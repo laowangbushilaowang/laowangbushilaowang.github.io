@@ -39,8 +39,7 @@ export default function HomePage() {
             <LocalizedNode
               en={
                 <>
-                  I am currently applying to <strong className="font-semibold text-accent">PhD programs</strong>. My core focus is{" "}
-                  <strong className="font-semibold text-accent">data-centric machine learning</strong> and{" "}
+                  My core focus is <strong className="font-semibold text-accent">data-centric machine learning</strong> and{" "}
                   <strong className="font-semibold text-accent">interdisciplinary AI</strong> in <em className="italic">computational biology</em>,{" "}
                   <em className="italic">medical vision</em>, and <em className="italic">robotics</em>, while also exploring{" "}
                   <strong className="font-semibold text-accent">AI-agent workflows</strong>.
@@ -48,8 +47,7 @@ export default function HomePage() {
               }
               zh={
                 <>
-                  我目前正在申请 <strong className="font-semibold text-accent">博士项目</strong>。核心方向是
-                  <strong className="font-semibold text-accent">数据驱动机器学习</strong> 与
+                  核心方向是<strong className="font-semibold text-accent">数据驱动机器学习</strong> 与
                   <strong className="font-semibold text-accent">跨领域 AI</strong>，应用于 <em className="italic">计算生物学</em>、
                   <em className="italic">医疗视觉</em> 与 <em className="italic">机器人</em>，并补充探索
                   <strong className="font-semibold text-accent">AI Agent 工作流</strong>。
@@ -60,7 +58,7 @@ export default function HomePage() {
 
           <div className="flex flex-wrap gap-2">
             <Tag>
-              <LocalizedText en="PhD Applicant" zh="博士申请中" />
+              <LocalizedText en="Early-Career Researcher" zh="早期研究者" />
             </Tag>
             <Tag>
               <LocalizedText en="Data-Centric ML" zh="数据驱动机器学习" />
@@ -147,7 +145,7 @@ export default function HomePage() {
                 en={
                   <>
                     He completed an MSc in Data Science at <strong className="font-semibold text-accent">Boston University (2025)</strong>, after a BSc (Hons) at{" "}
-                    <strong className="font-semibold text-accent">HKBU-UIC</strong>. He is now seeking PhD opportunities in <em className="italic">biology</em>,{" "}
+                    <strong className="font-semibold text-accent">HKBU-UIC</strong>. His current work spans <em className="italic">biology</em>,{" "}
                     <em className="italic">medical vision</em>, and <em className="italic">robotics</em>, with additional exploration of{" "}
                     <strong className="font-semibold text-accent">AI-agent workflows</strong>.
                   </>
@@ -155,8 +153,8 @@ export default function HomePage() {
                 zh={
                   <>
                     他于 <strong className="font-semibold text-accent">波士顿大学（2025）</strong> 完成数据科学硕士学位，此前在
-                    <strong className="font-semibold text-accent">HKBU-UIC</strong> 获得学士学位。当前申请聚焦
-                    <em className="italic">生物</em>、<em className="italic">医疗视觉</em> 与 <em className="italic">机器人</em> 跨领域应用的博士机会，并补充探索
+                    <strong className="font-semibold text-accent">HKBU-UIC</strong> 获得学士学位。当前工作聚焦
+                    <em className="italic">生物</em>、<em className="italic">医疗视觉</em> 与 <em className="italic">机器人</em> 的跨领域应用，并补充探索
                     <strong className="font-semibold text-accent">AI Agent 工作流</strong>。
                   </>
                 }
