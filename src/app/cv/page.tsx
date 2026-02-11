@@ -1,28 +1,11 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { PageIntro } from "@/components/motion/PageIntro";
-import { Reveal } from "@/components/motion/Reveal";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 import { LocalizedText } from "@/components/i18n/LocalizedText";
-import { education } from "@/content/education";
-import { projects } from "@/content/projects";
-import { awards, researchExperience, skillGroups } from "@/content/cv";
 
 export default function CvPage() {
   return (
-    <Container className="space-y-10 py-8 md:space-y-16 md:py-14">
-      <PageIntro
-        eyebrow={<LocalizedText en="Curriculum Vitae" zh="简历" />}
-        title={<LocalizedText en="Academic CV" zh="学术简历" />}
-        description={
-          <LocalizedText
-            en="Early-career profile for PhD applications: education, research experience, technical skills, and selected achievements."
-            zh="用于博士申请的早期学术履历：教育背景、研究经历、技术能力与主要成果。"
-          />
-        }
-      />
-
-      <Reveal>
+    <Container className="py-10 md:py-16">
+      <section className="flex min-h-[45vh] items-center justify-center">
         <Link
           href="/files/Bohan_Wang_CV.pdf"
           target="_blank"
@@ -30,130 +13,6 @@ export default function CvPage() {
         >
           <LocalizedText en="Download PDF CV" zh="下载 PDF 简历" />
         </Link>
-      </Reveal>
-
-      <section className="space-y-6">
-        <SectionHeading title={<LocalizedText en="Education" zh="教育背景" />} />
-        <div className="space-y-4">
-          {education.map((entry, idx) => (
-            <Reveal key={entry.id} delay={idx * 0.04}>
-              <article className="rounded-xl border border-line/70 bg-paper/90 p-4 md:p-5">
-                <h3 className="font-display text-xl text-accent md:text-2xl">
-                  <LocalizedText en={entry.degree} zh={entry.degreeZh ?? entry.degree} />
-                </h3>
-                <p className="mt-1 text-sm text-muted">
-                  <LocalizedText
-                    en={`${entry.institution} | ${entry.location}`}
-                    zh={`${entry.institutionZh ?? entry.institution} | ${entry.locationZh ?? entry.location}`}
-                  />
-                </p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-                  <LocalizedText en={`${entry.startDate} - ${entry.endDate}`} zh={`${entry.startDateZh ?? entry.startDate} - ${entry.endDateZh ?? entry.endDate}`} />
-                </p>
-                <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
-                  {entry.highlights.map((item, highlightIdx) => (
-                    <li key={item}>
-                      <LocalizedText en={item} zh={entry.highlightsZh?.[highlightIdx] ?? item} />
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      <section className="space-y-6">
-        <SectionHeading title={<LocalizedText en="Research experience" zh="研究经历" />} />
-        <div className="space-y-4">
-          {researchExperience.map((entry, idx) => (
-            <Reveal key={entry.id} delay={idx * 0.04}>
-              <article className="rounded-xl border border-line/70 bg-paper/90 p-4 md:p-5">
-                <h3 className="font-display text-xl text-accent md:text-2xl">
-                  <LocalizedText en={entry.role} zh={entry.roleZh ?? entry.role} />
-                </h3>
-                <p className="mt-1 text-sm text-muted">
-                  <LocalizedText
-                    en={`${entry.institution} | ${entry.location}`}
-                    zh={`${entry.institutionZh ?? entry.institution} | ${entry.locationZh ?? entry.location}`}
-                  />
-                </p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-                  <LocalizedText en={entry.period} zh={entry.periodZh ?? entry.period} />
-                </p>
-                <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
-                  {entry.bullets.map((item, bulletIdx) => (
-                    <li key={item}>
-                      <LocalizedText en={item} zh={entry.bulletsZh?.[bulletIdx] ?? item} />
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      <section className="space-y-6">
-        <SectionHeading title={<LocalizedText en="Selected projects" zh="精选项目" />} />
-        <div className="space-y-3">
-          {projects.slice(0, 4).map((project, idx) => (
-            <Reveal key={project.id} delay={idx * 0.03}>
-              <article className="rounded-xl border border-line/70 bg-paper/90 p-4 md:p-5">
-                <div className="flex flex-wrap items-baseline justify-between gap-3">
-                  <h3 className="font-semibold text-accent">
-                    <LocalizedText en={project.title} zh={project.titleZh ?? project.title} />
-                  </h3>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-                    <LocalizedText en={project.period} zh={project.periodZh ?? project.period} />
-                  </p>
-                </div>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  <LocalizedText en={project.summary} zh={project.summaryZh ?? project.summary} />
-                </p>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      <section className="grid gap-8 pb-4 md:grid-cols-2">
-        <div className="space-y-6">
-          <SectionHeading title={<LocalizedText en="Technical skills" zh="技术技能" />} />
-          <div className="space-y-3">
-            {skillGroups.map((group) => (
-              <article key={group.name} className="rounded-xl border border-line/70 bg-paper/90 p-4 md:p-5">
-                <h3 className="font-semibold text-accent">
-                  <LocalizedText en={group.name} zh={group.nameZh ?? group.name} />
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  <LocalizedText en={group.items.join(", ")} zh={(group.itemsZh ?? group.items).join("、")} />
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <SectionHeading title={<LocalizedText en="Awards" zh="奖项" />} />
-          <div className="space-y-3">
-            {awards.map((award) => (
-              <article key={award.title} className="rounded-xl border border-line/70 bg-paper/90 p-4 md:p-5">
-                <h3 className="font-semibold text-accent">
-                  <LocalizedText en={award.title} zh={award.titleZh ?? award.title} />
-                </h3>
-                <p className="mt-1 text-sm text-muted">
-                  <LocalizedText en={award.date} zh={award.dateZh ?? award.date} />
-                </p>
-                {award.note ? (
-                  <p className="mt-2 text-sm text-muted">
-                    <LocalizedText en={award.note} zh={award.noteZh ?? award.note} />
-                  </p>
-                ) : null}
-              </article>
-            ))}
-          </div>
-        </div>
       </section>
     </Container>
   );
