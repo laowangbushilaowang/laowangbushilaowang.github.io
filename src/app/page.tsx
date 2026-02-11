@@ -98,6 +98,44 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="grid gap-5 border-b border-line py-7 md:gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] md:py-10">
+        <article className="rounded-xl border border-line bg-paper/70 p-4 sm:p-5">
+          <h2 className="font-display text-2xl text-ink sm:text-[1.75rem] md:text-3xl">
+            <LocalizedText en="About" zh="关于我" />
+          </h2>
+          <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted sm:text-base">
+            <p>
+              <LocalizedText
+                en={`${siteProfile.name} is an early-career ${siteProfile.currentRole.title.toLowerCase()} at ${siteProfile.currentRole.institution}, working on data-centric machine learning for high-dimensional biological data and cross-domain AI systems.`}
+                zh={`${siteProfile.name} 目前在${siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution}担任早期阶段${siteProfile.currentRole.titleZh ?? siteProfile.currentRole.title}，主要从事面向高维生物数据的数据驱动机器学习与跨领域 AI 系统研究。`}
+              />
+            </p>
+            <p>
+              <LocalizedText
+                en="He completed an MSc in Data Science at Boston University (2025), after a BSc (Hons) in Data Science at HKBU-UIC. He is currently applying for PhD opportunities focused on machine learning, foundation models, and interdisciplinary applications in biology, medical vision, and robotics."
+                zh="他于 2025 年完成波士顿大学数据科学硕士学位，此前在 HKBU-UIC 获得数据科学荣誉学士学位。目前正在申请聚焦机器学习、基础模型及其在生物、医疗视觉与机器人中的跨领域应用的博士机会。"
+              />
+            </p>
+          </div>
+        </article>
+
+        <article className="rounded-xl border border-line bg-paper/70 p-4 sm:p-5">
+          <h3 className="font-display text-xl text-ink sm:text-2xl">
+            <LocalizedText en="Beyond Research" zh="兴趣爱好" />
+          </h3>
+          <p className="mt-2 text-sm text-muted">
+            <LocalizedText en="Sports, music, and games that keep me curious and creative." zh="运动、音乐和游戏让我保持好奇与创造力。" />
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {siteProfile.hobbies?.map((hobby, idx) => (
+              <Tag key={hobby}>
+                <LocalizedText en={hobby} zh={siteProfile.hobbiesZh?.[idx] ?? hobby} />
+              </Tag>
+            ))}
+          </div>
+        </article>
+      </section>
+
       <section className="grid gap-6 py-7 md:gap-8 md:py-10 md:grid-cols-2">
         <div className="space-y-4">
           <h2 className="font-display text-2xl text-ink sm:text-[1.75rem] md:text-3xl">
