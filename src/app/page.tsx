@@ -29,13 +29,10 @@ export default function HomePage() {
             {siteProfile.name} <span className="block text-xl text-muted sm:text-2xl md:text-3xl">({siteProfile.bilingualName})</span>
           </h1>
           <p className="text-sm text-ink/90 sm:text-base md:text-lg">
-            <LocalizedText en={siteProfile.tagline} zh="人工智能工程师与数据科学研究者。" />
+            <LocalizedText en={siteProfile.tagline} zh={siteProfile.taglineZh ?? siteProfile.tagline} />
           </p>
           <p className="max-w-3xl text-sm leading-relaxed text-muted">
-            <LocalizedText
-              en={siteProfile.intro}
-              zh="我主要研究计算生物学与机器学习，关注空间转录组、单细胞分析以及可落地的 AI 系统。"
-            />
+            <LocalizedText en={siteProfile.intro} zh={siteProfile.introZh ?? siteProfile.intro} />
           </p>
 
           <div className="grid gap-2 rounded-xl border border-line bg-paper/60 p-3 text-xs sm:p-4 sm:text-sm md:grid-cols-2">
@@ -43,19 +40,19 @@ export default function HomePage() {
               <span className="font-semibold text-ink">
                 <LocalizedText en="Current:" zh="当前职位：" />
               </span>{" "}
-              {siteProfile.currentRole.title}
+              <LocalizedText en={siteProfile.currentRole.title} zh={siteProfile.currentRole.titleZh ?? siteProfile.currentRole.title} />
             </p>
             <p>
               <span className="font-semibold text-ink">
                 <LocalizedText en="Institution:" zh="机构：" />
               </span>{" "}
-              {siteProfile.currentRole.institution}
+              <LocalizedText en={siteProfile.currentRole.institution} zh={siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution} />
             </p>
             <p>
               <span className="font-semibold text-ink">
                 <LocalizedText en="Location:" zh="地点：" />
               </span>{" "}
-              {siteProfile.location}
+              <LocalizedText en={siteProfile.location} zh={siteProfile.locationZh ?? siteProfile.location} />
             </p>
             <p>
               <span className="font-semibold text-ink">
@@ -90,8 +87,12 @@ export default function HomePage() {
           <div className="space-y-3">
             {topResearch.map((theme) => (
               <article key={theme.id} className="rounded-xl border border-line p-3 sm:p-4">
-                <h3 className="font-semibold text-ink">{theme.title}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-muted">{theme.summary}</p>
+                <h3 className="font-semibold text-ink">
+                  <LocalizedText en={theme.title} zh={theme.titleZh ?? theme.title} />
+                </h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted">
+                  <LocalizedText en={theme.summary} zh={theme.summaryZh ?? theme.summary} />
+                </p>
               </article>
             ))}
           </div>
@@ -105,13 +106,21 @@ export default function HomePage() {
             {topProjects.map((project) => (
               <article key={project.id} className="rounded-xl border border-line p-3 sm:p-4">
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="font-semibold text-ink">{project.title}</h3>
-                  <span className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted sm:text-xs">{project.period}</span>
+                  <h3 className="font-semibold text-ink">
+                    <LocalizedText en={project.title} zh={project.titleZh ?? project.title} />
+                  </h3>
+                  <span className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted sm:text-xs">
+                    <LocalizedText en={project.period} zh={project.periodZh ?? project.period} />
+                  </span>
                 </div>
-                <p className="mt-1 text-sm leading-relaxed text-muted">{project.summary}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted">
+                  <LocalizedText en={project.summary} zh={project.summaryZh ?? project.summary} />
+                </p>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {project.tags.slice(0, 3).map((tag) => (
-                    <Tag key={tag}>{tag}</Tag>
+                  {project.tags.slice(0, 3).map((tag, idx) => (
+                    <Tag key={tag}>
+                      <LocalizedText en={tag} zh={project.tagsZh?.[idx] ?? tag} />
+                    </Tag>
                   ))}
                 </div>
               </article>
@@ -129,7 +138,7 @@ export default function HomePage() {
             <li key={`${item.date}-${item.title}`}>
               <span className="font-semibold text-ink">{formatMonth(item.date)}</span>
               <span className="px-2">-</span>
-              {item.title}
+              <LocalizedText en={item.title} zh={item.titleZh ?? item.title} />
             </li>
           ))}
         </ul>

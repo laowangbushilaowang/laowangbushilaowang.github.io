@@ -33,16 +33,23 @@ export default function CvPage() {
           {education.map((entry, idx) => (
             <Reveal key={entry.id} delay={idx * 0.04}>
               <article className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
-                <h3 className="font-display text-xl text-ink md:text-2xl">{entry.degree}</h3>
+                <h3 className="font-display text-xl text-ink md:text-2xl">
+                  <LocalizedText en={entry.degree} zh={entry.degreeZh ?? entry.degree} />
+                </h3>
                 <p className="mt-1 text-sm text-muted">
-                  {entry.institution} | {entry.location}
+                  <LocalizedText
+                    en={`${entry.institution} | ${entry.location}`}
+                    zh={`${entry.institutionZh ?? entry.institution} | ${entry.locationZh ?? entry.location}`}
+                  />
                 </p>
                 <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-                  {entry.startDate} - {entry.endDate}
+                  <LocalizedText en={`${entry.startDate} - ${entry.endDate}`} zh={`${entry.startDateZh ?? entry.startDate} - ${entry.endDateZh ?? entry.endDate}`} />
                 </p>
                 <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
-                  {entry.highlights.map((item) => (
-                    <li key={item}>{item}</li>
+                  {entry.highlights.map((item, highlightIdx) => (
+                    <li key={item}>
+                      <LocalizedText en={item} zh={entry.highlightsZh?.[highlightIdx] ?? item} />
+                    </li>
                   ))}
                 </ul>
               </article>
@@ -57,14 +64,23 @@ export default function CvPage() {
           {researchExperience.map((entry, idx) => (
             <Reveal key={entry.id} delay={idx * 0.04}>
               <article className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
-                <h3 className="font-display text-xl text-ink md:text-2xl">{entry.role}</h3>
+                <h3 className="font-display text-xl text-ink md:text-2xl">
+                  <LocalizedText en={entry.role} zh={entry.roleZh ?? entry.role} />
+                </h3>
                 <p className="mt-1 text-sm text-muted">
-                  {entry.institution} | {entry.location}
+                  <LocalizedText
+                    en={`${entry.institution} | ${entry.location}`}
+                    zh={`${entry.institutionZh ?? entry.institution} | ${entry.locationZh ?? entry.location}`}
+                  />
                 </p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted">{entry.period}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+                  <LocalizedText en={entry.period} zh={entry.periodZh ?? entry.period} />
+                </p>
                 <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
-                  {entry.bullets.map((item) => (
-                    <li key={item}>{item}</li>
+                  {entry.bullets.map((item, bulletIdx) => (
+                    <li key={item}>
+                      <LocalizedText en={item} zh={entry.bulletsZh?.[bulletIdx] ?? item} />
+                    </li>
                   ))}
                 </ul>
               </article>
@@ -80,10 +96,16 @@ export default function CvPage() {
             <Reveal key={project.id} delay={idx * 0.03}>
               <article className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
                 <div className="flex flex-wrap items-baseline justify-between gap-3">
-                  <h3 className="font-semibold text-ink">{project.title}</h3>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">{project.period}</p>
+                  <h3 className="font-semibold text-ink">
+                    <LocalizedText en={project.title} zh={project.titleZh ?? project.title} />
+                  </h3>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+                    <LocalizedText en={project.period} zh={project.periodZh ?? project.period} />
+                  </p>
                 </div>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{project.summary}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  <LocalizedText en={project.summary} zh={project.summaryZh ?? project.summary} />
+                </p>
               </article>
             </Reveal>
           ))}
@@ -96,8 +118,12 @@ export default function CvPage() {
           <div className="space-y-3">
             {skillGroups.map((group) => (
               <article key={group.name} className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
-                <h3 className="font-semibold text-ink">{group.name}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{group.items.join(", ")}</p>
+                <h3 className="font-semibold text-ink">
+                  <LocalizedText en={group.name} zh={group.nameZh ?? group.name} />
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  <LocalizedText en={group.items.join(", ")} zh={(group.itemsZh ?? group.items).join("、")} />
+                </p>
               </article>
             ))}
           </div>
@@ -108,9 +134,17 @@ export default function CvPage() {
           <div className="space-y-3">
             {awards.map((award) => (
               <article key={award.title} className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
-                <h3 className="font-semibold text-ink">{award.title}</h3>
-                <p className="mt-1 text-sm text-muted">{award.date}</p>
-                {award.note ? <p className="mt-2 text-sm text-muted">{award.note}</p> : null}
+                <h3 className="font-semibold text-ink">
+                  <LocalizedText en={award.title} zh={award.titleZh ?? award.title} />
+                </h3>
+                <p className="mt-1 text-sm text-muted">
+                  <LocalizedText en={award.date} zh={award.dateZh ?? award.date} />
+                </p>
+                {award.note ? (
+                  <p className="mt-2 text-sm text-muted">
+                    <LocalizedText en={award.note} zh={award.noteZh ?? award.note} />
+                  </p>
+                ) : null}
               </article>
             ))}
           </div>

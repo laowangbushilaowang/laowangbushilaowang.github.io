@@ -34,7 +34,9 @@ export default function ContactPage() {
             <Link href={`mailto:${siteProfile.email}`} className="mt-5 inline-flex break-all text-base font-semibold text-accent hover:underline sm:text-lg">
               {siteProfile.emailDisplay}
             </Link>
-            <p className="mt-4 text-sm text-muted">{siteProfile.location}</p>
+            <p className="mt-4 text-sm text-muted">
+              <LocalizedText en={siteProfile.location} zh={siteProfile.locationZh ?? siteProfile.location} />
+            </p>
           </article>
         </Reveal>
 

@@ -26,12 +26,16 @@ export default function AboutPage() {
         <Reveal>
           <div className="max-w-4xl space-y-3 text-sm leading-relaxed text-muted sm:text-base md:text-lg">
             <p>
-              {siteProfile.name} is an {siteProfile.currentRole.title.toLowerCase()} at {siteProfile.currentRole.institution}, focused on computational biology
-              and machine learning for high-dimensional biological data.
+              <LocalizedText
+                en={`${siteProfile.name} is an ${siteProfile.currentRole.title.toLowerCase()} at ${siteProfile.currentRole.institution}, focused on computational biology and machine learning for high-dimensional biological data.`}
+                zh={`${siteProfile.name} 目前在${siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution}担任${siteProfile.currentRole.titleZh ?? siteProfile.currentRole.title}，主要关注高维生物数据的计算生物学与机器学习研究。`}
+              />
             </p>
             <p>
-              He completed an MSc in Data Science at Boston University (2025), after a BSc (Hons) in Data Science at HKBU-UIC. His recent work spans neural
-              fields, biomedical AI, and robot vision.
+              <LocalizedText
+                en="He completed an MSc in Data Science at Boston University (2025), after a BSc (Hons) in Data Science at HKBU-UIC. His recent work spans neural fields, biomedical AI, and robot vision."
+                zh="他于 2025 年完成波士顿大学数据科学硕士学位，此前在 HKBU-UIC 获得数据科学荣誉学士学位。近期研究覆盖神经场、生物医学 AI 与机器人视觉。"
+              />
             </p>
           </div>
         </Reveal>
@@ -43,8 +47,12 @@ export default function AboutPage() {
           {researchThemes.map((theme, idx) => (
             <Reveal key={theme.id} delay={idx * 0.05}>
               <article className="h-full rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
-                <h3 className="font-display text-xl text-ink md:text-2xl">{theme.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted">{theme.summary}</p>
+                <h3 className="font-display text-xl text-ink md:text-2xl">
+                  <LocalizedText en={theme.title} zh={theme.titleZh ?? theme.title} />
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted">
+                  <LocalizedText en={theme.summary} zh={theme.summaryZh ?? theme.summary} />
+                </p>
               </article>
             </Reveal>
           ))}
@@ -58,15 +66,22 @@ export default function AboutPage() {
             <Reveal key={entry.id} delay={idx * 0.05}>
               <li className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted">
-                  {entry.startDate} - {entry.endDate}
+                  <LocalizedText en={`${entry.startDate} - ${entry.endDate}`} zh={`${entry.startDateZh ?? entry.startDate} - ${entry.endDateZh ?? entry.endDate}`} />
                 </p>
-                <h3 className="mt-2 font-display text-xl text-ink md:text-2xl">{entry.degree}</h3>
+                <h3 className="mt-2 font-display text-xl text-ink md:text-2xl">
+                  <LocalizedText en={entry.degree} zh={entry.degreeZh ?? entry.degree} />
+                </h3>
                 <p className="text-sm text-muted">
-                  {entry.institution} | {entry.location}
+                  <LocalizedText
+                    en={`${entry.institution} | ${entry.location}`}
+                    zh={`${entry.institutionZh ?? entry.institution} | ${entry.locationZh ?? entry.location}`}
+                  />
                 </p>
                 <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
-                  {entry.highlights.map((item) => (
-                    <li key={item}>{item}</li>
+                  {entry.highlights.map((item, idx) => (
+                    <li key={item}>
+                      <LocalizedText en={item} zh={entry.highlightsZh?.[idx] ?? item} />
+                    </li>
                   ))}
                 </ul>
               </li>

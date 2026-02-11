@@ -24,8 +24,12 @@ export default function ResearchPage() {
         {researchThemes.map((theme, idx) => (
           <Reveal key={theme.id} delay={idx * 0.04}>
             <article className="rounded-2xl border border-line/70 bg-paper/90 p-4 shadow-card sm:p-5 md:p-8">
-              <h2 className="font-display text-2xl text-ink md:text-3xl">{theme.title}</h2>
-              <p className="mt-3 max-w-4xl text-sm leading-relaxed text-muted sm:text-base md:mt-4 md:text-lg">{theme.summary}</p>
+              <h2 className="font-display text-2xl text-ink md:text-3xl">
+                <LocalizedText en={theme.title} zh={theme.titleZh ?? theme.title} />
+              </h2>
+              <p className="mt-3 max-w-4xl text-sm leading-relaxed text-muted sm:text-base md:mt-4 md:text-lg">
+                <LocalizedText en={theme.summary} zh={theme.summaryZh ?? theme.summary} />
+              </p>
 
               <div className="mt-5 grid gap-4 md:mt-6 md:gap-5 md:grid-cols-3">
                 <div>
@@ -33,8 +37,10 @@ export default function ResearchPage() {
                     <LocalizedText en="Keywords" zh="关键词" />
                   </h3>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {theme.keywords.map((item) => (
-                      <Tag key={item}>{item}</Tag>
+                    {theme.keywords.map((item, keywordIdx) => (
+                      <Tag key={item}>
+                        <LocalizedText en={item} zh={theme.keywordsZh?.[keywordIdx] ?? item} />
+                      </Tag>
                     ))}
                   </div>
                 </div>
@@ -43,8 +49,10 @@ export default function ResearchPage() {
                     <LocalizedText en="Methods" zh="方法" />
                   </h3>
                   <ul className="mt-3 space-y-1 text-sm text-muted">
-                    {theme.methods.map((item) => (
-                      <li key={item}>- {item}</li>
+                    {theme.methods.map((item, methodIdx) => (
+                      <li key={item}>
+                        - <LocalizedText en={item} zh={theme.methodsZh?.[methodIdx] ?? item} />
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -53,8 +61,10 @@ export default function ResearchPage() {
                     <LocalizedText en="Applications" zh="应用" />
                   </h3>
                   <ul className="mt-3 space-y-1 text-sm text-muted">
-                    {theme.applications.map((item) => (
-                      <li key={item}>- {item}</li>
+                    {theme.applications.map((item, appIdx) => (
+                      <li key={item}>
+                        - <LocalizedText en={item} zh={theme.applicationsZh?.[appIdx] ?? item} />
+                      </li>
                     ))}
                   </ul>
                 </div>

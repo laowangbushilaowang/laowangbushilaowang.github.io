@@ -6,6 +6,12 @@ import { Tag } from "@/components/ui/Tag";
 import { LocalizedText } from "@/components/i18n/LocalizedText";
 import { projects } from "@/content/projects";
 
+const projectLinkLabelZh: Record<string, string> = {
+  Paper: "论文",
+  Repo: "代码",
+  Demo: "演示"
+};
+
 export default function ProjectsPage() {
   return (
     <Container className="space-y-10 py-8 md:space-y-16 md:py-14">
@@ -25,14 +31,22 @@ export default function ProjectsPage() {
           <Reveal key={project.id} delay={idx * 0.03}>
             <article className="h-full rounded-2xl border border-line/70 bg-paper/90 p-4 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 sm:p-5 md:p-6">
               <div className="flex items-start justify-between gap-3">
-                <h2 className="font-display text-xl text-ink sm:text-2xl">{project.title}</h2>
-                <span className="shrink-0 rounded-full bg-accentSoft px-3 py-1 text-xs font-semibold text-accent">{project.period}</span>
+                <h2 className="font-display text-xl text-ink sm:text-2xl">
+                  <LocalizedText en={project.title} zh={project.titleZh ?? project.title} />
+                </h2>
+                <span className="shrink-0 rounded-full bg-accentSoft px-3 py-1 text-xs font-semibold text-accent">
+                  <LocalizedText en={project.period} zh={project.periodZh ?? project.period} />
+                </span>
               </div>
-              <p className="mt-4 text-sm leading-relaxed text-muted">{project.summary}</p>
+              <p className="mt-4 text-sm leading-relaxed text-muted">
+                <LocalizedText en={project.summary} zh={project.summaryZh ?? project.summary} />
+              </p>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                {project.tags.map((tag) => (
-                  <Tag key={tag}>{tag}</Tag>
+                {project.tags.map((tag, tagIdx) => (
+                  <Tag key={tag}>
+                    <LocalizedText en={tag} zh={project.tagsZh?.[tagIdx] ?? tag} />
+                  </Tag>
                 ))}
               </div>
 
@@ -46,7 +60,7 @@ export default function ProjectsPage() {
                       rel="noreferrer"
                       className="text-sm font-semibold text-accent underline-offset-4 hover:underline"
                     >
-                      {linkItem.label}
+                      <LocalizedText en={linkItem.label} zh={projectLinkLabelZh[linkItem.label] ?? linkItem.label} />
                     </Link>
                   ))}
                 </div>
