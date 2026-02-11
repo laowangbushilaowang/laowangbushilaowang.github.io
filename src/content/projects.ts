@@ -79,8 +79,8 @@ export const projects: ProjectItem[] = [
     summary:
       "Analyzed U.S. Census commute data to quantify racial disparities and model post-COVID transit inequities.",
     summaryZh: "基于美国人口普查通勤数据，量化种族差异并分析后疫情时代交通不平等。",
-    tags: ["Data", "Geospatial", "Social Impact", "Statistics"],
-    tagsZh: ["数据", "地理空间", "社会影响", "统计"]
+    tags: ["Data", "Geospatial", "Equity Analysis", "Statistics"],
+    tagsZh: ["数据", "地理空间", "公平性分析", "统计"]
   },
   {
     id: "mental-health-chatbot",
@@ -91,8 +91,8 @@ export const projects: ProjectItem[] = [
     summary:
       "Created a GPT-based chatbot with emotion-aware responses for mental health conversations.",
     summaryZh: "构建基于 GPT 的情绪感知聊天机器人，用于心理健康对话支持。",
-    tags: ["NLP", "LLM", "Healthcare", "AI"],
-    tagsZh: ["NLP", "大模型", "医疗健康", "AI"]
+    tags: ["NLP", "AI Agent", "Healthcare", "AI"],
+    tagsZh: ["NLP", "AI Agent", "医疗健康", "AI"]
   },
   {
     id: "yolov7-robotics",

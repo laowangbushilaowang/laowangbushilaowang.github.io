@@ -47,7 +47,7 @@ export default function HomePage() {
               <LocalizedText en="Data-Centric ML" zh="数据驱动机器学习" />
             </Tag>
             <Tag>
-              <LocalizedText en="LLM x Domains" zh="大模型 x 跨领域" />
+              <LocalizedText en="AI Agents x Domains" zh="AI Agent x 跨领域" />
             </Tag>
             <Tag>
               <LocalizedText en="Medical Vision + Robotics" zh="医疗视觉 + 机器人" />
@@ -112,8 +112,8 @@ export default function HomePage() {
             </p>
             <p>
               <LocalizedText
-                en="He completed an MSc in Data Science at Boston University (2025), after a BSc (Hons) in Data Science at HKBU-UIC. He is currently applying for PhD opportunities focused on machine learning, foundation models, and interdisciplinary applications in biology, medical vision, and robotics."
-                zh="他于 2025 年完成波士顿大学数据科学硕士学位，此前在 HKBU-UIC 获得数据科学荣誉学士学位。目前正在申请聚焦机器学习、基础模型及其在生物、医疗视觉与机器人中的跨领域应用的博士机会。"
+                en="He completed an MSc in Data Science at Boston University (2025), after a BSc (Hons) in Data Science at HKBU-UIC. He is currently applying for PhD opportunities focused on machine learning and interdisciplinary applications in biology, medical vision, and robotics, while also exploring AI-agent workflows."
+                zh="他于 2025 年完成波士顿大学数据科学硕士学位，此前在 HKBU-UIC 获得数据科学荣誉学士学位。目前正在申请聚焦机器学习及其在生物、医疗视觉与机器人中跨领域应用的博士机会，同时探索 AI Agent 工作流。"
               />
             </p>
           </div>

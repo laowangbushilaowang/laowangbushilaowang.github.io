@@ -20,8 +20,8 @@ export default function ProjectsPage() {
         title={<LocalizedText en="Applied research and engineering" zh="研究与工程实践" />}
         description={
           <LocalizedText
-            en="Selected early-career projects that combine data-centric ML and LLM methods with computational biology, medical vision, robotics, NLP, and social data analysis."
-            zh="展示我早期阶段的代表项目：将数据驱动机器学习与大模型方法结合到计算生物学、医疗视觉、机器人、NLP 与社会数据分析中。"
+            en="Selected early-career projects centered on data-centric ML across computational biology, medical vision, robotics, and NLP, with AI-agent methods used in selected workflows."
+            zh="展示我早期阶段的代表项目：核心是数据驱动机器学习在计算生物学、医疗视觉、机器人与 NLP 中的应用，并在部分流程中引入 AI Agent 方法。"
           />
         }
       />
