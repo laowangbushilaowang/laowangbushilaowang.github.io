@@ -130,7 +130,7 @@ export default function HomePage() {
                 en={
                   <>
                     I completed my MSc in Data Science at <strong className="font-semibold text-accent">Boston University (2025)</strong>. Before that, I received a
-                    bachelor's degree in Data Science from <strong className="font-semibold text-accent">HKBU (Zhuhai) - BNBU</strong>, and studied sociology for two years
+                    bachelor&apos;s degree in Data Science from <strong className="font-semibold text-accent">HKBU (Zhuhai) - BNBU</strong>, and studied sociology for two years
                     during my undergraduate years.
                   </>
                 }
