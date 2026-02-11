@@ -22,6 +22,8 @@ export function SiteHeader() {
   const pathname = usePathname();
   const { lang } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const primaryName = lang === "zh" ? siteProfile.bilingualName : siteProfile.name;
+  const secondaryName = lang === "zh" ? siteProfile.name : siteProfile.bilingualName;
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -30,16 +32,16 @@ export function SiteHeader() {
   const menuButtonLabel = lang === "zh" ? (mobileMenuOpen ? "收起" : "菜单") : mobileMenuOpen ? "Close" : "Menu";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-[rgba(248,250,253,0.86)] shadow-[0_12px_28px_-24px_rgba(47,93,140,0.45)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(248,250,253,0.72)]">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 md:gap-6 md:px-8 md:py-3">
+    <header className="sticky top-0 z-50 border-b border-line bg-[rgba(248,250,253,0.8)] shadow-[0_14px_30px_-24px_rgba(47,93,140,0.5)] backdrop-blur-lg supports-[backdrop-filter]:bg-[rgba(248,250,253,0.64)]">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 md:gap-8 md:px-8 md:py-3.5">
         <Link href="/" className="inline-flex max-w-[62vw] flex-col leading-none sm:max-w-none" aria-label="Go to homepage">
-          <span className="truncate font-display text-lg text-accent md:text-xl">{siteProfile.name}</span>
-          <span className="text-xs text-muted">{siteProfile.bilingualName}</span>
+          <span className="truncate font-display text-xl text-accent md:text-2xl">{primaryName}</span>
+          <span className="text-sm text-muted">{secondaryName}</span>
         </Link>
 
         <div className="hidden items-center gap-5 md:flex">
           <nav aria-label="Main navigation">
-            <ul className="flex items-center gap-4">
+            <ul className="flex items-center gap-5">
               {navLinks.map((link) => {
                 const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
                 const translated = navLabelByHref[link.href] ?? { en: link.label, zh: link.label };
@@ -48,7 +50,7 @@ export function SiteHeader() {
                     <Link
                       href={link.href}
                       className={clsx(
-                        "text-sm font-medium transition-colors",
+                        "text-base font-medium transition-colors",
                         active ? "text-accent" : "text-ink/80 hover:text-accent"
                       )}
                     >
@@ -67,7 +69,7 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen((open) => !open)}
-            className="rounded-md border border-accent/30 bg-paper/80 px-2 py-1 text-xs font-semibold text-accent transition-colors hover:border-highlight/70 hover:bg-highlightSoft"
+            className="rounded-md border border-accent/30 bg-paper/80 px-2.5 py-1.5 text-sm font-semibold text-accent transition-colors hover:border-highlight/70 hover:bg-highlightSoft"
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-site-nav"
             aria-label={menuButtonLabel}
@@ -81,7 +83,7 @@ export function SiteHeader() {
         <nav
           id="mobile-site-nav"
           aria-label="Mobile navigation"
-          className="border-t border-line bg-[rgba(248,250,253,0.92)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(248,250,253,0.78)] md:hidden"
+          className="border-t border-line bg-[rgba(248,250,253,0.9)] backdrop-blur-lg supports-[backdrop-filter]:bg-[rgba(248,250,253,0.74)] md:hidden"
         >
           <ul className="space-y-1 px-4 py-2.5 sm:px-6">
             {navLinks.map((link) => {
@@ -92,7 +94,7 @@ export function SiteHeader() {
                   <Link
                     href={link.href}
                     className={clsx(
-                      "block rounded-md border border-line px-3 py-2 text-sm",
+                      "block rounded-md border border-line px-3 py-2.5 text-base",
                       active
                         ? "border-highlight/60 bg-highlightSoft font-semibold text-accent"
                         : "text-ink/80 hover:border-accent/35 hover:text-accent"

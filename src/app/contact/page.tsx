@@ -50,16 +50,16 @@ export default function ContactPage() {
             <h2 className="font-display text-xl text-accent sm:text-2xl">
               <LocalizedText en="Profiles and links" zh="主页与链接" />
             </h2>
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-4 flex flex-col gap-3">
               {socialLinks.map((link) => (
-                <li key={link.iconKey} className="inline-flex items-center gap-2 text-sm font-semibold text-accent">
-                  <span className="rounded-full border border-highlight/60 bg-highlightSoft px-2 py-1 text-xs text-accent">
+                <li key={link.iconKey} className="flex w-full items-center justify-between gap-3 text-sm font-semibold text-accent">
+                  <span className="shrink-0 rounded-full border border-highlight/60 bg-highlightSoft px-2 py-1 text-xs text-accent">
                     <LocalizedText en={iconByKey[link.iconKey].en} zh={iconByKey[link.iconKey].zh} />
                   </span>
                   {link.iconKey === "email" ? (
-                    <span className="break-all text-accent">{link.label}</span>
+                    <span className="text-right break-all text-accent">{link.label}</span>
                   ) : (
-                    <Link href={link.href} target="_blank" rel="noreferrer" className="break-all text-accent hover:underline">
+                    <Link href={link.href} target="_blank" rel="noreferrer" className="text-right break-all text-accent hover:underline">
                       {link.label}
                     </Link>
                   )}
