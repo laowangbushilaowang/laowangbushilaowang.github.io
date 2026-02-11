@@ -7,7 +7,7 @@ export const siteProfile: SiteProfile = {
   intro:
     "I work on computational biology and machine learning, with interests in spatial transcriptomics, single-cell analysis, and practical AI systems.",
   location: "Guangzhou, China",
-  email: "wbh@bu.com",
+  email: "wbh@bu.edu",
   currentRole: {
     title: "AI Algorithm Engineer (Research)",
     institution: "Guangzhou Laboratory",

@@ -3,7 +3,7 @@ import type { SocialLink } from "@/types/content";
 export const socialLinks: SocialLink[] = [
   {
     label: "Email",
-    href: "mailto:wbh@bu.com",
+    href: "mailto:wbh@bu.edu",
     iconKey: "email"
   },
   {
