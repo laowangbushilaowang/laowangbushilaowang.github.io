@@ -16,8 +16,8 @@ export const siteProfile: SiteProfile = {
   email: "wbh@bu.edu",
   emailDisplay: "wbh at dot bu dot edu",
   currentRole: {
-    title: "AI Algorithm Engineer (Research)",
-    titleZh: "AI 算法工程师（研究）",
+    title: "AI Algorithm Engineer",
+    titleZh: "AI 算法工程师",
     institution: "Guangzhou Laboratory",
     institutionZh: "广州实验室",
     location: "Guangzhou, China",

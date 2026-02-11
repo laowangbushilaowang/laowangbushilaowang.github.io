@@ -101,7 +101,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="grid gap-5 border-b border-line py-7 md:gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] md:py-10">
+      <section className="grid gap-5 py-7 md:gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] md:py-10">
         <article className="rounded-xl border border-line bg-paper/85 p-4 sm:p-5">
           <h2 className="font-display text-2xl text-accent sm:text-[1.75rem] md:text-3xl">
             <LocalizedText en="About" zh="关于我" />
@@ -111,17 +111,16 @@ export default function HomePage() {
               <LocalizedNode
                 en={
                   <>
-                    {siteProfile.name} is an early-career <em className="italic">{siteProfile.currentRole.title.toLowerCase()}</em> at{" "}
-                    <strong className="font-semibold text-accent">{siteProfile.currentRole.institution}</strong>, working on{" "}
-                    <strong className="font-semibold text-accent">data-centric machine learning</strong> for high-dimensional biological data.
+                    I am currently an <strong className="font-semibold text-accent">AI Algorithm Engineer</strong> at{" "}
+                    <strong className="font-semibold text-accent">Guangzhou Laboratory</strong>, mainly working on{" "}
+                    <strong className="font-semibold text-accent">data-centric machine learning</strong> and biological data algorithms.
                   </>
                 }
                 zh={
                   <>
-                    {siteProfile.name} 目前在
-                    <strong className="font-semibold text-accent">{siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution}</strong>
-                    担任 <em className="italic">{siteProfile.currentRole.titleZh ?? siteProfile.currentRole.title}</em>，
-                    主要从事 <strong className="font-semibold text-accent">数据驱动机器学习</strong> 与生物高维数据研究。
+                    我目前在
+                    <strong className="font-semibold text-accent">广州实验室</strong>
+                    担任 <em className="italic">AI 算法工程师</em>，主要从事 <strong className="font-semibold text-accent">数据驱动机器学习</strong> 与生物数据算法研究。
                   </>
                 }
               />
@@ -130,20 +129,36 @@ export default function HomePage() {
               <LocalizedNode
                 en={
                   <>
-                    I completed an MSc in Data Science at <strong className="font-semibold text-accent">Boston University (2025)</strong>, after a BSc (Hons) at{" "}
-                    <strong className="font-semibold text-accent">HKBU-UIC</strong>. My work prioritizes <em className="italic">AI</em> and{" "}
-                    <em className="italic">robotics</em>, while expanding domain applications in <em className="italic">biology</em> and <em className="italic">medical vision</em>.
+                    I completed my MSc in Data Science at <strong className="font-semibold text-accent">Boston University (2025)</strong>. Before that, I received a
+                    bachelor's degree in Data Science from <strong className="font-semibold text-accent">HKBU (Zhuhai) - BNBU</strong>, and studied sociology for two years
+                    during my undergraduate years.
                   </>
                 }
                 zh={
                   <>
                     我于 <strong className="font-semibold text-accent">波士顿大学（2025）</strong> 完成数据科学硕士学位，此前在
-                    <strong className="font-semibold text-accent">HKBU-UIC</strong> 获得学士学位。当前聚焦
-                    <em className="italic">人工智能</em> 与 <em className="italic">机器人</em>，并拓展
-                    <em className="italic">生物方向</em> 与 <em className="italic">医疗视觉</em> 的领域应用。
+                    <strong className="font-semibold text-accent">HKBU（珠海）- BNBU</strong> 获得数据科学学士学位，本科时学习过两年社会学。
                   </>
                 }
               />
+            </p>
+            <p>
+              <LocalizedNode
+                en={
+                  <>
+                    I am passionate about exploring how data can contribute across domains and using data-driven methods to solve real-life problems. I believe data and
+                    algorithms are transforming society and the way people live and work, and may drive the fourth industrial revolution.
+                  </>
+                }
+                zh={
+                  <>
+                    热衷于探索数据在各个领域的作用，希望能以数据驱动来解决生活中的问题。我认为数据和算法即将改变人类社会以及生活工作方式，实现第四次工业革命。
+                  </>
+                }
+              />
+            </p>
+            <p className="italic text-accent">
+              <LocalizedText en="Each person must complete their own individuation." zh="Each person must complete their own individuation." />
             </p>
           </div>
         </article>
