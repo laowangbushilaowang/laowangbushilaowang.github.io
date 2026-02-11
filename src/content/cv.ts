@@ -12,16 +12,12 @@ export const researchExperience: ResearchExperience[] = [
     location: "Guangzhou, China",
     locationZh: "中国广州",
     bullets: [
-      "Conduct interdisciplinary research at the intersection of AI and computational biology.",
-      "Designed spatiotemporal modeling methods for reconstructing continuous 3D+time structures from spatial transcriptomics data.",
-      "Developed decomposition methods to separate cell-fate variability from sample-time variability in single-cell RNA-seq.",
-      "Built an AI-agent-driven pipeline for literature search, data collection, metadata standardization, and H5AD generation."
+      "Worked on computational biology and data-centric machine learning projects.",
+      "Supported AI-agent workflow development and research compute environment maintenance."
     ],
     bulletsZh: [
-      "开展 AI 与计算生物学交叉研究。",
-      "设计时空建模方法，从空间转录组数据重建连续 3D+时间结构。",
-      "构建分解方法，区分单细胞 RNA-seq 中细胞命运差异与样本时间差异。",
-      "搭建 AI Agent 驱动流程，覆盖文献检索、数据采集、元数据标准化与 H5AD 生成。"
+      "参与计算生物学与数据驱动机器学习相关研究项目。",
+      "参与 AI Agent 流程开发与研究算力环境维护。"
     ]
   },
   {
@@ -42,19 +38,22 @@ export const researchExperience: ResearchExperience[] = [
   },
   {
     id: "bona-robotics",
-    role: "AI Algorithm Engineer (Research Intern)",
-    roleZh: "AI 算法工程师（研究实习）",
+    role: "AI Algorithm R&D Intern",
+    roleZh: "AI 算法研发实习生",
     institution: "Guangzhou Bona Robotics Co., Ltd.",
     institutionZh: "广州博依特机器人有限公司",
-    period: "2022-2023",
-    periodZh: "2022-2023",
+    period: "Jul 2022-Feb 2023",
+    periodZh: "2022年7月-2023年2月",
     location: "Guangzhou, China",
     locationZh: "中国广州",
     bullets: [
-      "Improved YOLOv7-based detection accuracy by 5% through architecture and loss refinements.",
-      "Migrated training pipelines to Huawei MindSpore and reached the Huawei Ascend AI Innovation Competition final."
+      "Contributed to robotic vision model development and deployment.",
+      "Supported model optimization and framework migration tasks."
     ],
-    bulletsZh: ["通过模型结构与损失优化将 YOLOv7 检测准确率提升约 5%。", "迁移训练流程到华为 MindSpore，并进入华为昇腾 AI 创新大赛决赛。"]
+    bulletsZh: [
+      "参与机器人视觉模型开发与部署。",
+      "参与模型优化与框架迁移相关工作。"
+    ]
   }
 ];
 
