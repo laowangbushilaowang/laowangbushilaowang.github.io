@@ -13,23 +13,6 @@ const iconByKey: Record<string, { en: string; zh: string }> = {
   scholar: { en: "Scholar", zh: "学术" }
 };
 
-function getLinkDisplayValue(href: string, emailDisplay: string) {
-  if (href.startsWith("mailto:")) {
-    return emailDisplay;
-  }
-
-  try {
-    const parsed = new URL(href);
-    if (parsed.hostname.includes("github.com")) {
-      const username = parsed.pathname.replace(/\//g, "");
-      return username ? `@${username}` : parsed.hostname;
-    }
-    return `${parsed.hostname}${parsed.pathname === "/" ? "" : parsed.pathname}`;
-  } catch {
-    return href;
-  }
-}
-
 export default function ContactPage() {
   return (
     <Container className="space-y-10 py-8 md:space-y-16 md:py-14">
@@ -52,13 +35,10 @@ export default function ContactPage() {
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted">
               <LocalizedText
-                en="Email is the best way to discuss research fit and collaboration, especially where data and machine learning are combined with biology, medical vision, and robotics."
-                zh="如需交流研究方向匹配与合作（尤其是数据与机器学习和生物、医疗视觉、机器人等领域结合），建议优先通过邮箱联系。"
+                en="I welcome conversations on research collaboration, interdisciplinary AI, and data-driven projects."
+                zh="欢迎交流研究合作、跨领域 AI 与数据驱动项目。"
               />
             </p>
-            <Link href={`mailto:${siteProfile.email}`} className="mt-5 inline-flex break-all text-base font-semibold text-accent hover:underline sm:text-lg">
-              {siteProfile.emailDisplay}
-            </Link>
             <p className="mt-4 text-sm text-muted">
               <LocalizedText en={siteProfile.location} zh={siteProfile.locationZh ?? siteProfile.location} />
             </p>
@@ -72,18 +52,17 @@ export default function ContactPage() {
             </h2>
             <ul className="mt-4 space-y-3">
               {socialLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    target={link.href.startsWith("mailto:") ? undefined : "_blank"}
-                    rel={link.href.startsWith("mailto:") ? undefined : "noreferrer"}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition-colors hover:underline"
-                  >
-                    <span className="rounded-full border border-highlight/60 bg-highlightSoft px-2 py-1 text-xs text-accent">
-                      <LocalizedText en={iconByKey[link.iconKey].en} zh={iconByKey[link.iconKey].zh} />
-                    </span>
-                    {getLinkDisplayValue(link.href, siteProfile.emailDisplay)}
-                  </Link>
+                <li key={link.iconKey} className="inline-flex items-center gap-2 text-sm font-semibold text-accent">
+                  <span className="rounded-full border border-highlight/60 bg-highlightSoft px-2 py-1 text-xs text-accent">
+                    <LocalizedText en={iconByKey[link.iconKey].en} zh={iconByKey[link.iconKey].zh} />
+                  </span>
+                  {link.iconKey === "email" ? (
+                    <span className="break-all text-accent">{link.label}</span>
+                  ) : (
+                    <Link href={link.href} target="_blank" rel="noreferrer" className="break-all text-accent hover:underline">
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

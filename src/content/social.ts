@@ -2,18 +2,18 @@ import type { SocialLink } from "@/types/content";
 
 export const socialLinks: SocialLink[] = [
   {
-    label: "Email",
+    label: "wbh at dot bu dot edu",
     href: "mailto:wbh@bu.edu",
     iconKey: "email"
   },
   {
-    label: "GitHub",
+    label: "laowangbushilaowang",
     href: "https://github.com/laowangbushilaowang",
     iconKey: "github"
   },
   {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/",
+    label: "Bohan Wang",
+    href: "https://www.linkedin.com/in/bohan-wang-409750291/",
     iconKey: "linkedin"
   }
 ];
