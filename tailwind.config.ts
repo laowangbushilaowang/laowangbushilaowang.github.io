@@ -14,13 +14,11 @@ const config: Config = {
         paper: "var(--color-paper)",
         accent: "var(--color-accent)",
         accentSoft: "var(--color-accent-soft)",
-        sun: "var(--color-sun)",
-        sunSoft: "var(--color-sun-soft)",
         line: "var(--color-line)",
         muted: "var(--color-muted)"
       },
       boxShadow: {
-        card: "0 18px 40px -24px rgba(30, 63, 126, 0.34)"
+        card: "0 18px 40px -24px rgba(13, 33, 41, 0.45)"
       }
     }
   },

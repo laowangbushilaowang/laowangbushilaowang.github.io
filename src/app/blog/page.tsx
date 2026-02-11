@@ -21,14 +21,14 @@ export default function BlogPage() {
       <section className="space-y-4 pb-4">
         {posts.length === 0 ? (
           <Reveal>
-            <p className="surface-a rounded-xl border border-dashed border-line p-6 text-sm text-muted">
+            <p className="rounded-xl border border-dashed border-line bg-paper/80 p-6 text-sm text-muted">
               <LocalizedText en="No posts yet. Add markdown files in" zh="暂无文章。可在" /> <code>content/blog</code> <LocalizedText en="to publish new entries." zh="中添加 Markdown 发布。" />
             </p>
           </Reveal>
         ) : (
           posts.map((post, idx) => (
             <Reveal key={post.slug} delay={idx * 0.04}>
-              <article className="surface-b rounded-2xl border border-line/70 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-card sm:p-5 md:p-6">
+              <article className="rounded-2xl border border-line/70 bg-paper/90 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-card sm:p-5 md:p-6">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">{formatDate(post.date)}</p>
                 <h2 className="mt-3 font-display text-2xl text-ink sm:text-3xl">
                   <Link href={`/blog/${post.slug}`} className="hover:text-accent">

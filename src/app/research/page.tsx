@@ -23,7 +23,7 @@ export default function ResearchPage() {
       <div className="grid gap-5">
         {researchThemes.map((theme, idx) => (
           <Reveal key={theme.id} delay={idx * 0.04}>
-            <article className="surface-a rounded-2xl border border-line/70 p-4 shadow-card sm:p-5 md:p-8">
+            <article className="rounded-2xl border border-line/70 bg-paper/90 p-4 shadow-card sm:p-5 md:p-8">
               <h2 className="font-display text-2xl text-ink md:text-3xl">
                 <LocalizedText en={theme.title} zh={theme.titleZh ?? theme.title} />
               </h2>
@@ -75,7 +75,7 @@ export default function ResearchPage() {
       </div>
 
       <Reveal>
-        <section className="surface-b rounded-xl border border-dashed border-line p-4 sm:p-5 md:p-6">
+        <section className="rounded-xl border border-dashed border-line bg-paper/75 p-4 sm:p-5 md:p-6">
           <h2 className="font-display text-2xl text-ink">
             <LocalizedText en="Publications-ready architecture" zh="可扩展的论文模块" />
           </h2>

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import clsx from "clsx";
 import { Container } from "@/components/ui/Container";
 import { Tag } from "@/components/ui/Tag";
 import { LocalizedNode, LocalizedText } from "@/components/i18n/LocalizedText";
@@ -63,10 +62,10 @@ export default function HomePage() {
             <Tag>
               <LocalizedText en="PhD Applicant" zh="博士申请中" />
             </Tag>
-            <Tag className="border-accent/35 bg-accentSoft text-accent">
+            <Tag>
               <LocalizedText en="Data-Centric ML" zh="数据驱动机器学习" />
             </Tag>
-            <Tag className="border-sun/55 bg-sunSoft text-ink">
+            <Tag>
               <LocalizedText en="AI Agents x Domains" zh="AI Agent x 跨领域" />
             </Tag>
             <Tag>
@@ -74,7 +73,7 @@ export default function HomePage() {
             </Tag>
           </div>
 
-          <div className="surface-a grid gap-2 rounded-xl border border-line p-3 text-xs sm:p-4 sm:text-sm md:grid-cols-2">
+          <div className="grid gap-2 rounded-xl border border-line bg-paper/60 p-3 text-xs sm:p-4 sm:text-sm md:grid-cols-2">
             <p>
               <span className="font-semibold text-ink">
                 <LocalizedText en="Current:" zh="当前职位：" />
@@ -119,7 +118,7 @@ export default function HomePage() {
       </section>
 
       <section className="grid gap-5 border-b border-line py-7 md:gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] md:py-10">
-        <article className="surface-b rounded-xl border border-line p-4 sm:p-5">
+        <article className="rounded-xl border border-line bg-paper/70 p-4 sm:p-5">
           <h2 className="font-display text-2xl text-ink sm:text-[1.75rem] md:text-3xl">
             <LocalizedText en="About" zh="关于我" />
           </h2>
@@ -166,7 +165,7 @@ export default function HomePage() {
           </div>
         </article>
 
-        <article className="surface-c rounded-xl border border-line p-4 sm:p-5">
+        <article className="rounded-xl border border-line bg-paper/70 p-4 sm:p-5">
           <h3 className="font-display text-xl text-ink sm:text-2xl">
             <LocalizedText en="Beyond Research" zh="兴趣爱好" />
           </h3>
@@ -189,8 +188,8 @@ export default function HomePage() {
             <LocalizedText en="Research Focus" zh="研究方向" />
           </h2>
           <div className="space-y-3">
-            {topResearch.map((theme, idx) => (
-              <article key={theme.id} className={clsx("rounded-xl border border-line p-3 sm:p-4", idx % 2 === 0 ? "surface-a" : "surface-b")}>
+            {topResearch.map((theme) => (
+              <article key={theme.id} className="rounded-xl border border-line p-3 sm:p-4">
                 <h3 className="font-semibold text-ink">
                   <LocalizedText en={theme.title} zh={theme.titleZh ?? theme.title} />
                 </h3>
@@ -207,8 +206,8 @@ export default function HomePage() {
             <LocalizedText en="Selected Projects" zh="精选项目" />
           </h2>
           <div className="space-y-3">
-            {topProjects.map((project, idx) => (
-              <article key={project.id} className={clsx("rounded-xl border border-line p-3 sm:p-4", idx % 2 === 0 ? "surface-b" : "surface-c")}>
+            {topProjects.map((project) => (
+              <article key={project.id} className="rounded-xl border border-line p-3 sm:p-4">
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="font-semibold text-ink">
                     <LocalizedText en={project.title} zh={project.titleZh ?? project.title} />
