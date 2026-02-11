@@ -30,7 +30,7 @@ export const projects: ProjectItem[] = [
   {
     id: "bu-thesis",
     title: "Image Reconstruction Through Multiple 1D Approximations",
-    titleZh: "基于多重一维近似的图像重建",
+    titleZh: "研究多重一维近似图像重建问题",
     period: "2024",
     periodZh: "2024",
     summary:

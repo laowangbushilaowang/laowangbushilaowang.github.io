@@ -10,7 +10,7 @@ import { news } from "@/content/news";
 import { formatMonth } from "@/lib/format";
 
 export default function HomePage() {
-  const topProjects = [projects.find((project) => project.id === "spatial-neural-field"), projects.find((project) => project.id === "medical-robotics-cuhk")].filter(
+  const topProjects = [projects.find((project) => project.id === "spatial-neural-field"), projects.find((project) => project.id === "bu-thesis")].filter(
     (project): project is (typeof projects)[number] => Boolean(project)
   );
   const topResearch = [researchThemes.find((theme) => theme.id === "comp-bio-ai"), researchThemes.find((theme) => theme.id === "ai-robotics")].filter(

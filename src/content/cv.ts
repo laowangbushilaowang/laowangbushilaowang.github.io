@@ -86,10 +86,5 @@ export const awards: AwardItem[] = [
     title: "Honorable Mention, Mathematical Contest in Modeling (MCM)",
     titleZh: "美国大学生数学建模竞赛（MCM）荣誉奖",
     date: "2022"
-  },
-  {
-    title: "University Second-Class Scholarship",
-    titleZh: "大学二等奖学金",
-    date: "2021, 2022, 2024"
   }
 ];
