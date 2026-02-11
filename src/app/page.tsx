@@ -147,12 +147,13 @@ export default function HomePage() {
                 en={
                   <>
                     I am passionate about exploring how data can contribute across domains and using data-driven methods to solve real-life problems. I believe data and
-                    algorithms are transforming society and the way people live and work, and may drive the fourth industrial revolution.
+                    algorithms are transforming society and the way people live and work, and may drive the fourth industrial revolution. Therefore, I hope to keep exploring
+                    and discovering in this field.
                   </>
                 }
                 zh={
                   <>
-                    热衷于探索数据在各个领域的作用，希望能以数据驱动来解决生活中的问题。我认为数据和算法即将改变人类社会以及生活工作方式，实现第四次工业革命。
+                    热衷于探索数据在各个领域的作用，希望能以数据驱动来解决生活中的问题。我认为数据和算法即将改变人类社会以及生活工作方式，实现第四次工业革命。因此希望能在这一领域探索和发现。
                   </>
                 }
               />
