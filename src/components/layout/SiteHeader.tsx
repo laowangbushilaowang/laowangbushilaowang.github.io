@@ -13,7 +13,6 @@ const navLabelByHref: Record<string, { en: string; zh: string }> = {
   "/about": { en: "About", zh: "关于" },
   "/research": { en: "Research", zh: "研究" },
   "/projects": { en: "Projects", zh: "项目" },
-  "/cv": { en: "CV", zh: "简历" },
   "/blog": { en: "Blog", zh: "博客" },
   "/news": { en: "News", zh: "动态" },
   "/contact": { en: "Contact", zh: "联系" }

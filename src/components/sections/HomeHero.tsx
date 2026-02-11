@@ -28,8 +28,8 @@ export function HomeHero() {
           <LinkButton href="/projects" variant="ghost">
             View Projects
           </LinkButton>
-          <LinkButton href="/cv" variant="ghost">
-            Open CV
+          <LinkButton href="/contact" variant="ghost">
+            Contact
           </LinkButton>
         </div>
       </Reveal>

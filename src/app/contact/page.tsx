@@ -13,6 +13,23 @@ const iconByKey: Record<string, { en: string; zh: string }> = {
   scholar: { en: "Scholar", zh: "学术" }
 };
 
+function getLinkDisplayValue(href: string, emailDisplay: string) {
+  if (href.startsWith("mailto:")) {
+    return emailDisplay;
+  }
+
+  try {
+    const parsed = new URL(href);
+    if (parsed.hostname.includes("github.com")) {
+      const username = parsed.pathname.replace(/\//g, "");
+      return username ? `@${username}` : parsed.hostname;
+    }
+    return `${parsed.hostname}${parsed.pathname === "/" ? "" : parsed.pathname}`;
+  } catch {
+    return href;
+  }
+}
+
 export default function ContactPage() {
   return (
     <Container className="space-y-10 py-8 md:space-y-16 md:py-14">
@@ -65,7 +82,7 @@ export default function ContactPage() {
                     <span className="rounded-full border border-highlight/60 bg-highlightSoft px-2 py-1 text-xs text-accent">
                       <LocalizedText en={iconByKey[link.iconKey].en} zh={iconByKey[link.iconKey].zh} />
                     </span>
-                    {link.label}
+                    {getLinkDisplayValue(link.href, siteProfile.emailDisplay)}
                   </Link>
                 </li>
               ))}

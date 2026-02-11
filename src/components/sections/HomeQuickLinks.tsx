@@ -14,17 +14,12 @@ const links = [
     href: "/projects",
     title: "Projects",
     description: "Applied and academic projects across AI, biology, and data science."
-  },
-  {
-    href: "/cv",
-    title: "Curriculum Vitae",
-    description: "Education, experience, technical skills, and awards."
   }
 ];
 
 export function HomeQuickLinks() {
   return (
-    <Stagger className="grid gap-4 md:grid-cols-3">
+    <Stagger className="grid gap-4 md:grid-cols-2">
       {links.map((item) => (
         <motion.div key={item.href} variants={staggerItem}>
           <Link

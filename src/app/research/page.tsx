@@ -85,8 +85,8 @@ export default function ResearchPage() {
               zh="本页使用结构化数据组织研究主题，后续新增 Publications 页面时几乎不需要重构。"
             />
           </p>
-          <Link href="/cv" className="mt-4 inline-flex text-sm font-semibold text-accent underline-offset-4 hover:underline">
-            <LocalizedText en="See current CV entries" zh="查看当前简历内容" />
+          <Link href="/projects" className="mt-4 inline-flex text-sm font-semibold text-accent underline-offset-4 hover:underline">
+            <LocalizedText en="See selected projects" zh="查看精选项目" />
           </Link>
         </section>
       </Reveal>

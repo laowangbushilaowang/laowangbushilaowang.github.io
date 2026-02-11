@@ -3,9 +3,8 @@ import type { NavLink, SiteProfile } from "@/types/content";
 export const siteProfile: SiteProfile = {
   name: "Bohan Wang",
   bilingualName: "王博涵",
-  tagline:
-    "Early-career researcher focused on data-centric machine learning and interdisciplinary AI applications, with AI-agent workflows as an additional direction.",
-  taglineZh: "早期阶段研究者，主轴是数据驱动机器学习与跨领域 AI 应用，同时探索 AI Agent 工作流。",
+  tagline: "Early-career researcher focused on data-centric machine learning and interdisciplinary AI applications.",
+  taglineZh: "早期阶段研究者，主轴是数据驱动机器学习与跨领域 AI 应用。",
   intro:
     "I am an early-career researcher focused on data-centric machine learning and interdisciplinary projects, with emphasis on AI and robotics while expanding applications in computational biology and medical computer vision, including spatial transcriptomics and single-cell analysis. I also explore AI-agent-enabled workflows for practical automation.",
   introZh:
@@ -35,7 +34,6 @@ export const navLinks: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/research", label: "Research" },
   { href: "/projects", label: "Projects" },
-  { href: "/cv", label: "CV" },
   { href: "/news", label: "News" },
   { href: "/contact", label: "Contact" }
 ];
