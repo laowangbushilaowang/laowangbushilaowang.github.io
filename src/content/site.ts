@@ -3,11 +3,12 @@ import type { NavLink, SiteProfile } from "@/types/content";
 export const siteProfile: SiteProfile = {
   name: "Bohan Wang",
   bilingualName: "王博涵",
-  tagline: "AI engineer and data science researcher.",
-  taglineZh: "人工智能工程师与数据科学研究者。",
+  tagline: "Early-career AI researcher and PhD applicant in computational biology, medical vision, and robotics.",
+  taglineZh: "早期阶段 AI 研究者（博士申请中），研究方向包括计算生物学、医疗视觉与机器人。",
   intro:
-    "I work on computational biology and machine learning, with interests in spatial transcriptomics, single-cell analysis, and practical AI systems.",
-  introZh: "我主要研究计算生物学与机器学习，关注空间转录组、单细胞分析以及可落地的 AI 系统。",
+    "I am an early-career researcher currently applying to PhD programs. My work combines computational biology, medical computer vision, and robotics-oriented AI systems, with interests in spatial transcriptomics and single-cell analysis.",
+  introZh:
+    "我是一名正在申请博士项目的早期研究者。当前工作融合计算生物学、医疗计算机视觉与机器人相关 AI 系统，同时关注空间转录组与单细胞分析。",
   location: "Guangzhou, China",
   locationZh: "中国广州",
   email: "wbh@bu.edu",
@@ -21,8 +22,9 @@ export const siteProfile: SiteProfile = {
     locationZh: "中国广州",
     startDate: "May 2025",
     startDateZh: "2025年5月",
-    summary: "Building AI methods for spatial and single-cell omics with a focus on robust, reusable workflows.",
-    summaryZh: "面向空间组学与单细胞组学构建稳定、可复用的 AI 研究流程。"
+    summary:
+      "Building robust and reusable AI methods for spatial/single-cell omics, while extending research toward medical vision and robot-assisted intelligence.",
+    summaryZh: "构建面向空间组学与单细胞组学的稳定可复用 AI 方法，并拓展到医疗视觉与机器人辅助智能方向。"
   }
 };
 

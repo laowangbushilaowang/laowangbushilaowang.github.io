@@ -19,7 +19,12 @@ export default function ContactPage() {
       <PageIntro
         eyebrow={<LocalizedText en="Contact" zh="联系" />}
         title={<LocalizedText en="Get in touch" zh="欢迎联系" />}
-        description={<LocalizedText en="I welcome conversations about PhD opportunities, research collaborations, and interdisciplinary AI projects." zh="欢迎交流博士申请、研究合作与跨学科 AI 项目。" />}
+        description={
+          <LocalizedText
+            en="I am actively seeking PhD opportunities and early-stage research collaborations in computational biology, medical vision, and robotics."
+            zh="我正在积极寻找计算生物学、医疗视觉与机器人方向的博士机会和早期研究合作。"
+          />
+        }
       />
 
       <section className="grid gap-4 pb-4 md:grid-cols-2 md:gap-5">
@@ -29,7 +34,10 @@ export default function ContactPage() {
               <LocalizedText en="Primary contact" zh="主要联系方式" />
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted">
-              <LocalizedText en="For research collaborations or academic inquiries, email is the preferred channel." zh="研究合作或学术交流建议优先通过邮箱联系。" />
+              <LocalizedText
+                en="Email is the best way to discuss PhD opportunities, research fit, or collaboration ideas."
+                zh="如需交流博士申请、研究匹配或合作想法，建议优先通过邮箱联系。"
+              />
             </p>
             <Link href={`mailto:${siteProfile.email}`} className="mt-5 inline-flex break-all text-base font-semibold text-accent hover:underline sm:text-lg">
               {siteProfile.emailDisplay}

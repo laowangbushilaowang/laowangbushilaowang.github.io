@@ -15,8 +15,8 @@ export default function AboutPage() {
         title={<LocalizedText en="Academic profile" zh="学术简介" />}
         description={
           <LocalizedText
-            en="I build practical machine learning systems for biological data and socially meaningful applications."
-            zh="我关注可落地的机器学习系统，重点是生物数据分析与具有社会价值的应用。"
+            en="I am an early-career researcher applying for PhD programs, building practical ML systems for biological data, medical vision, and robotics."
+            zh="我是一名正在申请博士项目的早期研究者，关注生物数据分析、医疗视觉与机器人方向的可落地机器学习系统。"
           />
         }
       />
@@ -27,14 +27,14 @@ export default function AboutPage() {
           <div className="max-w-4xl space-y-3 text-sm leading-relaxed text-muted sm:text-base md:text-lg">
             <p>
               <LocalizedText
-                en={`${siteProfile.name} is an ${siteProfile.currentRole.title.toLowerCase()} at ${siteProfile.currentRole.institution}, focused on computational biology and machine learning for high-dimensional biological data.`}
-                zh={`${siteProfile.name} 目前在${siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution}担任${siteProfile.currentRole.titleZh ?? siteProfile.currentRole.title}，主要关注高维生物数据的计算生物学与机器学习研究。`}
+                en={`${siteProfile.name} is an early-career ${siteProfile.currentRole.title.toLowerCase()} at ${siteProfile.currentRole.institution}, working on computational biology and machine learning for high-dimensional biological data.`}
+                zh={`${siteProfile.name} 目前在${siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution}担任早期阶段${siteProfile.currentRole.titleZh ?? siteProfile.currentRole.title}，主要从事高维生物数据的计算生物学与机器学习研究。`}
               />
             </p>
             <p>
               <LocalizedText
-                en="He completed an MSc in Data Science at Boston University (2025), after a BSc (Hons) in Data Science at HKBU-UIC. His recent work spans neural fields, biomedical AI, and robot vision."
-                zh="他于 2025 年完成波士顿大学数据科学硕士学位，此前在 HKBU-UIC 获得数据科学荣誉学士学位。近期研究覆盖神经场、生物医学 AI 与机器人视觉。"
+                en="He completed an MSc in Data Science at Boston University (2025), after a BSc (Hons) in Data Science at HKBU-UIC. He is currently applying for PhD opportunities in computational biology, medical computer vision, and robotics."
+                zh="他于 2025 年完成波士顿大学数据科学硕士学位，此前在 HKBU-UIC 获得数据科学荣誉学士学位。目前正在申请计算生物学、医疗计算机视觉与机器人方向的博士机会。"
               />
             </p>
           </div>

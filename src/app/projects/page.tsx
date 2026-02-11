@@ -20,8 +20,8 @@ export default function ProjectsPage() {
         title={<LocalizedText en="Applied research and engineering" zh="研究与工程实践" />}
         description={
           <LocalizedText
-            en="Selected projects in AI, computational biology, medical robotics, NLP, and socially oriented data analysis."
-            zh="涵盖 AI、计算生物学、医疗机器人、NLP 与社会数据分析的代表项目。"
+            en="Selected early-career projects in computational biology, medical computer vision, robotics, NLP, and socially oriented data analysis."
+            zh="展示我早期阶段的代表项目，涵盖计算生物学、医疗计算机视觉、机器人、NLP 与社会数据分析。"
           />
         }
       />

@@ -10,8 +10,12 @@ import { news } from "@/content/news";
 import { formatMonth } from "@/lib/format";
 
 export default function HomePage() {
-  const topProjects = projects.slice(0, 2);
-  const topResearch = researchThemes.slice(0, 2);
+  const topProjects = [projects.find((project) => project.id === "spatial-neural-field"), projects.find((project) => project.id === "medical-robotics-cuhk")].filter(
+    (project): project is (typeof projects)[number] => Boolean(project)
+  );
+  const topResearch = [researchThemes.find((theme) => theme.id === "comp-bio-ai"), researchThemes.find((theme) => theme.id === "ai-robotics")].filter(
+    (theme): theme is (typeof researchThemes)[number] => Boolean(theme)
+  );
   const topNews = news.slice(0, 3);
 
   return (
@@ -34,6 +38,18 @@ export default function HomePage() {
           <p className="max-w-3xl text-sm leading-relaxed text-muted">
             <LocalizedText en={siteProfile.intro} zh={siteProfile.introZh ?? siteProfile.intro} />
           </p>
+
+          <div className="flex flex-wrap gap-2">
+            <Tag>
+              <LocalizedText en="PhD Applicant" zh="博士申请中" />
+            </Tag>
+            <Tag>
+              <LocalizedText en="Medical Vision" zh="医疗视觉" />
+            </Tag>
+            <Tag>
+              <LocalizedText en="Robotics AI" zh="机器人 AI" />
+            </Tag>
+          </div>
 
           <div className="grid gap-2 rounded-xl border border-line bg-paper/60 p-3 text-xs sm:p-4 sm:text-sm md:grid-cols-2">
             <p>

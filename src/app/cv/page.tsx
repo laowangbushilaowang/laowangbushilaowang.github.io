@@ -14,7 +14,12 @@ export default function CvPage() {
       <PageIntro
         eyebrow={<LocalizedText en="Curriculum Vitae" zh="简历" />}
         title={<LocalizedText en="Academic CV" zh="学术简历" />}
-        description={<LocalizedText en="Education, research experience, technical skills, and selected achievements." zh="教育背景、研究经历、技能与主要成果。" />}
+        description={
+          <LocalizedText
+            en="Early-career profile for PhD applications: education, research experience, technical skills, and selected achievements."
+            zh="用于博士申请的早期学术履历：教育背景、研究经历、技术能力与主要成果。"
+          />
+        }
       />
 
       <Reveal>
