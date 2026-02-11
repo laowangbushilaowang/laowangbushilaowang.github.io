@@ -145,16 +145,18 @@ export default function HomePage() {
                 en={
                   <>
                     He completed an MSc in Data Science at <strong className="font-semibold text-accent">Boston University (2025)</strong>, after a BSc (Hons) at{" "}
-                    <strong className="font-semibold text-accent">HKBU-UIC</strong>. His current work spans <em className="italic">biology</em>,{" "}
-                    <em className="italic">medical vision</em>, and <em className="italic">robotics</em>, with additional exploration of{" "}
+                    <strong className="font-semibold text-accent">HKBU-UIC</strong>. His current work prioritizes <em className="italic">AI</em> and{" "}
+                    <em className="italic">robotics</em>, while expanding domain applications in <em className="italic">biology</em> and{" "}
+                    <em className="italic">medical vision</em>, with additional exploration of{" "}
                     <strong className="font-semibold text-accent">AI-agent workflows</strong>.
                   </>
                 }
                 zh={
                   <>
                     他于 <strong className="font-semibold text-accent">波士顿大学（2025）</strong> 完成数据科学硕士学位，此前在
-                    <strong className="font-semibold text-accent">HKBU-UIC</strong> 获得学士学位。当前工作聚焦
-                    <em className="italic">生物</em>、<em className="italic">医疗视觉</em> 与 <em className="italic">机器人</em> 的跨领域应用，并补充探索
+                    <strong className="font-semibold text-accent">HKBU-UIC</strong> 获得学士学位。当前聚焦
+                    <em className="italic">人工智能</em> 与 <em className="italic">机器人</em>，并拓展
+                    <em className="italic">生物方向</em> 与 <em className="italic">医疗视觉</em> 的领域应用，同时补充探索
                     <strong className="font-semibold text-accent">AI Agent 工作流</strong>。
                   </>
                 }
