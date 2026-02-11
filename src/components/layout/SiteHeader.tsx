@@ -31,7 +31,7 @@ export function SiteHeader() {
   const menuButtonLabel = lang === "zh" ? (mobileMenuOpen ? "收起" : "菜单") : mobileMenuOpen ? "Close" : "Menu";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-[rgba(251,252,254,0.82)] shadow-[0_10px_28px_-22px_rgba(15,23,42,0.55)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(251,252,254,0.68)]">
+    <header className="sticky top-0 z-50 border-b border-line bg-[rgba(248,250,255,0.84)] shadow-[0_10px_28px_-22px_rgba(30,63,126,0.4)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(248,250,255,0.72)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 md:gap-6 md:px-8 md:py-3">
         <Link href="/" className="inline-flex max-w-[62vw] flex-col leading-none sm:max-w-none" aria-label="Go to homepage">
           <span className="truncate font-display text-lg text-ink md:text-xl">{siteProfile.name}</span>
@@ -82,7 +82,7 @@ export function SiteHeader() {
         <nav
           id="mobile-site-nav"
           aria-label="Mobile navigation"
-          className="border-t border-line bg-[rgba(251,252,254,0.9)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(251,252,254,0.76)] md:hidden"
+          className="border-t border-line bg-[rgba(251,248,240,0.9)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(251,248,240,0.78)] md:hidden"
         >
           <ul className="space-y-1 px-4 py-2.5 sm:px-6">
             {navLinks.map((link) => {

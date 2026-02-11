@@ -63,10 +63,10 @@ export default function HomePage() {
             <Tag>
               <LocalizedText en="PhD Applicant" zh="博士申请中" />
             </Tag>
-            <Tag>
+            <Tag className="border-accent/35 bg-accentSoft text-accent">
               <LocalizedText en="Data-Centric ML" zh="数据驱动机器学习" />
             </Tag>
-            <Tag>
+            <Tag className="border-sun/55 bg-sunSoft text-ink">
               <LocalizedText en="AI Agents x Domains" zh="AI Agent x 跨领域" />
             </Tag>
             <Tag>
