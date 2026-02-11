@@ -1,72 +1,110 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Tag } from "@/components/ui/Tag";
-import { Reveal } from "@/components/motion/Reveal";
-import { HomeHero } from "@/components/sections/HomeHero";
-import { HomeQuickLinks } from "@/components/sections/HomeQuickLinks";
-import { CurrentFocus } from "@/components/sections/CurrentFocus";
+import { siteProfile } from "@/content/site";
 import { projects } from "@/content/projects";
+import { researchThemes } from "@/content/research";
 import { news } from "@/content/news";
 import { formatMonth } from "@/lib/format";
 
 export default function HomePage() {
-  const featuredProjects = projects.filter((item) => item.featured).slice(0, 3);
-  const latestNews = news.slice(0, 3);
+  const topProjects = projects.slice(0, 3);
+  const topResearch = researchThemes.slice(0, 3);
+  const topNews = news.slice(0, 4);
 
   return (
-    <Container className="space-y-16 py-10 md:space-y-20 md:py-16">
-      <HomeHero />
-      <HomeQuickLinks />
-      <CurrentFocus />
+    <Container className="py-10 md:py-14">
+      <section className="grid items-start gap-8 border-b border-line pb-10 md:grid-cols-[240px_minmax(0,1fr)]">
+        <div className="mx-auto w-full max-w-[220px] overflow-hidden rounded-2xl border border-line bg-white shadow-sm md:mx-0">
+          <Image src="/wbh.jpg" alt="Bohan Wang" width={360} height={480} className="h-auto w-full object-cover" priority />
+        </div>
 
-      <section className="space-y-8">
-        <SectionHeading
-          eyebrow="Selected Work"
-          title="Research-driven projects"
-          description="A snapshot of recent projects spanning computational biology, machine learning, and socially impactful data science."
-        />
-        <div className="grid gap-5 md:grid-cols-3">
-          {featuredProjects.map((project, idx) => (
-            <Reveal key={project.id} delay={idx * 0.04}>
-              <article className="h-full rounded-2xl border border-line/70 bg-paper/90 p-6 shadow-card transition-all duration-300 hover:-translate-y-1">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">{project.period}</p>
-                <h3 className="mt-3 font-display text-2xl text-ink">{project.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted">{project.summary}</p>
-                <div className="mt-4 flex flex-wrap gap-2">
+        <div className="space-y-4">
+          <p className="text-sm font-medium uppercase tracking-[0.16em] text-muted">Academic Profile</p>
+          <h1 className="font-display text-4xl leading-tight text-ink md:text-5xl">
+            {siteProfile.name} <span className="text-2xl text-muted md:text-3xl">({siteProfile.bilingualName})</span>
+          </h1>
+          <p className="text-lg text-ink/90">{siteProfile.tagline}</p>
+          <p className="max-w-3xl text-base leading-relaxed text-muted">{siteProfile.intro}</p>
+
+          <div className="grid gap-2 rounded-xl border border-line bg-paper/60 p-4 text-sm md:grid-cols-2">
+            <p>
+              <span className="font-semibold text-ink">Current:</span> {siteProfile.currentRole.title}
+            </p>
+            <p>
+              <span className="font-semibold text-ink">Institution:</span> {siteProfile.currentRole.institution}
+            </p>
+            <p>
+              <span className="font-semibold text-ink">Location:</span> {siteProfile.location}
+            </p>
+            <p>
+              <span className="font-semibold text-ink">Email:</span> {siteProfile.email}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-4 pt-1 text-sm font-semibold text-accent">
+            <Link href="/research" className="hover:underline">
+              Research
+            </Link>
+            <Link href="/projects" className="hover:underline">
+              Projects
+            </Link>
+            <Link href="/cv" className="hover:underline">
+              CV
+            </Link>
+            <Link href="/contact" className="hover:underline">
+              Contact
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-8 py-10 md:grid-cols-2">
+        <div className="space-y-4">
+          <h2 className="font-display text-2xl text-ink md:text-3xl">Research Focus</h2>
+          <div className="space-y-3">
+            {topResearch.map((theme) => (
+              <article key={theme.id} className="rounded-xl border border-line p-4">
+                <h3 className="font-semibold text-ink">{theme.title}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted">{theme.summary}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="font-display text-2xl text-ink md:text-3xl">Selected Projects</h2>
+          <div className="space-y-3">
+            {topProjects.map((project) => (
+              <article key={project.id} className="rounded-xl border border-line p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="font-semibold text-ink">{project.title}</h3>
+                  <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-muted">{project.period}</span>
+                </div>
+                <p className="mt-1 text-sm leading-relaxed text-muted">{project.summary}</p>
+                <div className="mt-2 flex flex-wrap gap-2">
                   {project.tags.slice(0, 3).map((tag) => (
                     <Tag key={tag}>{tag}</Tag>
                   ))}
                 </div>
               </article>
-            </Reveal>
-          ))}
+            ))}
+          </div>
         </div>
-        <Link href="/projects" className="inline-flex text-sm font-semibold text-accent underline-offset-4 hover:underline">
-          View all projects
-        </Link>
       </section>
 
-      <section className="space-y-8 pb-4">
-        <SectionHeading
-          eyebrow="Latest Updates"
-          title="Recent news"
-          description="Milestones, academic updates, and ongoing research progress."
-        />
-        <div className="grid gap-4">
-          {latestNews.map((item, idx) => (
-            <Reveal key={`${item.date}-${item.title}`} delay={idx * 0.04}>
-              <article className="rounded-xl border border-line/70 bg-paper/80 p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">{formatMonth(item.date)}</p>
-                <h3 className="mt-2 font-semibold text-ink">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{item.description}</p>
-              </article>
-            </Reveal>
+      <section className="border-t border-line pt-8">
+        <h2 className="font-display text-2xl text-ink md:text-3xl">Recent News</h2>
+        <ul className="mt-3 space-y-2 text-sm text-muted">
+          {topNews.map((item) => (
+            <li key={`${item.date}-${item.title}`}>
+              <span className="font-semibold text-ink">{formatMonth(item.date)}</span>
+              <span className="px-2">-</span>
+              {item.title}
+            </li>
           ))}
-        </div>
-        <Link href="/news" className="inline-flex text-sm font-semibold text-accent underline-offset-4 hover:underline">
-          Read all news
-        </Link>
+        </ul>
       </section>
     </Container>
   );
