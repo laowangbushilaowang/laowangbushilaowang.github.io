@@ -7,13 +7,13 @@ export function LanguageToggle() {
   const { lang, setLang } = useLanguage();
 
   return (
-    <div className="inline-flex items-center rounded-md border border-line bg-paper p-0.5 text-xs font-semibold">
+    <div className="inline-flex items-center rounded-md border border-accent/25 bg-paper p-0.5 text-xs font-semibold">
       <button
         type="button"
         onClick={() => setLang("en")}
         className={clsx(
           "rounded px-2 py-1 transition-colors",
-          lang === "en" ? "bg-accentSoft text-accent" : "text-ink/70 hover:text-ink"
+          lang === "en" ? "bg-highlightSoft text-accent" : "text-ink/70 hover:bg-accentSoft hover:text-accent"
         )}
         aria-pressed={lang === "en"}
       >
@@ -24,7 +24,7 @@ export function LanguageToggle() {
         onClick={() => setLang("zh")}
         className={clsx(
           "rounded px-2 py-1 transition-colors",
-          lang === "zh" ? "bg-accentSoft text-accent" : "text-ink/70 hover:text-ink"
+          lang === "zh" ? "bg-highlightSoft text-accent" : "text-ink/70 hover:bg-accentSoft hover:text-accent"
         )}
         aria-pressed={lang === "zh"}
       >

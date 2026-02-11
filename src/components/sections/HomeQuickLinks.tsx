@@ -29,9 +29,9 @@ export function HomeQuickLinks() {
         <motion.div key={item.href} variants={staggerItem}>
           <Link
             href={item.href}
-            className="group block rounded-2xl border border-line/70 bg-paper/80 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-card"
+            className="group block rounded-2xl border border-line/70 bg-paper/85 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-card"
           >
-            <p className="font-display text-2xl text-ink transition-colors group-hover:text-accent">{item.title}</p>
+            <p className="font-display text-2xl text-accent transition-colors group-hover:text-accent/90">{item.title}</p>
             <p className="mt-3 text-sm leading-relaxed text-muted">{item.description}</p>
           </Link>
         </motion.div>

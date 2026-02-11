@@ -26,7 +26,7 @@ export default function CvPage() {
         <Link
           href="/files/Bohan_Wang_CV.pdf"
           target="_blank"
-          className="inline-flex rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper transition-colors hover:bg-accent sm:px-5"
+          className="inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-paper transition-colors hover:bg-accent/90 sm:px-5"
         >
           <LocalizedText en="Download PDF CV" zh="下载 PDF 简历" />
         </Link>
@@ -37,8 +37,8 @@ export default function CvPage() {
         <div className="space-y-4">
           {education.map((entry, idx) => (
             <Reveal key={entry.id} delay={idx * 0.04}>
-              <article className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
-                <h3 className="font-display text-xl text-ink md:text-2xl">
+              <article className="rounded-xl border border-line/70 bg-paper/90 p-4 md:p-5">
+                <h3 className="font-display text-xl text-accent md:text-2xl">
                   <LocalizedText en={entry.degree} zh={entry.degreeZh ?? entry.degree} />
                 </h3>
                 <p className="mt-1 text-sm text-muted">
@@ -68,8 +68,8 @@ export default function CvPage() {
         <div className="space-y-4">
           {researchExperience.map((entry, idx) => (
             <Reveal key={entry.id} delay={idx * 0.04}>
-              <article className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
-                <h3 className="font-display text-xl text-ink md:text-2xl">
+              <article className="rounded-xl border border-line/70 bg-paper/90 p-4 md:p-5">
+                <h3 className="font-display text-xl text-accent md:text-2xl">
                   <LocalizedText en={entry.role} zh={entry.roleZh ?? entry.role} />
                 </h3>
                 <p className="mt-1 text-sm text-muted">
@@ -99,9 +99,9 @@ export default function CvPage() {
         <div className="space-y-3">
           {projects.slice(0, 4).map((project, idx) => (
             <Reveal key={project.id} delay={idx * 0.03}>
-              <article className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
+              <article className="rounded-xl border border-line/70 bg-paper/90 p-4 md:p-5">
                 <div className="flex flex-wrap items-baseline justify-between gap-3">
-                  <h3 className="font-semibold text-ink">
+                  <h3 className="font-semibold text-accent">
                     <LocalizedText en={project.title} zh={project.titleZh ?? project.title} />
                   </h3>
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
@@ -122,8 +122,8 @@ export default function CvPage() {
           <SectionHeading title={<LocalizedText en="Technical skills" zh="技术技能" />} />
           <div className="space-y-3">
             {skillGroups.map((group) => (
-              <article key={group.name} className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
-                <h3 className="font-semibold text-ink">
+              <article key={group.name} className="rounded-xl border border-line/70 bg-paper/90 p-4 md:p-5">
+                <h3 className="font-semibold text-accent">
                   <LocalizedText en={group.name} zh={group.nameZh ?? group.name} />
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted">
@@ -138,8 +138,8 @@ export default function CvPage() {
           <SectionHeading title={<LocalizedText en="Awards" zh="奖项" />} />
           <div className="space-y-3">
             {awards.map((award) => (
-              <article key={award.title} className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
-                <h3 className="font-semibold text-ink">
+              <article key={award.title} className="rounded-xl border border-line/70 bg-paper/90 p-4 md:p-5">
+                <h3 className="font-semibold text-accent">
                   <LocalizedText en={award.title} zh={award.titleZh ?? award.title} />
                 </h3>
                 <p className="mt-1 text-sm text-muted">

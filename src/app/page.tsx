@@ -21,7 +21,7 @@ export default function HomePage() {
   return (
     <Container className="py-6 md:py-12">
       <section className="grid items-start gap-5 border-b border-line pb-7 md:gap-8 md:pb-10 md:grid-cols-[240px_minmax(0,1fr)]">
-        <div className="mx-auto w-full max-w-[170px] overflow-hidden rounded-2xl border border-line bg-white shadow-sm sm:max-w-[220px] md:mx-0">
+        <div className="mx-auto w-full max-w-[170px] overflow-hidden rounded-2xl border border-line bg-paper shadow-[0_10px_26px_-20px_rgba(47,93,140,0.45)] sm:max-w-[220px] md:mx-0">
           <Image src="/wbh.jpg" alt="Bohan Wang" width={360} height={480} className="h-auto w-full object-cover" priority />
         </div>
 
@@ -29,7 +29,7 @@ export default function HomePage() {
           <p className="text-sm font-medium uppercase tracking-[0.16em] text-muted">
             <LocalizedText en="Academic Profile" zh="学术主页" />
           </p>
-          <h1 className="font-display text-3xl leading-tight text-ink sm:text-4xl md:text-5xl">
+          <h1 className="font-display text-3xl leading-tight text-accent sm:text-4xl md:text-5xl">
             {siteProfile.name} <span className="block text-xl text-muted sm:text-2xl md:text-3xl">({siteProfile.bilingualName})</span>
           </h1>
           <p className="text-sm text-ink/90 sm:text-base md:text-lg">
@@ -39,20 +39,20 @@ export default function HomePage() {
             <LocalizedNode
               en={
                 <>
-                  I am currently applying to <strong className="font-semibold text-ink">PhD programs</strong>. My core focus is{" "}
-                  <strong className="font-semibold text-ink">data-centric machine learning</strong> and{" "}
-                  <strong className="font-semibold text-ink">interdisciplinary AI</strong> in <em className="italic">computational biology</em>,{" "}
+                  I am currently applying to <strong className="font-semibold text-accent">PhD programs</strong>. My core focus is{" "}
+                  <strong className="font-semibold text-accent">data-centric machine learning</strong> and{" "}
+                  <strong className="font-semibold text-accent">interdisciplinary AI</strong> in <em className="italic">computational biology</em>,{" "}
                   <em className="italic">medical vision</em>, and <em className="italic">robotics</em>, while also exploring{" "}
-                  <strong className="font-semibold text-ink">AI-agent workflows</strong>.
+                  <strong className="font-semibold text-accent">AI-agent workflows</strong>.
                 </>
               }
               zh={
                 <>
-                  我目前正在申请 <strong className="font-semibold text-ink">博士项目</strong>。核心方向是
-                  <strong className="font-semibold text-ink">数据驱动机器学习</strong> 与
-                  <strong className="font-semibold text-ink">跨领域 AI</strong>，应用于 <em className="italic">计算生物学</em>、
+                  我目前正在申请 <strong className="font-semibold text-accent">博士项目</strong>。核心方向是
+                  <strong className="font-semibold text-accent">数据驱动机器学习</strong> 与
+                  <strong className="font-semibold text-accent">跨领域 AI</strong>，应用于 <em className="italic">计算生物学</em>、
                   <em className="italic">医疗视觉</em> 与 <em className="italic">机器人</em>，并补充探索
-                  <strong className="font-semibold text-ink">AI Agent 工作流</strong>。
+                  <strong className="font-semibold text-accent">AI Agent 工作流</strong>。
                 </>
               }
             />
@@ -73,27 +73,27 @@ export default function HomePage() {
             </Tag>
           </div>
 
-          <div className="grid gap-2 rounded-xl border border-line bg-paper/60 p-3 text-xs sm:p-4 sm:text-sm md:grid-cols-2">
+          <div className="grid gap-2 rounded-xl border border-line bg-paper/85 p-3 text-xs sm:p-4 sm:text-sm md:grid-cols-2">
             <p>
-              <span className="font-semibold text-ink">
+              <span className="font-semibold text-accent">
                 <LocalizedText en="Current:" zh="当前职位：" />
               </span>{" "}
               <LocalizedText en={siteProfile.currentRole.title} zh={siteProfile.currentRole.titleZh ?? siteProfile.currentRole.title} />
             </p>
             <p>
-              <span className="font-semibold text-ink">
+              <span className="font-semibold text-accent">
                 <LocalizedText en="Institution:" zh="机构：" />
               </span>{" "}
               <LocalizedText en={siteProfile.currentRole.institution} zh={siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution} />
             </p>
             <p>
-              <span className="font-semibold text-ink">
+              <span className="font-semibold text-accent">
                 <LocalizedText en="Location:" zh="地点：" />
               </span>{" "}
               <LocalizedText en={siteProfile.location} zh={siteProfile.locationZh ?? siteProfile.location} />
             </p>
             <p>
-              <span className="font-semibold text-ink">
+              <span className="font-semibold text-accent">
                 <LocalizedText en="Email:" zh="邮箱：" />
               </span>{" "}
               {siteProfile.emailDisplay}
@@ -118,8 +118,8 @@ export default function HomePage() {
       </section>
 
       <section className="grid gap-5 border-b border-line py-7 md:gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] md:py-10">
-        <article className="rounded-xl border border-line bg-paper/70 p-4 sm:p-5">
-          <h2 className="font-display text-2xl text-ink sm:text-[1.75rem] md:text-3xl">
+        <article className="rounded-xl border border-line bg-paper/85 p-4 sm:p-5">
+          <h2 className="font-display text-2xl text-accent sm:text-[1.75rem] md:text-3xl">
             <LocalizedText en="About" zh="关于我" />
           </h2>
           <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted sm:text-base">
@@ -128,16 +128,16 @@ export default function HomePage() {
                 en={
                   <>
                     {siteProfile.name} is an early-career <em className="italic">{siteProfile.currentRole.title.toLowerCase()}</em> at{" "}
-                    <strong className="font-semibold text-ink">{siteProfile.currentRole.institution}</strong>, working on{" "}
-                    <strong className="font-semibold text-ink">data-centric machine learning</strong> for high-dimensional biological data.
+                    <strong className="font-semibold text-accent">{siteProfile.currentRole.institution}</strong>, working on{" "}
+                    <strong className="font-semibold text-accent">data-centric machine learning</strong> for high-dimensional biological data.
                   </>
                 }
                 zh={
                   <>
                     {siteProfile.name} 目前在
-                    <strong className="font-semibold text-ink">{siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution}</strong>
+                    <strong className="font-semibold text-accent">{siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution}</strong>
                     担任 <em className="italic">{siteProfile.currentRole.titleZh ?? siteProfile.currentRole.title}</em>，
-                    主要从事 <strong className="font-semibold text-ink">数据驱动机器学习</strong> 与生物高维数据研究。
+                    主要从事 <strong className="font-semibold text-accent">数据驱动机器学习</strong> 与生物高维数据研究。
                   </>
                 }
               />
@@ -146,18 +146,18 @@ export default function HomePage() {
               <LocalizedNode
                 en={
                   <>
-                    He completed an MSc in Data Science at <strong className="font-semibold text-ink">Boston University (2025)</strong>, after a BSc (Hons) at{" "}
-                    <strong className="font-semibold text-ink">HKBU-UIC</strong>. He is now seeking PhD opportunities in <em className="italic">biology</em>,{" "}
+                    He completed an MSc in Data Science at <strong className="font-semibold text-accent">Boston University (2025)</strong>, after a BSc (Hons) at{" "}
+                    <strong className="font-semibold text-accent">HKBU-UIC</strong>. He is now seeking PhD opportunities in <em className="italic">biology</em>,{" "}
                     <em className="italic">medical vision</em>, and <em className="italic">robotics</em>, with additional exploration of{" "}
-                    <strong className="font-semibold text-ink">AI-agent workflows</strong>.
+                    <strong className="font-semibold text-accent">AI-agent workflows</strong>.
                   </>
                 }
                 zh={
                   <>
-                    他于 <strong className="font-semibold text-ink">波士顿大学（2025）</strong> 完成数据科学硕士学位，此前在
-                    <strong className="font-semibold text-ink">HKBU-UIC</strong> 获得学士学位。当前申请聚焦
+                    他于 <strong className="font-semibold text-accent">波士顿大学（2025）</strong> 完成数据科学硕士学位，此前在
+                    <strong className="font-semibold text-accent">HKBU-UIC</strong> 获得学士学位。当前申请聚焦
                     <em className="italic">生物</em>、<em className="italic">医疗视觉</em> 与 <em className="italic">机器人</em> 跨领域应用的博士机会，并补充探索
-                    <strong className="font-semibold text-ink">AI Agent 工作流</strong>。
+                    <strong className="font-semibold text-accent">AI Agent 工作流</strong>。
                   </>
                 }
               />
@@ -165,8 +165,8 @@ export default function HomePage() {
           </div>
         </article>
 
-        <article className="rounded-xl border border-line bg-paper/70 p-4 sm:p-5">
-          <h3 className="font-display text-xl text-ink sm:text-2xl">
+        <article className="rounded-xl border border-line bg-paper/85 p-4 sm:p-5">
+          <h3 className="font-display text-xl text-accent sm:text-2xl">
             <LocalizedText en="Beyond Research" zh="兴趣爱好" />
           </h3>
           <p className="mt-2 text-sm text-muted">
@@ -184,13 +184,13 @@ export default function HomePage() {
 
       <section className="grid gap-6 py-7 md:gap-8 md:py-10 md:grid-cols-2">
         <div className="space-y-4">
-          <h2 className="font-display text-2xl text-ink sm:text-[1.75rem] md:text-3xl">
+          <h2 className="font-display text-2xl text-accent sm:text-[1.75rem] md:text-3xl">
             <LocalizedText en="Research Focus" zh="研究方向" />
           </h2>
           <div className="space-y-3">
             {topResearch.map((theme) => (
-              <article key={theme.id} className="rounded-xl border border-line p-3 sm:p-4">
-                <h3 className="font-semibold text-ink">
+              <article key={theme.id} className="rounded-xl border border-line bg-paper/75 p-3 sm:p-4">
+                <h3 className="font-semibold text-accent">
                   <LocalizedText en={theme.title} zh={theme.titleZh ?? theme.title} />
                 </h3>
                 <p className="mt-1 text-sm leading-relaxed text-muted">
@@ -202,17 +202,17 @@ export default function HomePage() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="font-display text-2xl text-ink sm:text-[1.75rem] md:text-3xl">
+          <h2 className="font-display text-2xl text-accent sm:text-[1.75rem] md:text-3xl">
             <LocalizedText en="Selected Projects" zh="精选项目" />
           </h2>
           <div className="space-y-3">
             {topProjects.map((project) => (
-              <article key={project.id} className="rounded-xl border border-line p-3 sm:p-4">
+              <article key={project.id} className="rounded-xl border border-line bg-paper/75 p-3 sm:p-4">
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="font-semibold text-ink">
+                  <h3 className="font-semibold text-accent">
                     <LocalizedText en={project.title} zh={project.titleZh ?? project.title} />
                   </h3>
-                  <span className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted sm:text-xs">
+                  <span className="shrink-0 rounded-full bg-highlightSoft px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-accent sm:text-xs">
                     <LocalizedText en={project.period} zh={project.periodZh ?? project.period} />
                   </span>
                 </div>
@@ -233,13 +233,13 @@ export default function HomePage() {
       </section>
 
       <section className="border-t border-line pt-6 md:pt-8">
-        <h2 className="font-display text-2xl text-ink sm:text-[1.75rem] md:text-3xl">
+        <h2 className="font-display text-2xl text-accent sm:text-[1.75rem] md:text-3xl">
           <LocalizedText en="Recent News" zh="最新动态" />
         </h2>
         <ul className="mt-3 space-y-2 text-sm text-muted">
           {topNews.map((item) => (
             <li key={`${item.date}-${item.title}`}>
-              <span className="font-semibold text-ink">{formatMonth(item.date)}</span>
+              <span className="font-semibold text-accent">{formatMonth(item.date)}</span>
               <span className="px-2">-</span>
               <LocalizedText en={item.title} zh={item.titleZh ?? item.title} />
             </li>

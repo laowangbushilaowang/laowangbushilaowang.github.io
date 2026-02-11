@@ -31,10 +31,10 @@ export function SiteHeader() {
   const menuButtonLabel = lang === "zh" ? (mobileMenuOpen ? "收起" : "菜单") : mobileMenuOpen ? "Close" : "Menu";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-[rgba(251,252,254,0.82)] shadow-[0_10px_28px_-22px_rgba(15,23,42,0.55)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(251,252,254,0.68)]">
+    <header className="sticky top-0 z-50 border-b border-line bg-[rgba(248,250,253,0.86)] shadow-[0_12px_28px_-24px_rgba(47,93,140,0.45)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(248,250,253,0.72)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 md:gap-6 md:px-8 md:py-3">
         <Link href="/" className="inline-flex max-w-[62vw] flex-col leading-none sm:max-w-none" aria-label="Go to homepage">
-          <span className="truncate font-display text-lg text-ink md:text-xl">{siteProfile.name}</span>
+          <span className="truncate font-display text-lg text-accent md:text-xl">{siteProfile.name}</span>
           <span className="text-xs text-muted">{siteProfile.bilingualName}</span>
         </Link>
 
@@ -68,7 +68,7 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen((open) => !open)}
-            className="rounded-md border border-line px-2 py-1 text-xs font-semibold text-ink/80"
+            className="rounded-md border border-accent/30 bg-paper/80 px-2 py-1 text-xs font-semibold text-accent transition-colors hover:border-highlight/70 hover:bg-highlightSoft"
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-site-nav"
             aria-label={menuButtonLabel}
@@ -82,7 +82,7 @@ export function SiteHeader() {
         <nav
           id="mobile-site-nav"
           aria-label="Mobile navigation"
-          className="border-t border-line bg-[rgba(251,252,254,0.9)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(251,252,254,0.76)] md:hidden"
+          className="border-t border-line bg-[rgba(248,250,253,0.92)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(248,250,253,0.78)] md:hidden"
         >
           <ul className="space-y-1 px-4 py-2.5 sm:px-6">
             {navLinks.map((link) => {
@@ -94,7 +94,9 @@ export function SiteHeader() {
                     href={link.href}
                     className={clsx(
                       "block rounded-md border border-line px-3 py-2 text-sm",
-                      active ? "bg-accentSoft font-semibold text-accent" : "text-ink/80"
+                      active
+                        ? "border-highlight/60 bg-highlightSoft font-semibold text-accent"
+                        : "text-ink/80 hover:border-accent/35 hover:text-accent"
                     )}
                   >
                     {lang === "zh" ? translated.zh : translated.en}

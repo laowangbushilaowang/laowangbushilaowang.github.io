@@ -30,7 +30,7 @@ export default function ContactPage() {
       <section className="grid gap-4 pb-4 md:grid-cols-2 md:gap-5">
         <Reveal>
           <article className="rounded-2xl border border-line/70 bg-paper/90 p-4 shadow-card sm:p-5 md:p-6">
-            <h2 className="font-display text-xl text-ink sm:text-2xl">
+            <h2 className="font-display text-xl text-accent sm:text-2xl">
               <LocalizedText en="Primary contact" zh="主要联系方式" />
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted">
@@ -50,7 +50,7 @@ export default function ContactPage() {
 
         <Reveal delay={0.08}>
           <article className="rounded-2xl border border-line/70 bg-paper/90 p-4 shadow-card sm:p-5 md:p-6">
-            <h2 className="font-display text-xl text-ink sm:text-2xl">
+            <h2 className="font-display text-xl text-accent sm:text-2xl">
               <LocalizedText en="Profiles and links" zh="主页与链接" />
             </h2>
             <ul className="mt-4 space-y-3">
@@ -60,9 +60,9 @@ export default function ContactPage() {
                     href={link.href}
                     target={link.href.startsWith("mailto:") ? undefined : "_blank"}
                     rel={link.href.startsWith("mailto:") ? undefined : "noreferrer"}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-ink transition-colors hover:text-accent"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition-colors hover:underline"
                   >
-                    <span className="rounded-full border border-line px-2 py-1 text-xs text-muted">
+                    <span className="rounded-full border border-highlight/60 bg-highlightSoft px-2 py-1 text-xs text-accent">
                       <LocalizedText en={iconByKey[link.iconKey].en} zh={iconByKey[link.iconKey].zh} />
                     </span>
                     {link.label}

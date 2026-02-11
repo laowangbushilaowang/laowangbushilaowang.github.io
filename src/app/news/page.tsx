@@ -19,9 +19,9 @@ export default function NewsPage() {
         {news.map((item, idx) => (
           <Reveal key={`${item.date}-${item.title}`} delay={idx * 0.03}>
             <article className="relative ml-6 rounded-xl border border-line/70 bg-paper/90 p-4 sm:ml-8 sm:p-5">
-              <span className="absolute -left-[2.05rem] top-5 h-3 w-3 rounded-full border border-accent bg-paper" aria-hidden />
+              <span className="absolute -left-[2.05rem] top-5 h-3 w-3 rounded-full border border-accent bg-highlight" aria-hidden />
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">{formatMonth(item.date)}</p>
-              <h2 className="mt-2 font-semibold text-ink">
+              <h2 className="mt-2 font-semibold text-accent">
                 <LocalizedText en={item.title} zh={item.titleZh ?? item.title} />
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-muted">

@@ -14,6 +14,8 @@ const config: Config = {
         paper: "var(--color-paper)",
         accent: "var(--color-accent)",
         accentSoft: "var(--color-accent-soft)",
+        highlight: "var(--color-highlight)",
+        highlightSoft: "var(--color-highlight-soft)",
         line: "var(--color-line)",
         muted: "var(--color-muted)"
       },
