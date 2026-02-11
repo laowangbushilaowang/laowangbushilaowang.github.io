@@ -21,8 +21,8 @@ export default function ContactPage() {
         title={<LocalizedText en="Get in touch" zh="欢迎联系" />}
         description={
           <LocalizedText
-            en="I am actively seeking PhD opportunities and early-stage research collaborations in computational biology, medical vision, and robotics."
-            zh="我正在积极寻找计算生物学、医疗视觉与机器人方向的博士机会和早期研究合作。"
+            en="I am actively seeking PhD opportunities and early-stage collaborations focused on data-centric machine learning, foundation models (LLMs), and cross-domain applications."
+            zh="我正在积极寻找聚焦数据驱动机器学习、基础模型（大模型）与跨领域应用的博士机会和早期合作。"
           />
         }
       />
@@ -35,8 +35,8 @@ export default function ContactPage() {
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted">
               <LocalizedText
-                en="Email is the best way to discuss PhD opportunities, research fit, or collaboration ideas."
-                zh="如需交流博士申请、研究匹配或合作想法，建议优先通过邮箱联系。"
+                en="Email is the best way to discuss PhD opportunities and research fit, especially where data and machine learning are combined with domains such as biology, medical vision, robotics, and social applications."
+                zh="如需交流博士申请与研究匹配（尤其是数据与机器学习和生物、医疗视觉、机器人及社会应用等领域结合），建议优先通过邮箱联系。"
               />
             </p>
             <Link href={`mailto:${siteProfile.email}`} className="mt-5 inline-flex break-all text-base font-semibold text-accent hover:underline sm:text-lg">

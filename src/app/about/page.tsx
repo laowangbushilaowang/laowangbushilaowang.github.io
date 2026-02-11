@@ -2,6 +2,7 @@ import { Container } from "@/components/ui/Container";
 import { PageIntro } from "@/components/motion/PageIntro";
 import { Reveal } from "@/components/motion/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Tag } from "@/components/ui/Tag";
 import { LocalizedText } from "@/components/i18n/LocalizedText";
 import { education } from "@/content/education";
 import { researchThemes } from "@/content/research";
@@ -15,8 +16,8 @@ export default function AboutPage() {
         title={<LocalizedText en="Academic profile" zh="学术简介" />}
         description={
           <LocalizedText
-            en="I am an early-career researcher applying for PhD programs, building practical ML systems for biological data, medical vision, and robotics."
-            zh="我是一名正在申请博士项目的早期研究者，关注生物数据分析、医疗视觉与机器人方向的可落地机器学习系统。"
+            en="I am an early-career researcher applying for PhD programs, with interests in data-centric ML, LLM-enabled systems, and interdisciplinary projects."
+            zh="我是一名正在申请博士项目的早期研究者，重点兴趣包括数据驱动机器学习、大模型系统与跨领域项目。"
           />
         }
       />
@@ -27,14 +28,14 @@ export default function AboutPage() {
           <div className="max-w-4xl space-y-3 text-sm leading-relaxed text-muted sm:text-base md:text-lg">
             <p>
               <LocalizedText
-                en={`${siteProfile.name} is an early-career ${siteProfile.currentRole.title.toLowerCase()} at ${siteProfile.currentRole.institution}, working on computational biology and machine learning for high-dimensional biological data.`}
-                zh={`${siteProfile.name} 目前在${siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution}担任早期阶段${siteProfile.currentRole.titleZh ?? siteProfile.currentRole.title}，主要从事高维生物数据的计算生物学与机器学习研究。`}
+                en={`${siteProfile.name} is an early-career ${siteProfile.currentRole.title.toLowerCase()} at ${siteProfile.currentRole.institution}, working on data-centric machine learning for high-dimensional biological data and cross-domain AI systems.`}
+                zh={`${siteProfile.name} 目前在${siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution}担任早期阶段${siteProfile.currentRole.titleZh ?? siteProfile.currentRole.title}，主要从事面向高维生物数据的数据驱动机器学习与跨领域 AI 系统研究。`}
               />
             </p>
             <p>
               <LocalizedText
-                en="He completed an MSc in Data Science at Boston University (2025), after a BSc (Hons) in Data Science at HKBU-UIC. He is currently applying for PhD opportunities in computational biology, medical computer vision, and robotics."
-                zh="他于 2025 年完成波士顿大学数据科学硕士学位，此前在 HKBU-UIC 获得数据科学荣誉学士学位。目前正在申请计算生物学、医疗计算机视觉与机器人方向的博士机会。"
+                en="He completed an MSc in Data Science at Boston University (2025), after a BSc (Hons) in Data Science at HKBU-UIC. He is currently applying for PhD opportunities focused on machine learning, foundation models, and interdisciplinary applications in biology, medical vision, and robotics."
+                zh="他于 2025 年完成波士顿大学数据科学硕士学位，此前在 HKBU-UIC 获得数据科学荣誉学士学位。目前正在申请聚焦机器学习、基础模型及其在生物、医疗视觉与机器人中的跨领域应用的博士机会。"
               />
             </p>
           </div>
@@ -57,6 +58,29 @@ export default function AboutPage() {
             </Reveal>
           ))}
         </div>
+      </section>
+
+      <section className="space-y-6">
+        <SectionHeading
+          title={<LocalizedText en="Beyond Research" zh="兴趣爱好" />}
+          description={
+            <LocalizedText
+              en="Outside research, I stay active and creative through sports, music, and games."
+              zh="在科研之外，我通过运动、音乐和游戏保持活力与创造力。"
+            />
+          }
+        />
+        <Reveal>
+          <article className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
+            <div className="flex flex-wrap gap-2">
+              {siteProfile.hobbies?.map((hobby, idx) => (
+                <Tag key={hobby}>
+                  <LocalizedText en={hobby} zh={siteProfile.hobbiesZh?.[idx] ?? hobby} />
+                </Tag>
+              ))}
+            </div>
+          </article>
+        </Reveal>
       </section>
 
       <section className="space-y-6 pb-4">

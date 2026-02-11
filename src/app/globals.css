@@ -19,12 +19,12 @@ html,
 body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
 }
 
 body {
   color: var(--color-ink);
   background: var(--color-paper);
+  overflow-x: clip;
 }
 
 a {

@@ -44,10 +44,13 @@ export default function HomePage() {
               <LocalizedText en="PhD Applicant" zh="博士申请中" />
             </Tag>
             <Tag>
-              <LocalizedText en="Medical Vision" zh="医疗视觉" />
+              <LocalizedText en="Data-Centric ML" zh="数据驱动机器学习" />
             </Tag>
             <Tag>
-              <LocalizedText en="Robotics AI" zh="机器人 AI" />
+              <LocalizedText en="LLM x Domains" zh="大模型 x 跨领域" />
+            </Tag>
+            <Tag>
+              <LocalizedText en="Medical Vision + Robotics" zh="医疗视觉 + 机器人" />
             </Tag>
           </div>
 

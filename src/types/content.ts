@@ -5,6 +5,8 @@ export type SiteProfile = {
   taglineZh?: string;
   intro: string;
   introZh?: string;
+  hobbies?: string[];
+  hobbiesZh?: string[];
   location: string;
   locationZh?: string;
   email: string;

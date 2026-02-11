@@ -14,8 +14,8 @@ export default function ResearchPage() {
         title={<LocalizedText en="Themes and directions" zh="研究主题与方向" />}
         description={
           <LocalizedText
-            en="As a PhD applicant and early-career researcher, I focus on machine learning for computational biology, medical computer vision, and robotics."
-            zh="作为正在申请博士的早期研究者，我聚焦机器学习在计算生物学、医疗计算机视觉与机器人中的应用。"
+            en="As a PhD applicant and early-career researcher, I focus on data-centric machine learning, foundation models (LLMs), and their interdisciplinary applications."
+            zh="作为正在申请博士的早期研究者，我聚焦数据驱动机器学习、基础模型（大模型）及其跨领域应用。"
           />
         }
       />
