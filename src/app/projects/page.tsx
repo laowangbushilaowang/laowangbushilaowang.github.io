@@ -29,7 +29,7 @@ export default function ProjectsPage() {
       <section className="grid gap-4 md:grid-cols-2 md:gap-5">
         {projects.map((project, idx) => (
           <Reveal key={project.id} delay={idx * 0.03}>
-            <article className="h-full rounded-2xl border border-line/70 bg-paper/90 p-4 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 sm:p-5 md:p-6">
+            <article className="surface-b h-full rounded-2xl border border-line/70 p-4 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 sm:p-5 md:p-6">
               <div className="flex items-start justify-between gap-3">
                 <h2 className="font-display text-xl text-ink sm:text-2xl">
                   <LocalizedText en={project.title} zh={project.titleZh ?? project.title} />

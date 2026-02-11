@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import clsx from "clsx";
 import { Container } from "@/components/ui/Container";
 import { Tag } from "@/components/ui/Tag";
-import { LocalizedText } from "@/components/i18n/LocalizedText";
+import { LocalizedNode, LocalizedText } from "@/components/i18n/LocalizedText";
 import { siteProfile } from "@/content/site";
 import { projects } from "@/content/projects";
 import { researchThemes } from "@/content/research";
@@ -36,7 +37,26 @@ export default function HomePage() {
             <LocalizedText en={siteProfile.tagline} zh={siteProfile.taglineZh ?? siteProfile.tagline} />
           </p>
           <p className="max-w-3xl text-sm leading-relaxed text-muted">
-            <LocalizedText en={siteProfile.intro} zh={siteProfile.introZh ?? siteProfile.intro} />
+            <LocalizedNode
+              en={
+                <>
+                  I am currently applying to <strong className="font-semibold text-ink">PhD programs</strong>. My core focus is{" "}
+                  <strong className="font-semibold text-ink">data-centric machine learning</strong> and{" "}
+                  <strong className="font-semibold text-ink">interdisciplinary AI</strong> in <em className="italic">computational biology</em>,{" "}
+                  <em className="italic">medical vision</em>, and <em className="italic">robotics</em>, while also exploring{" "}
+                  <strong className="font-semibold text-ink">AI-agent workflows</strong>.
+                </>
+              }
+              zh={
+                <>
+                  我目前正在申请 <strong className="font-semibold text-ink">博士项目</strong>。核心方向是
+                  <strong className="font-semibold text-ink">数据驱动机器学习</strong> 与
+                  <strong className="font-semibold text-ink">跨领域 AI</strong>，应用于 <em className="italic">计算生物学</em>、
+                  <em className="italic">医疗视觉</em> 与 <em className="italic">机器人</em>，并补充探索
+                  <strong className="font-semibold text-ink">AI Agent 工作流</strong>。
+                </>
+              }
+            />
           </p>
 
           <div className="flex flex-wrap gap-2">
@@ -54,7 +74,7 @@ export default function HomePage() {
             </Tag>
           </div>
 
-          <div className="grid gap-2 rounded-xl border border-line bg-paper/60 p-3 text-xs sm:p-4 sm:text-sm md:grid-cols-2">
+          <div className="surface-a grid gap-2 rounded-xl border border-line p-3 text-xs sm:p-4 sm:text-sm md:grid-cols-2">
             <p>
               <span className="font-semibold text-ink">
                 <LocalizedText en="Current:" zh="当前职位：" />
@@ -99,27 +119,54 @@ export default function HomePage() {
       </section>
 
       <section className="grid gap-5 border-b border-line py-7 md:gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] md:py-10">
-        <article className="rounded-xl border border-line bg-paper/70 p-4 sm:p-5">
+        <article className="surface-b rounded-xl border border-line p-4 sm:p-5">
           <h2 className="font-display text-2xl text-ink sm:text-[1.75rem] md:text-3xl">
             <LocalizedText en="About" zh="关于我" />
           </h2>
           <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted sm:text-base">
             <p>
-              <LocalizedText
-                en={`${siteProfile.name} is an early-career ${siteProfile.currentRole.title.toLowerCase()} at ${siteProfile.currentRole.institution}, working on data-centric machine learning for high-dimensional biological data and cross-domain AI systems.`}
-                zh={`${siteProfile.name} 目前在${siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution}担任早期阶段${siteProfile.currentRole.titleZh ?? siteProfile.currentRole.title}，主要从事面向高维生物数据的数据驱动机器学习与跨领域 AI 系统研究。`}
+              <LocalizedNode
+                en={
+                  <>
+                    {siteProfile.name} is an early-career <em className="italic">{siteProfile.currentRole.title.toLowerCase()}</em> at{" "}
+                    <strong className="font-semibold text-ink">{siteProfile.currentRole.institution}</strong>, working on{" "}
+                    <strong className="font-semibold text-ink">data-centric machine learning</strong> for high-dimensional biological data.
+                  </>
+                }
+                zh={
+                  <>
+                    {siteProfile.name} 目前在
+                    <strong className="font-semibold text-ink">{siteProfile.currentRole.institutionZh ?? siteProfile.currentRole.institution}</strong>
+                    担任 <em className="italic">{siteProfile.currentRole.titleZh ?? siteProfile.currentRole.title}</em>，
+                    主要从事 <strong className="font-semibold text-ink">数据驱动机器学习</strong> 与生物高维数据研究。
+                  </>
+                }
               />
             </p>
             <p>
-              <LocalizedText
-                en="He completed an MSc in Data Science at Boston University (2025), after a BSc (Hons) in Data Science at HKBU-UIC. He is currently applying for PhD opportunities focused on machine learning and interdisciplinary applications in biology, medical vision, and robotics, while also exploring AI-agent workflows."
-                zh="他于 2025 年完成波士顿大学数据科学硕士学位，此前在 HKBU-UIC 获得数据科学荣誉学士学位。目前正在申请聚焦机器学习及其在生物、医疗视觉与机器人中跨领域应用的博士机会，同时探索 AI Agent 工作流。"
+              <LocalizedNode
+                en={
+                  <>
+                    He completed an MSc in Data Science at <strong className="font-semibold text-ink">Boston University (2025)</strong>, after a BSc (Hons) at{" "}
+                    <strong className="font-semibold text-ink">HKBU-UIC</strong>. He is now seeking PhD opportunities in <em className="italic">biology</em>,{" "}
+                    <em className="italic">medical vision</em>, and <em className="italic">robotics</em>, with additional exploration of{" "}
+                    <strong className="font-semibold text-ink">AI-agent workflows</strong>.
+                  </>
+                }
+                zh={
+                  <>
+                    他于 <strong className="font-semibold text-ink">波士顿大学（2025）</strong> 完成数据科学硕士学位，此前在
+                    <strong className="font-semibold text-ink">HKBU-UIC</strong> 获得学士学位。当前申请聚焦
+                    <em className="italic">生物</em>、<em className="italic">医疗视觉</em> 与 <em className="italic">机器人</em> 跨领域应用的博士机会，并补充探索
+                    <strong className="font-semibold text-ink">AI Agent 工作流</strong>。
+                  </>
+                }
               />
             </p>
           </div>
         </article>
 
-        <article className="rounded-xl border border-line bg-paper/70 p-4 sm:p-5">
+        <article className="surface-c rounded-xl border border-line p-4 sm:p-5">
           <h3 className="font-display text-xl text-ink sm:text-2xl">
             <LocalizedText en="Beyond Research" zh="兴趣爱好" />
           </h3>
@@ -142,8 +189,8 @@ export default function HomePage() {
             <LocalizedText en="Research Focus" zh="研究方向" />
           </h2>
           <div className="space-y-3">
-            {topResearch.map((theme) => (
-              <article key={theme.id} className="rounded-xl border border-line p-3 sm:p-4">
+            {topResearch.map((theme, idx) => (
+              <article key={theme.id} className={clsx("rounded-xl border border-line p-3 sm:p-4", idx % 2 === 0 ? "surface-a" : "surface-b")}>
                 <h3 className="font-semibold text-ink">
                   <LocalizedText en={theme.title} zh={theme.titleZh ?? theme.title} />
                 </h3>
@@ -160,8 +207,8 @@ export default function HomePage() {
             <LocalizedText en="Selected Projects" zh="精选项目" />
           </h2>
           <div className="space-y-3">
-            {topProjects.map((project) => (
-              <article key={project.id} className="rounded-xl border border-line p-3 sm:p-4">
+            {topProjects.map((project, idx) => (
+              <article key={project.id} className={clsx("rounded-xl border border-line p-3 sm:p-4", idx % 2 === 0 ? "surface-b" : "surface-c")}>
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="font-semibold text-ink">
                     <LocalizedText en={project.title} zh={project.titleZh ?? project.title} />

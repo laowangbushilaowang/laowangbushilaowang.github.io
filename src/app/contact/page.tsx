@@ -29,7 +29,7 @@ export default function ContactPage() {
 
       <section className="grid gap-4 pb-4 md:grid-cols-2 md:gap-5">
         <Reveal>
-          <article className="rounded-2xl border border-line/70 bg-paper/90 p-4 shadow-card sm:p-5 md:p-6">
+          <article className="surface-a rounded-2xl border border-line/70 p-4 shadow-card sm:p-5 md:p-6">
             <h2 className="font-display text-xl text-ink sm:text-2xl">
               <LocalizedText en="Primary contact" zh="主要联系方式" />
             </h2>
@@ -49,7 +49,7 @@ export default function ContactPage() {
         </Reveal>
 
         <Reveal delay={0.08}>
-          <article className="rounded-2xl border border-line/70 bg-paper/90 p-4 shadow-card sm:p-5 md:p-6">
+          <article className="surface-c rounded-2xl border border-line/70 p-4 shadow-card sm:p-5 md:p-6">
             <h2 className="font-display text-xl text-ink sm:text-2xl">
               <LocalizedText en="Profiles and links" zh="主页与链接" />
             </h2>

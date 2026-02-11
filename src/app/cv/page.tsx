@@ -37,7 +37,7 @@ export default function CvPage() {
         <div className="space-y-4">
           {education.map((entry, idx) => (
             <Reveal key={entry.id} delay={idx * 0.04}>
-              <article className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
+              <article className="surface-a rounded-xl border border-line/70 p-4 md:p-5">
                 <h3 className="font-display text-xl text-ink md:text-2xl">
                   <LocalizedText en={entry.degree} zh={entry.degreeZh ?? entry.degree} />
                 </h3>
@@ -68,7 +68,7 @@ export default function CvPage() {
         <div className="space-y-4">
           {researchExperience.map((entry, idx) => (
             <Reveal key={entry.id} delay={idx * 0.04}>
-              <article className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
+              <article className="surface-b rounded-xl border border-line/70 p-4 md:p-5">
                 <h3 className="font-display text-xl text-ink md:text-2xl">
                   <LocalizedText en={entry.role} zh={entry.roleZh ?? entry.role} />
                 </h3>
@@ -99,7 +99,7 @@ export default function CvPage() {
         <div className="space-y-3">
           {projects.slice(0, 4).map((project, idx) => (
             <Reveal key={project.id} delay={idx * 0.03}>
-              <article className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
+              <article className="surface-c rounded-xl border border-line/70 p-4 md:p-5">
                 <div className="flex flex-wrap items-baseline justify-between gap-3">
                   <h3 className="font-semibold text-ink">
                     <LocalizedText en={project.title} zh={project.titleZh ?? project.title} />
@@ -122,7 +122,7 @@ export default function CvPage() {
           <SectionHeading title={<LocalizedText en="Technical skills" zh="技术技能" />} />
           <div className="space-y-3">
             {skillGroups.map((group) => (
-              <article key={group.name} className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
+              <article key={group.name} className="surface-a rounded-xl border border-line/70 p-4 md:p-5">
                 <h3 className="font-semibold text-ink">
                   <LocalizedText en={group.name} zh={group.nameZh ?? group.name} />
                 </h3>
@@ -138,7 +138,7 @@ export default function CvPage() {
           <SectionHeading title={<LocalizedText en="Awards" zh="奖项" />} />
           <div className="space-y-3">
             {awards.map((award) => (
-              <article key={award.title} className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
+              <article key={award.title} className="surface-b rounded-xl border border-line/70 p-4 md:p-5">
                 <h3 className="font-semibold text-ink">
                   <LocalizedText en={award.title} zh={award.titleZh ?? award.title} />
                 </h3>
