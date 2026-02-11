@@ -53,8 +53,8 @@ export const projects: ProjectItem[] = [
     period: "2025",
     periodZh: "2025",
     summary:
-      "Contributed to an image recognition component for robot-assisted medical diagnosis in collaboration with CUHK Medical Robotics Lab.",
-    summaryZh: "与港中大医疗机器人实验室合作，参与机器人辅助诊断的图像识别模块开发。",
+      "Developed an image recognition component for robot-assisted medical diagnosis.",
+    summaryZh: "参与机器人辅助诊断场景下的图像识别模块开发。",
     tags: ["Medical Robotics", "Computer Vision", "AI"],
     tagsZh: ["医疗机器人", "计算机视觉", "AI"]
   },
