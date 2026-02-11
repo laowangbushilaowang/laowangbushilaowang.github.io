@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { LanguageProvider } from "@/components/i18n/LanguageProvider";
 import { siteProfile } from "@/content/site";
 
 const displayFont = Fraunces({
@@ -45,12 +46,13 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <div className="site-background" aria-hidden />
-        <div className="relative z-10">
-          <SiteHeader />
-          <main id="main-content">{children}</main>
-          <SiteFooter />
-        </div>
+        <LanguageProvider>
+          <div className="relative z-10">
+            <SiteHeader />
+            <main id="main-content">{children}</main>
+            <SiteFooter />
+          </div>
+        </LanguageProvider>
       </body>
     </html>
   );

@@ -2,43 +2,48 @@ import { Container } from "@/components/ui/Container";
 import { PageIntro } from "@/components/motion/PageIntro";
 import { Reveal } from "@/components/motion/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { LocalizedText } from "@/components/i18n/LocalizedText";
 import { education } from "@/content/education";
 import { researchThemes } from "@/content/research";
 import { siteProfile } from "@/content/site";
 
 export default function AboutPage() {
   return (
-    <Container className="space-y-16 py-10 md:space-y-20 md:py-16">
+    <Container className="space-y-10 py-8 md:space-y-16 md:py-14">
       <PageIntro
-        eyebrow="About"
-        title="Academic profile"
-        description="I am a data science and AI researcher focused on translating machine learning advances into meaningful biomedical and social impact."
+        eyebrow={<LocalizedText en="About" zh="关于" />}
+        title={<LocalizedText en="Academic profile" zh="学术简介" />}
+        description={
+          <LocalizedText
+            en="I build practical machine learning systems for biological data and socially meaningful applications."
+            zh="我关注可落地的机器学习系统，重点是生物数据分析与具有社会价值的应用。"
+          />
+        }
       />
 
       <section className="space-y-6">
-        <SectionHeading title="Bio" />
+        <SectionHeading title={<LocalizedText en="Bio" zh="个人介绍" />} />
         <Reveal>
-          <div className="max-w-4xl space-y-4 text-base leading-relaxed text-muted md:text-lg">
+          <div className="max-w-4xl space-y-3 text-sm leading-relaxed text-muted sm:text-base md:text-lg">
             <p>
-              {siteProfile.name} is currently an {siteProfile.currentRole.title.toLowerCase()} at {siteProfile.currentRole.institution}, where he works on
-              computational biology and machine learning research. His work combines theory-inspired modeling with practical data engineering for
-              high-dimensional biological datasets.
+              {siteProfile.name} is an {siteProfile.currentRole.title.toLowerCase()} at {siteProfile.currentRole.institution}, focused on computational biology
+              and machine learning for high-dimensional biological data.
             </p>
             <p>
-              He completed an MSc in Data Science at Boston University in February 2025 and previously earned a BSc (Hons) in Data Science from HKBU-UIC.
-              Across research and industry settings, he has developed methods in neural fields, biomedical AI, and robot vision systems.
+              He completed an MSc in Data Science at Boston University (2025), after a BSc (Hons) in Data Science at HKBU-UIC. His recent work spans neural
+              fields, biomedical AI, and robot vision.
             </p>
           </div>
         </Reveal>
       </section>
 
       <section className="space-y-6">
-        <SectionHeading title="Research interests" />
-        <div className="grid gap-4 md:grid-cols-2">
+        <SectionHeading title={<LocalizedText en="Research interests" zh="研究兴趣" />} />
+        <div className="grid gap-3 md:grid-cols-2 md:gap-4">
           {researchThemes.map((theme, idx) => (
             <Reveal key={theme.id} delay={idx * 0.05}>
-              <article className="h-full rounded-xl border border-line/70 bg-paper/85 p-5">
-                <h3 className="font-display text-2xl text-ink">{theme.title}</h3>
+              <article className="h-full rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
+                <h3 className="font-display text-xl text-ink md:text-2xl">{theme.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted">{theme.summary}</p>
               </article>
             </Reveal>
@@ -47,15 +52,15 @@ export default function AboutPage() {
       </section>
 
       <section className="space-y-6 pb-4">
-        <SectionHeading title="Education timeline" />
-        <ol className="space-y-4">
+        <SectionHeading title={<LocalizedText en="Education timeline" zh="教育经历" />} />
+        <ol className="space-y-3 md:space-y-4">
           {education.map((entry, idx) => (
             <Reveal key={entry.id} delay={idx * 0.05}>
-              <li className="rounded-xl border border-line/70 bg-paper/85 p-5">
+              <li className="rounded-xl border border-line/70 bg-paper/85 p-4 md:p-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted">
                   {entry.startDate} - {entry.endDate}
                 </p>
-                <h3 className="mt-2 font-display text-2xl text-ink">{entry.degree}</h3>
+                <h3 className="mt-2 font-display text-xl text-ink md:text-2xl">{entry.degree}</h3>
                 <p className="text-sm text-muted">
                   {entry.institution} | {entry.location}
                 </p>

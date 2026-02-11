@@ -5,6 +5,7 @@ export type SiteProfile = {
   intro: string;
   location: string;
   email: string;
+  emailDisplay: string;
   currentRole: {
     title: string;
     institution: string;

@@ -1,19 +1,20 @@
+import type { ReactNode } from "react";
 import { Reveal } from "@/components/motion/Reveal";
 
 type PageIntroProps = {
-  title: string;
-  description: string;
-  eyebrow?: string;
+  title: ReactNode;
+  description: ReactNode;
+  eyebrow?: ReactNode;
 };
 
 export function PageIntro({ title, description, eyebrow }: PageIntroProps) {
   return (
-    <section className="pt-10 md:pt-16">
+    <section className="pt-6 md:pt-12">
       <Reveal>
-        <div className="max-w-3xl space-y-5">
+        <div className="max-w-3xl space-y-4 md:space-y-5">
           {eyebrow ? <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">{eyebrow}</p> : null}
-          <h1 className="font-display text-4xl leading-tight text-ink md:text-5xl">{title}</h1>
-          <p className="text-base leading-relaxed text-muted md:text-lg">{description}</p>
+          <h1 className="font-display text-3xl leading-tight text-ink sm:text-4xl md:text-5xl">{title}</h1>
+          <p className="text-sm leading-relaxed text-muted sm:text-base md:text-lg">{description}</p>
         </div>
       </Reveal>
     </section>
