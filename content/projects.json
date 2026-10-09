@@ -90,6 +90,48 @@
     ]
   },
   {
+    "id": "hermes-local-agent",
+    "title": "Hermes / local Qwen",
+    "titleZh": "Hermes / 本地 Qwen",
+    "period": "Personal practice · 2026",
+    "periodZh": "个人实践 · 2026",
+    "summary": "A GPU-hosted Qwen service with four inference routes, connected to Hermes. The work covers structured tool calls, auxiliary routing, context declarations, and client-path diagnosis.",
+    "summaryZh": "GPU 上的 Qwen 服务提供四档推理路由，接入 Hermes；实践涉及结构化工具调用、辅助请求分流、上下文登记与客户端链路排查。",
+    "tags": [
+      "Hermes",
+      "Qwen",
+      "llama.cpp"
+    ],
+    "featured": false,
+    "role": "Personal deployment and configuration",
+    "roleZh": "个人部署与配置",
+    "ownership": "I directed model migration, selected the main and approval routes, and reviewed configuration changes with Codex. Hermes, Qwen, and llama.cpp are third-party components.",
+    "ownershipZh": "我提出模型迁移要求，选择主任务与审批路由，并与 Codex 核对配置改动。Hermes、Qwen 和 llama.cpp 均为第三方组件。",
+    "article": "hermes-local-agent",
+    "details": [
+      "Four aliases select request policies for one set of weights. Early Auto rules inspected the supplied conversation history, so a past tool result could keep later requests on Deep.",
+      "A September 2026 minimal add_numbers test returned structured tool calls once per alias. It established a small compatibility check, not a speed ranking or long-task reliability benchmark.",
+      "Applied changes kept local qwen-standard for the main task, used an independent Codex provider for approval, declared 262144 context for all four aliases, and enabled the loop hard stop. This is hybrid inference; a complete auxiliary split and measured improvements remain unverified.",
+      "A model responding on its host and an external gateway timing out were separate observations. Historical checks do not establish current availability or a completed enterprise deployment."
+    ],
+    "detailsZh": [
+      "四个别名选择同一份权重的请求策略。早期 Auto 规则检查整段历史，一次旧工具结果就可能让后续请求继续进入 Deep。",
+      "2026年9月的 add_numbers 最小测试中，每个别名各一次返回结构化工具调用。它验证了有限兼容性，不构成速度排名或长期任务可靠性基准。",
+      "已实施改动保留本地 qwen-standard 做主任务，审批使用独立 Codex provider，补齐四档262144上下文登记并开启循环硬停止。这是混合推理；全套辅助任务分流及量化改善仍未验收。",
+      "模型在本机回答与外部网关超时是不同观察。历史检查不能说明当前在线，也不等于完成企业私有化交付。"
+    ],
+    "links": [
+      {
+        "label": "Hermes · upstream framework",
+        "href": "https://github.com/NousResearch/hermes-agent"
+      },
+      {
+        "label": "llama.cpp · inference runtime",
+        "href": "https://github.com/ggml-org/llama.cpp"
+      }
+    ]
+  },
+  {
     "id": "bu-thesis",
     "title": "Image Reconstruction Through Multiple 1D Approximations",
     "titleZh": "多重一维近似图像重建",
