@@ -53,12 +53,12 @@
   },
   {
     "id": "single-cell-agent-pipeline",
-    "title": "BioFlow: multi-omics data pipeline",
-    "titleZh": "BioFlow：多组学数据流程",
+    "title": "BioFlow: omics collection and standardization",
+    "titleZh": "BioFlow：组学数据采集与标准化",
     "period": "Guangzhou Laboratory",
     "periodZh": "广州实验室",
-    "summary": "A five-stage workflow for literature discovery, PDFs, accession extraction, dataset construction, and metadata. Rules handle deterministic work; language models handle selected text judgments.",
-    "summaryZh": "以文献、PDF、accession、数据集构建和元数据为五个阶段；确定性步骤交给规则，部分文本判断交给语言模型。",
+    "summary": "A five-stage pipeline connecting papers, accessions, dataset files, and sample metadata. Language models assist with selected judgments; Python tools perform the data processing.",
+    "summaryZh": "把论文、数据编号、数据文件和样本元数据接起来的五阶段流程。语言模型参与部分判断，Python 工具执行数据处理。",
     "tags": [
       "Data engineering",
       "LLM",
@@ -67,8 +67,27 @@
     "featured": true,
     "role": "Work project",
     "roleZh": "工作项目",
-    "ownership": "A laboratory project I worked on. Team outcomes and individual work are kept separate; later Nova / Sentinel prototypes need their own validation.",
-    "ownershipZh": "我参与的实验室项目。团队成果与个人工作分别描述；后续 Nova / Sentinel 原型需单独核验。"
+    "ownership": "A project I worked on at Guangzhou National Laboratory. I shaped the workflow and later requested isolated omics extensions and Skill-based stage organization; Codex assisted with implementation and debugging. AnnData, Scanpy, and other libraries supply their own components.",
+    "ownershipZh": "我在广州国家实验室参与的项目，围绕受约束流程设计，后续提出隔离扩展组学与按 Skill 拆分阶段的要求，Codex 协助实现和排障。AnnData、Scanpy 等库提供各自组件。",
+    "article": "bioflow-dataset-pipeline",
+    "details": [
+      "The project began with a need to collect public omics data for virtual-cell modeling. Each stage leaves inspectable outputs so a format fix can reuse earlier literature and downloads.",
+      "Regex-first accession extraction, a directory probe and registered-loader planner, and missing-value metadata enrichment address different kinds of uncertainty. They do not establish data relevance or scientific validity by themselves.",
+      "RNA, ATAC, and spatial data have matrix-building paths. Protein, metabolomics, and imaging currently use collection bundles with separate output roots; their quantitative or image-analysis processing is not implemented here.",
+      "The later Sentinel prototype implements SQLite task state, workers, retries, and heartbeats. Eight existing unit tests passed in this review, while a historical tiny_e2e run stopped at stage two. Production adoption and complete real-data execution remain unverified."
+    ],
+    "detailsZh": [
+      "项目起于为虚拟细胞模型收集公开组学数据的需求。各阶段留下可检查的产物，修格式适配时可以沿用已经完成的文献与下载材料。",
+      "正则优先的编号提取、目录探测与已注册 loader 选择、缺失元数据补充，分别处理不同的不确定性；这些步骤本身不能证明数据相关性或科学有效性。",
+      "RNA、ATAC、空间数据有各自的矩阵构建路径。蛋白、代谢和影像目前采用目录隔离的 collection bundle，这里没有完成它们的定量处理或图像分析。",
+      "后来的 Sentinel 原型实现 SQLite 任务状态、worker、重试和心跳。本次复查通过现有 8 项单元测试，历史 tiny_e2e 小样则停在第二阶段；生产采用与完整真实数据链路仍未验收。"
+    ],
+    "links": [
+      {
+        "label": "Early public scripts · 早期公开脚本",
+        "href": "https://github.com/laowangbushilaowang/Bio_dataflow"
+      }
+    ]
   },
   {
     "id": "bu-thesis",
