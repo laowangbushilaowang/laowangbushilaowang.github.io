@@ -5,8 +5,8 @@
     "titleZh": "基于文件的 Agent 项目管理",
     "period": "Personal practice",
     "periodZh": "个人实践",
-    "summary": "File boundaries and reading paths help agents find current work, applicable rules, and the sources behind a result.",
-    "summaryZh": "用文件归属与读取路径定位当前任务、适用规则和结果来源，减少接手时的上下文歧义。",
+    "summary": "My project conventions for AGENTS.md, current-task handoffs, and choosing which files to read.",
+    "summaryZh": "我在项目里采用的 AGENTS.md 约定、任务交接，以及按当前工作选择要读的文件。",
     "tags": [
       "Agents",
       "Codex",

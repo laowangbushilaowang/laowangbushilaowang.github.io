@@ -1,118 +1,68 @@
 ---
-title: "How file structure helps agents understand a project"
+title: "AGENTS.md and project handoffs"
 date: "2026-10-09"
 updated: "2026-10-09"
 language: en
 project: codex-workflow
-excerpt: "Separate project rules, current work, and historical results so an agent has a clear path to the context it needs."
+excerpt: "What belongs in AGENTS.md, where to keep progress, and how a new session finds the work to continue."
 tags: [Agents, Codex, Context, Filesystem]
 draft: false
 ---
 
-A long-running project contains more than code. It also contains results from earlier experiments and decisions that have since changed. When an agent picks up the work in a new session, it needs to establish which task is active and which instructions and results apply.
+When I continue a project in a new Codex session, I want it to establish the project's conventions and find the work in progress. I keep durable instructions in AGENTS.md and maintain a separate handoff for the current task.
 
-I use files to make those relationships explicit. A project entry point identifies the task. Its handoff describes the current state and links to the relevant code or results. The purpose is to help the agent choose what to read before opening a large collection of historical material.
+I arrived at this arrangement through revisions across several projects. I set the requirements and reviewed the scope of the changes; Codex helped implement and check the files. These days, I care more about whether an instruction makes the next action clear than whether the management directory looks complete.
 
-A misplaced directory during a workspace cleanup with Codex shows why the conventions need to be quite specific.
+## What I put in AGENTS.md
 
-## Directory ownership determines which rules apply
+I keep recurring requirements here, especially things that are easy to get wrong: where new files belong, where to start when resuming work, and when to update the handoff.
 
-During one workspace cleanup, the outer project's context directory ended up inside a nested Hermes project. Hermes had its own entry point, but that directory had been treated as a shared workspace for the outer project.
+“Keep the project tidy” leaves a lot to interpretation. “Before creating a file, check whether an existing project directory already has a suitable location” gives the agent something to do at a particular moment. These are shortened versions of instructions in my project entry points:
 
-Writing files still worked. Links could still exist. The problem would surface when resuming the outer project: its handoff lived inside a separate project, whose records now also contained unrelated work. A successful write did not establish correct ownership.
+- Keep new files in the relevant project or task directory. Reuse a suitable existing location.
+- Consult the context entry point when resuming old work, switching tasks, or lacking background. For a small, well-scoped change, start with the relevant files.
+- Update the existing handoff after meaningful progress. Include the verification time, blockers, and next action.
 
-The correction gave the outer project its own context directory and kept Hermes's entry point separate. **An entry point needs to establish the project boundary.** Nesting describes where directories are stored; it does not make their tasks or rules interchangeable.
+Each instruction has a trigger. The agent can apply it when creating a file, picking up a task, or finishing a piece of work. Details such as which experiment is running and what blocked yesterday's attempt go in the task handoff. Otherwise, every change in progress would require an edit to the project rules.
 
-My top-level index therefore stores boundaries and entry points. Each project maintains its own current handoff. Copying live progress into the index would create a second place to update—and another version for the next session to reconcile.
+If I were starting an AGENTS.md today, I would begin with one mistake I had repeatedly corrected and specify when the instruction applies and what to do. A document that tries to cover everything at once is harder to maintain.
 
-## Separate current work from its history
+## Where progress belongs
 
-Project rules and task progress change at different rates. An experimental comparison policy might remain relevant for months. A blocker can disappear after one run. Mixing them in a growing document makes the reader work out which passages are still current before acting.
+Long projects accumulate abandoned plans. A new session needs to find the plan currently in use and the result to inspect next. The full history can wait until a question calls for it.
 
-I keep durable requirements in `AGENTS.md` and current work in a task handoff. A project with several ongoing tasks can use a structure like this. Names are abbreviated and business files are omitted; a small project does not need every file shown.
+I give the files separate jobs:
 
-```text
-project/
-├── AGENTS.md
-├── README.md
-└── .context/
-    ├── README.md
-    └── tasks/
-        └── task-id/
-            ├── HANDOFF.md
-            ├── APPROVED_PLAN.md
-            ├── decisions.md
-            ├── notes.md
-            ├── state.json
-            └── events.jsonl
-```
+| File | What I keep there |
+| --- | --- |
+| AGENTS.md | Durable project conventions and pointers to specialized instructions |
+| README or context index | The current task's entry point and locations of relevant material |
+| HANDOFF.md | The goal, current progress, blocker, next action, and acceptance conditions |
 
-`HANDOFF.md` puts the current problem within reach. `APPROVED_PLAN.md` retains the agreed scope. Important decisions, their reasons, and links to their sources belong in `decisions.md`. Only tasks with an automatic observer need its `state.json` and `events.jsonl`; human follow-up goes in `notes.md` so a generated update does not overwrite it.
+The handoff links to the original code, notebooks, and results. I keep those materials in their existing directories so that the next session opens the maintained source.
 
-The handoff changes as work progresses. Observation events are appended. When a proposal is abandoned, its reason and result remain traceable. That gives a later session a way to check why it was dropped before trying the same experiment again.
+“Experiment finished” needs more detail. Training may have ended while evaluation is still pending. Exporting a figure does not mean it has been checked. I record what actually finished and leave unchecked parts visible. That helps the next session decide whether to inspect a result or complete a missing check.
 
-Notebooks, data, and figures stay in their existing business directories. Context files link to them. Copying results into the context directory would introduce another version to maintain, including the familiar problem of two different files both claiming to be final.
+## Reading depends on the task
 
-## Give the agent a reading path
+In AIQuant, the root instructions point to separate notebook and cleanup procedures. Notebook work opens the notebook instructions; cleaning up data or reports opens the retention rules.
 
-Once files have separate jobs, the agent needs conditions for reading them. To resume an old task, follow the existing README or active-work entry point to its handoff, then open the material needed for the next step. Search the history when a decision needs explaining.
+The root file provides directions. A button-label change can start at its component. Resuming a paused research task calls for the handoff and the relevant experiment. They need different amounts of background.
 
-This makes the structure useful for selecting context. A specific UI fix may need only the relevant component. Resuming an experiment requires its current identity and results. Loading the same full history for both tasks adds material that may have no bearing on the work.
+I still check which task Codex identified and which result it intends to use. Having a file on disk does not establish that a session read or understood it. When working remotely, I also ask it to read the remote project's own instructions; a local entry point cannot replace them.
 
-Several project entry points retain this condition, translated here:
+## Check which project owns a directory
 
-```text
-Read .context/README.md as needed when resuming an old task,
-switching the main line of work, or lacking context.
-A small, well-scoped change does not require a full read-through.
-```
+During a workspace cleanup, the outer project's context directory ended up inside a nested Hermes project. The files could be written and the links could be opened, but resuming the outer task led into a separate project's records.
 
-AIQuant once had a long root instruction file, with detailed notebook and cleanup procedures. Those procedures were moved into dedicated documents, leaving their triggers and links at the root. Notebook work reads its specific instructions; an ordinary source edit follows the project rules. The root file can help select the next document without containing every procedure itself.
+We moved the outer handoff back into its own directory and kept Hermes's entry point separate. Since then, I check whether a nested directory belongs to the same project or simply happens to be stored underneath it.
 
-The presence of a file does not show that a session read it. When work resumes, I still check which task the agent identified and which result it used. For remote work through a local session, the remote project's rules must also be read. The local entry point only provides directions.
+My top-level index points to project entry points. Each project maintains its own progress. Keeping a second live summary in the index would add another version to synchronize.
 
-## Record the limits of a status observation
+## Small projects can use fewer files
 
-“Training is healthy” leaves too much unanswered. A process check establishes that a process exists. An increasing epoch count supports a claim that training is progressing. Evaluation and figure acceptance need separate checks.
+If a README and one handoff already locate the work, I keep using them. I add task directories when several ongoing tasks need separate records. Decision logs and event files appear when needed, rather than as empty placeholders.
 
-The research-task observer compares phases, epochs, checkpoints, and task counts, and records a warning when it finds no measurable progress. Missing inputs or incomplete JSON produce an `unverified` status. Its output also includes:
+Reusable procedures can live in Skills. A task handoff records what is missing and what to do next; a Skill can maintain the general method for checking a download, for example. My context-initialization Skill is limited to new projects or missing or broken entry points. Routine resumption uses what already exists.
 
-```python
-'scientific_acceptance': 'not_assessed_by_observer',
-'visual_acceptance': 'not_assessed_by_observer',
-```
-
-Those fields tell the next session what remains to be checked. The runtime was observed; the observer has not accepted a scientific conclusion or a figure. That distinction matters when choosing the next action.
-
-How the observation is written matters too. The implementation appends an event before replacing the current state and handoff. This excerpt keeps the original variable names and omits summary generation:
-
-```python
-with (dest / 'events.jsonl').open('a') as stream:
-    stream.write(json.dumps(result, ensure_ascii=False) + '\n')
-    stream.flush()
-    os.fsync(stream.fileno())
-
-atomic(state, json.dumps(result, ensure_ascii=False, indent=2) + '\n')
-# text is generated from the same result
-atomic(dest / 'HANDOFF.md', text)
-```
-
-Writing the event first preserves a record to inspect if a later replacement fails. The `atomic` helper writes and flushes a temporary file in the target directory, calls `fsync`, and replaces the individual destination with `os.replace`. A file lock at the write entry point prevents two observer processes from updating it concurrently.
-
-There is still a gap: `state.json` and `HANDOFF.md` are replaced separately. An interruption between them can leave different observations in the two files. Atomic replacement of one file is not a transaction across both. Recovery still requires comparing observation times and checking the corresponding event.
-
-## Put reusable procedures in Skills
-
-“Check the download next” belongs to a particular task's handoff. How to check completeness and recover from a failed download can live in a Skill used by later tasks. The handoff stays focused while the procedure has a stable maintenance location.
-
-Context initialization has a Skill too. Its scope was narrowed to new projects or repairs to missing or broken entry points. If a README and handoff already locate the task, use them. Reinitializing every time would create another set of state to synchronize.
-
-That is also why I do not require small projects to copy the entire directory structure. A README and one page of handoff can be enough until the work actually needs more.
-
-## Handoffs need maintenance
-
-A clear reading path can still lead to a stale description. Important conclusions need a verification time and a source link. Runtime state needed for the next action must be checked again. Restoring a backup also requires comparing the current version if work continued after the backup was taken.
-
-What I can verify so far is the organization of the files, the observer's write behavior, and the ownership problem that was corrected. I have not measured an improvement in resumption time or task success.
-
-I continue to use these conventions. Before adding a document, I check whether an existing file already serves its purpose. When updating a handoff, I focus on facts and unresolved questions needed for the next action. Every extra file costs something to maintain; reducing uncertainty at the next handoff is what makes the extra page worth writing.
+I have not run a controlled comparison of resumption time or task success. This is the organization I currently use. Maintaining it means checking whether the handoff still describes the next action, retaining links behind older conclusions, and checking live state again when execution depends on it.
