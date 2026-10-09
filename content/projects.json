@@ -132,6 +132,38 @@
     ]
   },
   {
+    "id": "private-workbench",
+    "title": "Private local workbench",
+    "titleZh": "私有本地工作台",
+    "period": "Personal tool · 2026",
+    "periodZh": "个人工具 · 2026",
+    "summary": "A private Web desk connecting orders, account queries, browser execution, and receipt management, with explicit cancellation and state readback.",
+    "summaryZh": "把订单、账号查询、浏览器执行与收据管理放在一处的私有 Web 工作台，处理取消、重复请求和状态回读。",
+    "tags": [
+      "Python",
+      "JavaScript",
+      "Async workflows"
+    ],
+    "featured": false,
+    "role": "Personal tool, developed with Codex",
+    "roleZh": "通过 Codex 开发的个人工具",
+    "ownership": "I shaped the workflow, chose the layout and Stop behaviour, and reported failures from use. Codex helped implement and check the changes.",
+    "ownershipZh": "我提出工作流要求，选择布局和停止方式，并在使用中反馈故障；Codex 协助实现与检查。",
+    "article": "local-workbench-state",
+    "details": [
+      "The local Web interface brings private task records and execution controls together. The public case study covers general engineering design and a synthetic replay of actual components.",
+      "In-flight reads share a Promise within one page; duplicate concurrent mutations are rejected. Page generations, execution IDs, and query sequences give different responses different permission to render.",
+      "Stop ends the foreground wait and asks the local executor to stop the matching worker. A cancellation acknowledgement does not undo an external request that has already been sent.",
+      "Cancellation and progress checks, plus five local-worker tests, passed during review. Four cases in an uncommitted polling test failed because its source-extraction anchors were stale. Real payments, current deployment, and cloud end-to-end completion were not validated in this review."
+    ],
+    "detailsZh": [
+      "本地 Web 将私有任务记录和执行控件放在一起。公开案例展开通用工程设计，配图为实际组件的合成数据重放。",
+      "同一页面共享进行中的读取，拒绝相同键的并发重复写操作；页面版本、执行标识与查询序号分别限制响应的渲染范围。",
+      "停止会结束前台等待，并请求本机执行器终止对应任务。取消回执不能撤销已经发出的外部请求。",
+      "本次复查的取消/进度检查和5项本机任务测试通过；未提交轮询测试的4项用例因旧源码截取位置失败。本次没有验收真实付款、当前部署或云端全流程。"
+    ]
+  },
+  {
     "id": "bu-thesis",
     "title": "Image Reconstruction Through Multiple 1D Approximations",
     "titleZh": "多重一维近似图像重建",
