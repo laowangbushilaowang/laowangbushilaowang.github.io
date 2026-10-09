@@ -5,8 +5,8 @@
     "titleZh": "基于文件的 Agent 项目管理",
     "period": "Personal practice",
     "periodZh": "个人实践",
-    "summary": "My project conventions for AGENTS.md, current-task handoffs, and choosing which files to read.",
-    "summaryZh": "我在项目里采用的 AGENTS.md 约定、任务交接，以及按当前工作选择要读的文件。",
+    "summary": "Analysis capsules, notebook decisions, dependency boundaries, and handoffs for continuing agent-assisted research.",
+    "summaryZh": "按轮次组织分析目录，在 Notebook 中保留判断，用输入边界和交接定位 Agent 要继续的研究。",
     "tags": [
       "Agents",
       "Codex",
