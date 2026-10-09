@@ -33,3 +33,5 @@ Before publishing, check that the opening and section headings expose the techni
 同日发布多篇时可填写 `publishedAt: "2026-10-09T13:00:43Z"`（UTC ISO时间，与date同一天，中英一致）。列表优先按publishedAt排序；未填沿用date，阅读页仍显示日期。发布排序时间应来自实际发布记录或此次编辑发布时刻，不以文件名、文件修改时间推断。
 
 Choose technical depth for the article's question. Tool-use and workflow posts should explain what I do, the available choices, and when each choice fits. Keep implementation code out unless it answers the main question. Algorithm posts may include code: introduce the problem and intuition first, explain the inputs, variables, outputs, and why the change matters, then connect it to the actual experiment. Do not impose a code quota or a long-form template on every post.
+
+Keep only material that answers the article's question. Each paragraph should contribute a concrete practice, a reason for a choice, a necessary example, or an actual result. Remove repeated setup, author introductions, generic commentary about AI, and empty conclusions. Source research belongs in the private dossier; its volume should not dictate article length.
