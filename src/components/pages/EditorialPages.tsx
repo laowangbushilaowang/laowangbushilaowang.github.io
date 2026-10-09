@@ -85,6 +85,7 @@ export function Project({ slug, locale }: { slug: string; locale: Locale }) {
   const p = projects.find((p) => p.id === slug);
   if (!p) notFound();
   const posts = getAllPosts(locale).filter((post) => post.project === p.id);
+  const details = locale === "zh" ? p.detailsZh : p.details;
   return (
     <Container className="py-8 md:py-14">
       <Link href={lp("/projects", locale)} className="text-sm text-accent">
@@ -119,6 +120,18 @@ export function Project({ slug, locale }: { slug: string; locale: Locale }) {
           </a>
         ))}
       </section>
+      {details && details.length > 0 && (
+        <section className="mt-10 max-w-3xl space-y-4">
+          <h2 className="font-display text-2xl text-accent">
+            {t(locale, "Implementation and results", "实现与结果")}
+          </h2>
+          {details.map((paragraph) => (
+            <p key={paragraph} className="text-sm leading-relaxed text-muted">
+              {paragraph}
+            </p>
+          ))}
+        </section>
+      )}
       {posts.length > 0 && (
         <section className="mt-10 max-w-3xl">
           <h2 className="font-display text-2xl text-accent">

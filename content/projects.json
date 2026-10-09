@@ -25,8 +25,8 @@
     "titleZh": "AIQuant",
     "period": "Personal project",
     "periodZh": "个人项目",
-    "summary": "An AI-assisted research system connecting a data lake, reusable Skills, strategy experiments, and shadow evaluation. No candidate is currently promotion-ready.",
-    "summaryZh": "连接数据湖、可复用 Skills、策略实验与影子评估的 AI 辅助研究系统。目前没有达到晋级条件的候选策略。",
+    "summary": "A personal research system connecting a remote Parquet lake, Codex research tools, and strategy replay. No candidate currently meets promotion requirements.",
+    "summaryZh": "连接远端 Parquet 数据湖、Codex 研究工具和策略回放的个人研究系统。目前没有达到晋级要求的候选。",
     "tags": [
       "Python",
       "Parquet",
@@ -35,8 +35,21 @@
     "featured": true,
     "role": "Research / shadow evaluation",
     "roleZh": "研究与影子评估",
-    "ownership": "My personal project, developed with Codex. It is a research system; it does not establish stable profit or live trading.",
-    "ownershipZh": "我的个人项目，由我与 Codex 持续推进。成果是研究系统，不代表稳定盈利或实盘交易。"
+    "ownership": "I set the research requirements, choose the next investigation, and review the results. Codex helps implement the tools, research sources, and diagnose problems. This is research; live trading and order APIs remain disabled.",
+    "ownershipZh": "我提出研究要求、选择下一步并审查结果，Codex 协助实现工具、查资料和排障。项目处于研究阶段，实盘和订单接口未启用。",
+    "article": "aiquant-research",
+    "details": [
+      "The system lets me test market hypotheses against repeatable data and explicit execution assumptions. An early A-share news-and-momentum sample remains separate from the later contract research workflow.",
+      "Recent CSV features pass through a version-aware sync queue into UTC instrument-hour Parquet/ZSTD parts. Compute reads the shared remote store; incremental catalogs locate inputs without copying the archive into agent context.",
+      "Codex works from compact reading packs and registered research tools. Reusable Skills cover the procedures, while Python performs transformations, backtests, and report generation.",
+      "A next-month order-flow diagnostic produced 319 reference trades but remained near break-even at zero assumed cost and negative with costs. It is reused OOS with unverified fills, not formal performance. The current decision still has no promotion-ready candidate."
+    ],
+    "detailsZh": [
+      "系统用于把行情假设放进可重复的数据与明确执行条件里检查。早期 A 股新闻与动量样例仍保留，和后来的合约研究工作流分开介绍。",
+      "近期 CSV 特征经版本化同步队列进入按 UTC 品种小时划分的 Parquet/ZSTD 分片。计算读取同一份远端存储，增量 catalog 帮助定位输入，无需把完整行情塞进 Agent 上下文。",
+      "Codex 读取轻量研究包并调用已注册工具，Skills 保存可复用操作要求，Python 负责转换、回测和生成报告。",
+      "一项订单流次月诊断得到 319 笔参考交易，零成本接近盈亏平衡，计入成本后为负；它属于 reused OOS，成交未验证，不是正式表现。当前仍无可晋级候选。"
+    ]
   },
   {
     "id": "single-cell-agent-pipeline",

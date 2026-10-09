@@ -83,6 +83,8 @@ export type ProjectItem = {
   roleZh: string;
   ownership: string;
   ownershipZh: string;
+  details?: string[];
+  detailsZh?: string[];
   article?: string;
 };
 
