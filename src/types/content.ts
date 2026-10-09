@@ -78,6 +78,12 @@ export type ProjectItem = {
   tagsZh?: string[];
   links?: ProjectLink[];
   featured?: boolean;
+  cover?: string;
+  role: string;
+  roleZh: string;
+  ownership: string;
+  ownershipZh: string;
+  article?: string;
 };
 
 export type NewsItem = {

@@ -10,17 +10,31 @@ const iconByKey: Record<string, { en: string; zh: string }> = {
   email: { en: "Email", zh: "邮箱" },
   github: { en: "GitHub", zh: "GitHub" },
   linkedin: { en: "LinkedIn", zh: "LinkedIn" },
-  scholar: { en: "Scholar", zh: "学术" }
+  scholar: { en: "Scholar", zh: "学术" },
 };
 
-function ItemIcon({ type }: { type: "location" | "email" | "github" | "linkedin" }) {
+function ItemIcon({
+  type,
+}: {
+  type: "location" | "email" | "github" | "linkedin";
+}) {
   const common = "h-5 w-5 text-accent";
 
   if (type === "location") {
     return (
       <svg viewBox="0 0 24 24" fill="none" className={common} aria-hidden>
-        <path d="M12 21s-6-5.58-6-10a6 6 0 1 1 12 0c0 4.42-6 10-6 10Z" stroke="currentColor" strokeWidth="1.8" />
-        <circle cx="12" cy="11" r="2.4" stroke="currentColor" strokeWidth="1.8" />
+        <path
+          d="M12 21s-6-5.58-6-10a6 6 0 1 1 12 0c0 4.42-6 10-6 10Z"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        />
+        <circle
+          cx="12"
+          cy="11"
+          r="2.4"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        />
       </svg>
     );
   }
@@ -28,7 +42,15 @@ function ItemIcon({ type }: { type: "location" | "email" | "github" | "linkedin"
   if (type === "email") {
     return (
       <svg viewBox="0 0 24 24" fill="none" className={common} aria-hidden>
-        <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" strokeWidth="1.8" />
+        <rect
+          x="3.5"
+          y="5.5"
+          width="17"
+          height="13"
+          rx="2"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        />
         <path d="m5 7 7 5 7-5" stroke="currentColor" strokeWidth="1.8" />
       </svg>
     );
@@ -48,8 +70,20 @@ function ItemIcon({ type }: { type: "location" | "email" | "github" | "linkedin"
 
   return (
     <svg viewBox="0 0 24 24" fill="none" className={common} aria-hidden>
-      <rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M8 10.5c0-1.6 1.3-2.9 2.9-2.9h2.2c1.6 0 2.9 1.3 2.9 2.9v3c0 1.6-1.3 2.9-2.9 2.9h-2.2C9.3 16.4 8 15.1 8 13.5v-3Z" stroke="currentColor" strokeWidth="1.8" />
+      <rect
+        x="4"
+        y="4"
+        width="16"
+        height="16"
+        rx="3"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <path
+        d="M8 10.5c0-1.6 1.3-2.9 2.9-2.9h2.2c1.6 0 2.9 1.3 2.9 2.9v3c0 1.6-1.3 2.9-2.9 2.9h-2.2C9.3 16.4 8 15.1 8 13.5v-3Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
     </svg>
   );
 }
@@ -80,24 +114,48 @@ export default function ContactPage() {
                   <LocalizedText en="Location" zh="地点" />
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-muted">
-                  <LocalizedText en={siteProfile.location} zh={siteProfile.locationZh ?? siteProfile.location} />
+                  <LocalizedText
+                    en={siteProfile.location}
+                    zh={siteProfile.locationZh ?? siteProfile.location}
+                  />
                 </p>
               </div>
             </li>
 
             {socialLinks.map((link) => (
-              <li key={link.iconKey} className="flex items-start gap-3 border-b border-line/60 pb-4 last:border-b-0 last:pb-0">
+              <li
+                key={link.iconKey}
+                className="flex items-start gap-3 border-b border-line/60 pb-4 last:border-b-0 last:pb-0"
+              >
                 <span className="mt-0.5">
-                  <ItemIcon type={link.iconKey === "email" ? "email" : link.iconKey === "github" ? "github" : "linkedin"} />
+                  <ItemIcon
+                    type={
+                      link.iconKey === "email"
+                        ? "email"
+                        : link.iconKey === "github"
+                          ? "github"
+                          : "linkedin"
+                    }
+                  />
                 </span>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-accent">
-                    <LocalizedText en={iconByKey[link.iconKey].en} zh={iconByKey[link.iconKey].zh} />
+                    <LocalizedText
+                      en={iconByKey[link.iconKey].en}
+                      zh={iconByKey[link.iconKey].zh}
+                    />
                   </p>
                   {link.iconKey === "email" ? (
-                    <p className="mt-1 text-sm break-all text-muted">{link.label}</p>
+                    <p className="mt-1 text-sm break-all text-muted">
+                      {link.label}
+                    </p>
                   ) : (
-                    <Link href={link.href} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent">
+                    <Link
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
+                    >
                       {link.label}
                       <span aria-hidden>↗</span>
                     </Link>

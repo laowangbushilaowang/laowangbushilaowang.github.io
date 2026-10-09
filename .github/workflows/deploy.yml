@@ -30,12 +30,22 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Validate content and code
+        run: |
+          npm test
+          npm run validate:content
+          npm run typecheck
+          npm run lint
 
       - name: Build static site
         run: npm run build
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
+
+      - name: Validate exported links
+        run: npm run validate:export
 
       - name: Add nojekyll marker
         run: touch out/.nojekyll

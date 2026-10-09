@@ -2,67 +2,36 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import type { BlogFrontmatter, BlogPost, BlogPostSummary } from "@/types/blog";
-
-const blogDirectory = path.join(process.cwd(), "content/blog");
-
-function estimateReadingTime(text: string): number {
-  const words = text.trim().split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.round(words / 220));
-}
-
-export function getAllPosts(): BlogPostSummary[] {
-  if (!fs.existsSync(blogDirectory)) {
-    return [];
-  }
-
-  const files = fs
-    .readdirSync(blogDirectory)
-    .filter((file) => file.endsWith(".md"))
-    .sort((a, b) => a.localeCompare(b));
-
-  const posts = files
-    .map((file) => {
-      const fullPath = path.join(blogDirectory, file);
-      const source = fs.readFileSync(fullPath, "utf8");
-      const { data, content } = matter(source);
-      const frontmatter = data as BlogFrontmatter;
-      const slug = file.replace(/\.md$/, "");
-
-      return {
-        slug,
-        title: frontmatter.title,
-        date: frontmatter.date,
-        excerpt: frontmatter.excerpt,
-        tags: frontmatter.tags,
-        draft: frontmatter.draft,
-        readingTimeMinutes: estimateReadingTime(content)
-      };
-    })
-    .filter((post) => !post.draft)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-  return posts;
-}
-
-export function getPostBySlug(slug: string): BlogPost | null {
-  const fullPath = path.join(blogDirectory, `${slug}.md`);
-
-  if (!fs.existsSync(fullPath)) {
-    return null;
-  }
-
-  const source = fs.readFileSync(fullPath, "utf8");
-  const { data, content } = matter(source);
+import type { Locale } from "./locale";
+const directory = path.join(process.cwd(), "content/blog");
+export function getPostBySlug(
+  slug: string,
+  locale: Locale = "en",
+): BlogPost | null {
+  if (!/^[a-z0-9-]+$/.test(slug)) return null;
+  const filename = path.join(directory, slug, `${locale}.md`);
+  if (!fs.existsSync(filename)) return null;
+  const { data, content } = matter(fs.readFileSync(filename, "utf8"));
   const frontmatter = data as BlogFrontmatter;
-
+  if (frontmatter.draft || frontmatter.language !== locale) return null;
+  const characters = (content.match(/[\u3400-\u9fff]/g) || []).length;
+  const words = content
+    .replace(/[\u3400-\u9fff]/g, " ")
+    .split(/\s+/)
+    .filter(Boolean).length;
   return {
+    ...frontmatter,
     slug,
-    title: frontmatter.title,
-    date: frontmatter.date,
-    excerpt: frontmatter.excerpt,
-    tags: frontmatter.tags,
-    draft: frontmatter.draft,
-    readingTimeMinutes: estimateReadingTime(content),
-    content
+    content,
+    readingTimeMinutes: Math.max(1, Math.ceil(characters / 350 + words / 220)),
   };
+}
+export function getAllPosts(locale: Locale = "en"): BlogPostSummary[] {
+  if (!fs.existsSync(directory)) return [];
+  return fs
+    .readdirSync(directory, { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .map((e) => getPostBySlug(e.name, locale))
+    .filter((p): p is BlogPost => p !== null)
+    .sort((a, b) => b.date.localeCompare(a.date));
 }

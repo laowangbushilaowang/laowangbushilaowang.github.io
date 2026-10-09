@@ -1,0 +1,184 @@
+[
+  {
+    "id": "codex-workflow",
+    "title": "File-based agent project management",
+    "titleZh": "基于文件的 Agent 项目管理",
+    "period": "Personal practice",
+    "periodZh": "个人实践",
+    "summary": "Project instructions, task handoffs, and observer records organized for work that continues across sessions.",
+    "summaryZh": "组织项目规则、任务交接和观察记录，让跨会话的工作能找到当前任务与相关材料。",
+    "tags": [
+      "Agents",
+      "Codex",
+      "Filesystem"
+    ],
+    "featured": true,
+    "role": "Personal workflow",
+    "roleZh": "个人工作流",
+    "ownership": "I directed and reviewed the changes to my project workflows; Codex implemented the files and helped check them.",
+    "ownershipZh": "我提出并审查工作流的修改，Codex 完成文件实现并协助核对。",
+    "article": "codex-long-projects"
+  },
+  {
+    "id": "aiquant",
+    "title": "AIQuant",
+    "titleZh": "AIQuant",
+    "period": "Personal project",
+    "periodZh": "个人项目",
+    "summary": "An AI-assisted research system connecting a data lake, reusable Skills, strategy experiments, and shadow evaluation. No candidate is currently promotion-ready.",
+    "summaryZh": "连接数据湖、可复用 Skills、策略实验与影子评估的 AI 辅助研究系统。目前没有达到晋级条件的候选策略。",
+    "tags": [
+      "Python",
+      "Parquet",
+      "Agents"
+    ],
+    "featured": true,
+    "role": "Research / shadow evaluation",
+    "roleZh": "研究与影子评估",
+    "ownership": "My personal project, developed with Codex. It is a research system; it does not establish stable profit or live trading.",
+    "ownershipZh": "我的个人项目，由我与 Codex 持续推进。成果是研究系统，不代表稳定盈利或实盘交易。"
+  },
+  {
+    "id": "single-cell-agent-pipeline",
+    "title": "BioFlow: multi-omics data pipeline",
+    "titleZh": "BioFlow：多组学数据流程",
+    "period": "Guangzhou Laboratory",
+    "periodZh": "广州实验室",
+    "summary": "A five-stage workflow for literature discovery, PDFs, accession extraction, dataset construction, and metadata. Rules handle deterministic work; language models handle selected text judgments.",
+    "summaryZh": "以文献、PDF、accession、数据集构建和元数据为五个阶段；确定性步骤交给规则，部分文本判断交给语言模型。",
+    "tags": [
+      "Data engineering",
+      "LLM",
+      "Single-cell"
+    ],
+    "featured": true,
+    "role": "Work project",
+    "roleZh": "工作项目",
+    "ownership": "A laboratory project I worked on. Team outcomes and individual work are kept separate; later Nova / Sentinel prototypes need their own validation.",
+    "ownershipZh": "我参与的实验室项目。团队成果与个人工作分别描述；后续 Nova / Sentinel 原型需单独核验。"
+  },
+  {
+    "id": "bu-thesis",
+    "title": "Image Reconstruction Through Multiple 1D Approximations",
+    "titleZh": "多重一维近似图像重建",
+    "period": "Boston University · 2025",
+    "periodZh": "波士顿大学 · 2025",
+    "summary": "My master’s thesis explores image reconstruction through multiple one-dimensional projections, interpolation, and sample selection under a fixed representation budget.",
+    "summaryZh": "硕士论文研究在固定表示预算下，怎样通过多个一维投影、插值与采样选择重建图像。",
+    "tags": [
+      "Image reconstruction",
+      "Sampling",
+      "Interpolation"
+    ],
+    "featured": true,
+    "role": "Independent thesis",
+    "roleZh": "独立硕士论文",
+    "ownership": "I conducted the thesis research and comparisons. Sampling choices that failed are part of the story, alongside the successful settings.",
+    "ownershipZh": "我完成论文研究与比较。失败的采样方案和有效的设置一样，都是这项工作的组成部分。",
+    "links": [
+      {
+        "label": "Public research repository",
+        "href": "https://github.com/laowangbushilaowang/Image-Reconstruction-through-Multiple-1D-Approximations"
+      },
+      {
+        "label": "Boston University thesis",
+        "href": "https://hdl.handle.net/2144/49595"
+      }
+    ]
+  },
+  {
+    "id": "tempofactor",
+    "title": "SCage / TempoFactor",
+    "titleZh": "SCage / TempoFactor",
+    "period": "Guangzhou Laboratory",
+    "periodZh": "广州实验室",
+    "summary": "Modeling sample time and cell state, then asking what survives held-out evaluation and downstream analysis. Local spatial ordering remains a limited observation.",
+    "summaryZh": "建模样本时间与细胞状态，再检查哪些结论能经受留出评估和下游分析。局部空间排序仍是有限观察。",
+    "tags": [
+      "VAE",
+      "Benchmarking",
+      "Biology"
+    ],
+    "featured": false,
+    "role": "Ongoing team research",
+    "roleZh": "持续中的团队研究",
+    "ownership": "I contribute to model refactoring, benchmarks, attribution and validation. Spatial predictions do not establish lineage, absolute speed, or mechanism.",
+    "ownershipZh": "我参与模型重构、benchmark、归因和验证。空间预测不能证明谱系、绝对发育速度或机制。"
+  },
+  {
+    "id": "spatial-neural-field",
+    "title": "Neural Fields for Spatial Transcriptomics",
+    "titleZh": "空间转录组的 Neural Field 探索",
+    "period": "Guangzhou Laboratory · 2025",
+    "periodZh": "广州实验室 · 2025",
+    "summary": "Coordinate-based expression modeling exposed a useful failure: fitting observed points well did not guarantee interpolation across sparsely observed slices.",
+    "summaryZh": "基于坐标的表达建模留下了一个有用的失败：已观测点拟合得好，并不保证跨稀疏切片的插值可靠。",
+    "tags": [
+      "Neural fields",
+      "SIREN",
+      "Spatial omics"
+    ],
+    "featured": false,
+    "role": "Exploratory research",
+    "roleZh": "探索性研究",
+    "ownership": "I reimplemented a coordinate-to-latent pipeline and compared models. SUICA, STINR and other reference methods belong to their original authors.",
+    "ownershipZh": "我重实现了坐标到 latent 的流程并比较模型。SUICA、STINR 等参考方法属于原作者。"
+  },
+  {
+    "id": "yolov7-robotics",
+    "title": "Bona: YOLO training and visual control",
+    "titleZh": "Bona：YOLO 训练与视觉控制",
+    "period": "Internship · 2022–2023",
+    "periodZh": "实习 · 2022–2023",
+    "summary": "YOLO-family training for household-object detection, plus a separate real-time visual-control prototype from the same internship. Server-side training was not robot deployment.",
+    "summaryZh": "同一段实习中的家居物体 YOLO 系列训练与另一个实时视觉控制原型。服务器训练不等于机器人端部署。",
+    "tags": [
+      "PyTorch",
+      "YOLO",
+      "Computer vision"
+    ],
+    "featured": false,
+    "role": "Internship",
+    "roleZh": "实习",
+    "ownership": "My work included model and training experiments. The detection task and the visual-control prototype are separate technical strands.",
+    "ownershipZh": "我的工作包含模型与训练实验。检测任务和视觉控制原型是两条分别核验的技术线。"
+  },
+  {
+    "id": "geospatial-fairness",
+    "title": "Bus Equity",
+    "titleZh": "Bus Equity：公交公平性分析",
+    "period": "BU Spark × LivableStreets Alliance",
+    "periodZh": "BU Spark × LivableStreets Alliance",
+    "summary": "A team analysis of transit equity in Greater Boston. My documented responsibility was regional differences, with participation across the wider analysis.",
+    "summaryZh": "团队分析大波士顿地区的公交公平性。我在文档中主责地区差异分析，并参与更广的分析流程。",
+    "tags": [
+      "Geospatial",
+      "Public data",
+      "Client analysis"
+    ],
+    "featured": false,
+    "role": "Team / client project",
+    "roleZh": "团队与客户项目",
+    "ownership": "I owned the regional-analysis question and presented another question for the team. The complete analysis was a team result.",
+    "ownershipZh": "我主责地区分析问题，并为团队代讲另一个问题。整体分析属于团队成果。"
+  },
+  {
+    "id": "data-days-for-good",
+    "title": "Data Days for Good",
+    "titleZh": "Data Days for Good",
+    "period": "BU × MassMutual",
+    "periodZh": "BU × MassMutual",
+    "summary": "A team R Shiny product built from survey data and free text. My reported focus was cleaning comments, sentiment groups, and frequent words.",
+    "summaryZh": "基于问卷和自由文本的团队 R Shiny 产品。我确认的个人重点是评论清洗、情绪分组与高频词。",
+    "tags": [
+      "R Shiny",
+      "Text analysis",
+      "Data product"
+    ],
+    "featured": false,
+    "role": "Team project",
+    "roleZh": "团队项目",
+    "ownership": "I contributed text analysis; the application was delivered by the team. The exact classifier and my share of reactive code remain unverified.",
+    "ownershipZh": "我参与文本分析，应用由团队共同交付。具体分类器和 reactive 代码分工尚未核实。"
+  }
+]

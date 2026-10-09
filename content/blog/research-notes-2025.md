@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Research Notes: Building Robust Spatial Omics Pipelines"
 date: "2025-09-12"
 excerpt: "Practical lessons from designing reproducible pipelines for spatial and single-cell transcriptomics research."

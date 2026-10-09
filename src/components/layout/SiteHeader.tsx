@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
+import { localizedPath } from "@/lib/locale";
 import { navLinks, siteProfile } from "@/content/site";
 
 const navLabelByHref: Record<string, { en: string; zh: string }> = {
@@ -15,27 +16,42 @@ const navLabelByHref: Record<string, { en: string; zh: string }> = {
   "/projects": { en: "Projects", zh: "项目" },
   "/blog": { en: "Blog", zh: "博客" },
   "/news": { en: "News", zh: "动态" },
-  "/contact": { en: "Contact", zh: "联系" }
+  "/contact": { en: "Contact", zh: "联系" },
 };
 
 export function SiteHeader() {
   const pathname = usePathname();
   const { lang } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const primaryName = lang === "zh" ? siteProfile.bilingualName : siteProfile.name;
-  const secondaryName = lang === "zh" ? siteProfile.name : siteProfile.bilingualName;
+  const primaryName =
+    lang === "zh" ? siteProfile.bilingualName : siteProfile.name;
+  const secondaryName =
+    lang === "zh" ? siteProfile.name : siteProfile.bilingualName;
 
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  const menuButtonLabel = lang === "zh" ? (mobileMenuOpen ? "收起" : "菜单") : mobileMenuOpen ? "Close" : "Menu";
+  const menuButtonLabel =
+    lang === "zh"
+      ? mobileMenuOpen
+        ? "收起"
+        : "菜单"
+      : mobileMenuOpen
+        ? "Close"
+        : "Menu";
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-[rgba(248,250,253,0.8)] shadow-[0_14px_30px_-24px_rgba(47,93,140,0.5)] backdrop-blur-lg supports-[backdrop-filter]:bg-[rgba(248,250,253,0.64)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 md:gap-8 md:px-8 md:py-3.5">
-        <Link href="/" className="inline-flex max-w-[62vw] flex-col leading-none sm:max-w-none" aria-label="Go to homepage">
-          <span className="truncate font-display text-xl text-accent md:text-2xl">{primaryName}</span>
+        <Link
+          href={localizedPath("/", lang)}
+          className="inline-flex max-w-[62vw] flex-col leading-none sm:max-w-none"
+          aria-label="Go to homepage"
+        >
+          <span className="truncate font-display text-xl text-accent md:text-2xl">
+            {primaryName}
+          </span>
           <span className="text-sm text-muted">{secondaryName}</span>
         </Link>
 
@@ -43,15 +59,23 @@ export function SiteHeader() {
           <nav aria-label="Main navigation">
             <ul className="flex items-center gap-5">
               {navLinks.map((link) => {
-                const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
-                const translated = navLabelByHref[link.href] ?? { en: link.label, zh: link.label };
+                const active =
+                  link.href === "/"
+                    ? localizedPath(pathname, "en") === "/"
+                    : localizedPath(pathname, "en").startsWith(link.href);
+                const translated = navLabelByHref[link.href] ?? {
+                  en: link.label,
+                  zh: link.label,
+                };
                 return (
                   <li key={link.href}>
                     <Link
-                      href={link.href}
+                      href={localizedPath(link.href, lang)}
                       className={clsx(
                         "text-base font-medium transition-colors",
-                        active ? "text-accent" : "text-ink/80 hover:text-accent"
+                        active
+                          ? "text-accent"
+                          : "text-ink/80 hover:text-accent",
                       )}
                     >
                       {lang === "zh" ? translated.zh : translated.en}
@@ -87,17 +111,23 @@ export function SiteHeader() {
         >
           <ul className="space-y-1 px-4 py-2.5 sm:px-6">
             {navLinks.map((link) => {
-              const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
-              const translated = navLabelByHref[link.href] ?? { en: link.label, zh: link.label };
+              const active =
+                link.href === "/"
+                  ? localizedPath(pathname, "en") === "/"
+                  : localizedPath(pathname, "en").startsWith(link.href);
+              const translated = navLabelByHref[link.href] ?? {
+                en: link.label,
+                zh: link.label,
+              };
               return (
                 <li key={link.href}>
                   <Link
-                    href={link.href}
+                    href={localizedPath(link.href, lang)}
                     className={clsx(
                       "block rounded-md border border-line px-3 py-2.5 text-base",
                       active
                         ? "border-highlight/60 bg-highlightSoft font-semibold text-accent"
-                        : "text-ink/80 hover:border-accent/35 hover:text-accent"
+                        : "text-ink/80 hover:border-accent/35 hover:text-accent",
                     )}
                   >
                     {lang === "zh" ? translated.zh : translated.en}

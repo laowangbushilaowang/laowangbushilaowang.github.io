@@ -5,8 +5,10 @@ export function SiteFooter() {
     <footer className="border-t border-line bg-[rgba(248,250,253,0.7)] py-6">
       <div className="mx-auto max-w-6xl px-5 text-sm text-muted md:px-8">
         <p>
-          <span className="font-semibold text-accent">© {new Date().getFullYear()} Bohan Wang.</span>{" "}
-          <LocalizedText en="Simple academic portfolio." zh="简洁学术主页。" />
+          <span className="font-semibold text-accent">
+            © {new Date().getFullYear()} Bohan Wang.
+          </span>{" "}
+          <LocalizedText en="" zh="" />
         </p>
       </div>
     </footer>
