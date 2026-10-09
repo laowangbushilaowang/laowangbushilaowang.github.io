@@ -5,8 +5,8 @@
     "titleZh": "基于文件的 Agent 项目管理",
     "period": "Personal practice",
     "periodZh": "个人实践",
-    "summary": "Project instructions, task handoffs, and observer records organized for work that continues across sessions.",
-    "summaryZh": "组织项目规则、任务交接和观察记录，让跨会话的工作能找到当前任务与相关材料。",
+    "summary": "File boundaries and reading paths help agents find current work, applicable rules, and the sources behind a result.",
+    "summaryZh": "用文件归属与读取路径定位当前任务、适用规则和结果来源，减少接手时的上下文歧义。",
     "tags": [
       "Agents",
       "Codex",

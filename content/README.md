@@ -23,3 +23,9 @@ Before publishing: edit each language independently, check claims and ownership 
 check bilingual factual agreement, and review the prose for generic or mechanical writing.
 Run `npm test`, `npm run validate:content`, `npm run typecheck`, `npm run lint`, `npm run build`, and `npm run validate:export`.
 Check reading and navigation at phone, tablet, and desktop sizes, including image zoom and language switching.
+
+Lead with the technical idea a reader can use and explain why it works in this project's setting.
+Conversation records verify decisions; they should not dictate a chronology of prompts and edits.
+Use a real incident when it helps explain the problem. Label hypothetical teaching examples and do not invent autobiographical scenes, dialogue, or emotions.
+Read relevant reference posts before each article and record the editorial lessons in the private source ledger.
+Before publishing, check that the opening and section headings expose the technical question, then remove process details that do not help answer it.
