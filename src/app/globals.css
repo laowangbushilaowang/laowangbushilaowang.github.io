@@ -347,7 +347,7 @@ html {
   margin: auto;
 }
 .image-dialog .native-size {
-  min-width: 1100px;
+  width: auto;
   max-width: none;
   max-height: none;
 }

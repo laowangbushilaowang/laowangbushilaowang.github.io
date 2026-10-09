@@ -2,7 +2,12 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 export function ArticleImages({ locale }: { locale: "en" | "zh" }) {
-  const [image, setImage] = useState<{ src: string; alt: string } | null>(null);
+  const [image, setImage] = useState<{
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+  } | null>(null);
   const [fullSize, setFullSize] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement | null>(null);
@@ -23,7 +28,12 @@ export function ArticleImages({ locale }: { locale: "en" | "zh" }) {
       button.append(img);
       button.onclick = () => {
         trigger.current = button;
-        setImage({ src: img.src, alt: img.alt });
+        setImage({
+          src: img.src,
+          alt: img.alt,
+          width: img.naturalWidth || 1100,
+          height: img.naturalHeight || 620,
+        });
       };
       buttons.push(button);
     });
@@ -73,8 +83,18 @@ export function ArticleImages({ locale }: { locale: "en" | "zh" }) {
               className={fullSize ? "native-size" : undefined}
               src={image.src}
               alt={image.alt}
-              width={1100}
-              height={620}
+              width={image.width}
+              height={image.height}
+              onLoad={({ currentTarget }) => {
+                const { src, naturalWidth: width, naturalHeight: height } = currentTarget;
+                if (width && height) {
+                  setImage((current) =>
+                    current && current.src === src && (current.width !== width || current.height !== height)
+                      ? { ...current, width, height }
+                      : current,
+                  );
+                }
+              }}
               unoptimized
             />
           </div>
