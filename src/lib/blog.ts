@@ -33,5 +33,7 @@ export function getAllPosts(locale: Locale = "en"): BlogPostSummary[] {
     .filter((e) => e.isDirectory())
     .map((e) => getPostBySlug(e.name, locale))
     .filter((p): p is BlogPost => p !== null)
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort((a, b) =>
+      (b.publishedAt ?? b.date).localeCompare(a.publishedAt ?? a.date),
+    );
 }

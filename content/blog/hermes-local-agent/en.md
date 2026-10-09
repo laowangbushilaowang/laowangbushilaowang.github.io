@@ -3,6 +3,7 @@ title: "Routing inference for a local agent"
 excerpt: "Connecting Qwen to Hermes exposed a resource allocation problem: main tasks and small auxiliary requests can share both a reasoning policy and a busy inference slot."
 language: "en"
 date: "2026-10-09"
+publishedAt: "2026-10-09T12:03:17Z"
 updated: "2026-10-09"
 project: "hermes-local-agent"
 tags: ["Hermes", "Qwen", "llama.cpp", "Agents"]

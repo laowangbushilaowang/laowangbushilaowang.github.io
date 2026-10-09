@@ -2,6 +2,7 @@ import type { Locale } from "@/lib/locale";
 export type BlogFrontmatter = {
   title: string;
   date: string;
+  publishedAt?: string;
   updated: string;
   excerpt: string;
   language: Locale;

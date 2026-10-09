@@ -58,6 +58,12 @@ export function validateContent(root) {
         data.updated < data.date
       )
         errors.push(`${where}: invalid dates`);
+      if (data.publishedAt !== undefined &&
+          (typeof data.publishedAt !== "string" ||
+           !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(data.publishedAt) ||
+           !Number.isFinite(Date.parse(data.publishedAt)) ||
+           data.publishedAt.slice(0, 10) !== data.date))
+        errors.push(`${where}: invalid publishedAt`);
       if (data.cover) {
         asset(data.cover, where);
         if (!data.coverAlt) errors.push(`${where}: missing coverAlt`);
@@ -71,7 +77,7 @@ export function validateContent(root) {
       published.add(entry.name);
     });
     if (posts[0] && posts[1])
-      for (const key of ["date", "updated", "project", "cover"])
+      for (const key of ["date", "publishedAt", "updated", "project", "cover"])
         if (posts[0].data[key] !== posts[1].data[key])
           errors.push(`${entry.name}: inconsistent ${key}`);
   }

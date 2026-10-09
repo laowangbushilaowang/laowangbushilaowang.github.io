@@ -1,6 +1,7 @@
 ---
 title: 异步工作台的取消与状态回读
 date: '2026-10-09'
+publishedAt: "2026-10-09T12:35:31Z"
 updated: '2026-10-09'
 language: zh
 translationKey: local-workbench-state

@@ -164,6 +164,44 @@
     ]
   },
   {
+    "id": "private-iphone-workbench",
+    "title": "Private iPhone workbench",
+    "titleZh": "私有 iPhone 管理端",
+    "period": "Personal tool · 2026",
+    "periodZh": "个人工具 · 2026",
+    "summary": "A SwiftUI front end for a private workbench, with native task views and a remote browser controlled through a persistent SSH command channel.",
+    "summaryZh": "私有工作台的 SwiftUI 移动入口：原生任务页面与通过持续 SSH 命令通道操作的远端浏览器。",
+    "tags": [
+      "SwiftUI",
+      "SSH",
+      "Remote browser"
+    ],
+    "featured": false,
+    "role": "Personal tool, developed with Codex",
+    "roleZh": "通过 Codex 开发的个人工具",
+    "ownership": "I set the mobile workflow and touch-feedback requirements, reported problems on my phone, and chose simulator debugging for later changes. Codex helped implement and check the app. SwiftNIO SSH and Chrome are third-party components.",
+    "ownershipZh": "我提出移动流程与触控反馈要求，在手机使用中报告问题，并选择后续用模拟器调试；Codex 协助实现和检查。SwiftNIO SSH 与 Chrome 是第三方组件。",
+    "article": "iphone-remote-browser",
+    "details": [
+      "Native screens handle records, task progress, and parameters. The remote view forwards pointer input to the original website and displays captured images; it is a request-and-screenshot loop rather than a continuous video stream.",
+      "The touch path reuses a connection, coalesces movement to the latest position, retains release events, and maps image-local coordinates after zoom. Browser parking preserves the profile separately from the lifetime of the phone view.",
+      "One historical device diagnostic measured 1011 ms for a fresh-path frame, 96 ms to open the persistent path, and 2459 ms for a reused-path frame. These sequential single observations do not establish a speedup.",
+      "Version 1.6 was updated in the simulator in the reviewed records; the physical phone retained an earlier build. Temporary gateway and status checks do not validate current availability, touch responsiveness, or paid workflows."
+    ],
+    "detailsZh": [
+      "原生页面展示记录、任务进度与参数。远端画面向原网站转发指针并显示截图，是请求与取帧循环，非连续视频。",
+      "触控路径复用连接、只保留最新移动位置但仍发送释放事件，并映射缩放后的图片局部坐标。浏览器停放保留 profile，与手机页面生命周期分开。",
+      "历史真机一次诊断：新连接路径取帧1011ms、持续路径建立96ms、复用路径取帧2459ms。顺序各一次，不能据此声称提速。",
+      "本次核对的记录中，1.6只更新到模拟器，实体手机保持此前版本。临时网关与状态检查不证明当前在线、真机触控体验或收费流程成功。"
+    ],
+    "links": [
+      {
+        "label": "SwiftNIO SSH · upstream library",
+        "href": "https://github.com/apple/swift-nio-ssh"
+      }
+    ]
+  },
+  {
     "id": "bu-thesis",
     "title": "Image Reconstruction Through Multiple 1D Approximations",
     "titleZh": "多重一维近似图像重建",

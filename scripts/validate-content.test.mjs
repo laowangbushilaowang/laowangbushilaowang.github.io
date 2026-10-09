@@ -64,3 +64,18 @@ test("rejects divergent shared facts in a translation", (t) => {
   );
   assert.match(validateContent(root).join(" "), /inconsistent updated/);
 });
+
+test("publication time is optional, valid, and shared by translations", (t) => {
+  const root = fixture(t);
+  const en = path.join(root, "content/blog/note/en.md");
+  const zh = path.join(root, "content/blog/note/zh.md");
+  const stamp = 'publishedAt: "2026-10-09T13:00:43Z"\n';
+  for (const file of [en, zh]) {
+    fs.writeFileSync(file, fs.readFileSync(file, "utf8").replace("---\n", "---\n" + stamp));
+  }
+  assert.deepEqual(validateContent(root), []);
+  fs.writeFileSync(zh, fs.readFileSync(zh, "utf8").replace("13:00:43", "13:01:43"));
+  assert.match(validateContent(root).join(" "), /inconsistent publishedAt/);
+  fs.writeFileSync(en, fs.readFileSync(en, "utf8").replace("2026-10-09T13:00:43Z", "invalid"));
+  assert.match(validateContent(root).join(" "), /invalid publishedAt/);
+});

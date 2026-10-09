@@ -29,3 +29,5 @@ Conversation records verify decisions; they should not dictate a chronology of p
 Use a real incident when it helps explain the problem. Label hypothetical teaching examples and do not invent autobiographical scenes, dialogue, or emotions.
 Read relevant reference posts before each article and record the editorial lessons in the private source ledger.
 Before publishing, check that the opening and section headings expose the technical question, then remove process details that do not help answer it.
+
+同日发布多篇时可填写 `publishedAt: "2026-10-09T13:00:43Z"`（UTC ISO时间，与date同一天，中英一致）。列表优先按publishedAt排序；未填沿用date，阅读页仍显示日期。发布排序时间应来自实际发布记录或此次编辑发布时刻，不以文件名、文件修改时间推断。

@@ -3,6 +3,7 @@ title: "本地 Agent 的推理路由"
 excerpt: "把 Qwen 接到 Hermes 后，怎样分配主任务与辅助请求的推理资源，以及工具调用、上下文和代理链路为什么需要分别检查。"
 language: "zh"
 date: "2026-10-09"
+publishedAt: "2026-10-09T12:03:17Z"
 updated: "2026-10-09"
 project: "hermes-local-agent"
 tags: ["Hermes", "Qwen", "llama.cpp", "Agents"]
