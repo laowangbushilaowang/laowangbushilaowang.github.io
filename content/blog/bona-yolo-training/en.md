@@ -35,20 +35,39 @@ Image → Backbone: extract features
 
 A bottleneck is an internal component, not another name for the neck. Lightweight convolutions change computation and representation; attention reweights features; scale fusion changes how information at different resolutions is combined. A head replacement can also affect matching, losses and export compatibility.
 
-Today I would record the location of each change, the error it is meant to address, and its comparison configuration. Fewer parameters do not guarantee faster inference. A higher average score can also hide a class getting worse.
+#### Channel, spatial and combined attention
 
-#### Comparing the ablations
+I remember comparing channel attention, spatial attention and a combination of the two. If I designed that experiment again, I would use SE and CBAM to isolate what each change does.
 
-This table organizes the changes I remember. I have not recovered the original Word document, so I have left out invented baseline scores. The five-point improvement is my recollection.
+**Channel attention weights feature responses.** These channels are learned features, not RGB colors. [SE](https://arxiv.org/abs/1709.01507) globally averages each channel, passes the resulting vector through a small network, then multiplies the predicted weights into the original features. With 256 channels and reduction ratio 16, the intermediate vector has 16 entries and the output has 256 weights. The feature shape stays unchanged.
 
-| Comparison | Change | Question or remembered result |
+**Spatial attention weights locations.** CBAM's spatial branch takes the mean and maximum across channels, concatenates the resulting maps, and applies a 7×7 convolution and sigmoid to produce spatial weights. Background suppression might help, but a weak cable response could also be suppressed. [Author implementation](https://github.com/Jongchan/attention-module/blob/master/MODELS/cbam.py)
+
+**CBAM applies channel attention followed by spatial attention.** Its channel branch combines global average and maximum pooling through a shared small network, differing from SE's average-only aggregation. The combination reweights features twice before prediction. [CBAM paper](https://arxiv.org/abs/1807.06521)
+
+```text
+Fused features F
+  → Channel weights: F₁ = F × M_channel(F)
+  → Spatial weights: F₂ = F₁ × M_spatial(F₁)
+  → Detection head: predict classes and boxes
+```
+
+#### Where I would insert it in YOLOv7
+
+I would start at one fused feature output in the neck, keeping the input and output shape unchanged and leaving the loss alone. That gives a comparison of channel weighting, spatial weighting and their combination.
+
+| Variant | Change | What I would inspect |
 | --- | --- | --- |
-| Original YOLO baseline | Original structure and loss | Common reference; I no longer remember the absolute score |
-| Lightweight modules | Parts of the backbone / bottleneck | Does reduced computation cost more misses on small objects such as cables? No recovered numbers |
-| Attention | Feature weighting | I tried replacements for difficult backgrounds and occlusion; exact modules and scores are missing |
-| Loss-only replacement | Considered Focal and Varifocal | Remembered gain of about 5 percentage points in `mAP@0.5`; winning loss unknown |
+| Baseline | Original YOLOv7 | Misses and false positives for shoes, cables and furniture legs |
+| + SE | Channel weighting at the chosen location | Fewer background false positives, but possibly weaker cable responses |
+| + Spatial | CBAM spatial branch only | Recall under occlusion and false positives on reflective floors |
+| + CBAM | Channel then spatial at the same location | Whether the combination beats either branch and justifies its latency |
 
-Today I would test each change independently before combining the useful ones, keeping the validation set, input size and training budget fixed. For a lightweight model I would record single-image inference time alongside accuracy. Parameter count alone would not answer the deployment question.
+First I would change one location. If it helped, I would compare a late backbone location with a neck fusion output. Standard YOLOv7 predicts at strides 8, 16 and 32: a 640×640 input produces feature maps of 80×80, 40×40 and 20×20. The higher-resolution branch deserves attention for cables, but also costs more computation. Adding a module at every scale would not automatically be an improvement. [Original configuration](https://github.com/WongKinYiu/yolov7/blob/main/cfg/training/yolov7.yaml)
+
+Editing YAML is only part of integration. The model parser must recognize the custom module and pass its channel count correctly. Inserting layers also requires checking downstream feature references. After a forward pass works, I would check gradients, training and ONNX / TensorRT export.
+
+I would not assume that the most elaborate module wins. One possible outcome is fewer shoe false positives but more missed cables, leaving average mAP almost unchanged. Another is slightly better accuracy at a latency cost that the real-time task cannot afford. I would compare per-class AP, recall, false positives at the same threshold and single-image latency, then combine useful structural changes with a loss change. My remembered five-point gain from a loss-only replacement does not establish the outcome of these attention comparisons.
 
 ### Focal and Varifocal address different questions
 
