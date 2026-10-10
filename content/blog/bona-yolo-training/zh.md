@@ -240,11 +240,13 @@ PID 在 `control.py` 中有实际实现。横向用了 P、I、D，纵向主要�
 
 P 根据当前偏差调整，I 累积历史偏差，D 看偏差的变化。检测框抖动、帧间隔不稳、动作过大，都可能让最终表现变差，所以要把位置测量和控制分开检查。漏掉一帧后继续预测、等待还是停止动作，也需要明确。
 
-#### 一个相关例子：无人机的 YOLO 与 Kalman
+#### 几年后，在无人机论文里看到相近的思路
 
-我还记得看过一篇四川或重庆高校的无人机论文，思路也是检测后接位置估计，不过已经记不清题目。这次回看资料，找到四川大学参与的 [Fast UAV Object-Searching in Large-Scale and Complex Environments](https://researchers.westernsydney.edu.au/en/publications/fast-uav-object-searching-in-large-scale-and-complex-environments/)，发表在 2025 年的 *IEEE Transactions on Cybernetics*。它把 YOLO 与 Kalman 结合，用于杂乱、容易遮挡环境中的目标位置估计，再服务于无人机搜索。
+2022—2023 年做这个原型时，我已经在考虑把检测、连续的位置估计和控制接起来。原因很具体：YOLO 找到了目标，但框会抖，目标会移动，检测返回的位置也可能已经过时。只把一帧识别准确，还不够完成后面的动作。
 
-它适合用来理解这里的分工：检测告诉系统“这一帧看到了什么”，位置估计则利用前后帧的信息处理运动和遮挡。无人机还要规划搜索路径，我的原型主要处理屏幕中的目标位置与控制，两者的完整任务并不相同。这篇是后来找到的相关阅读，不是我当年记得的那篇；摘要也没有确认 PID。
+几年后，我看到四川大学参与的 [Fast UAV Object-Searching in Large-Scale and Complex Environments](https://researchers.westernsydney.edu.au/en/publications/fast-uav-object-searching-in-large-scale-and-complex-environments/)，发表在 2025 年的 *IEEE Transactions on Cybernetics*。它把 YOLO 与 Kalman 结合，用于杂乱、容易遮挡环境中的目标位置估计，再服务于无人机搜索。让我有感触的是，我几年前做游戏原型时，就已经在想这条链路；后来看到相近的思路被放进无人机场景，做成了正式研究。
+
+我的出发点是屏幕里的目标怎样接到控制，论文还展开了搜索策略、视点生成和路径规划。这也让我看到，从一个能用的原型到一项完整研究，还要把问题定义、方法和实验往前推进多少。当时的尝试规模不大，但那个“识别之后怎么办”的问题，确实值得继续做下去。
 
 ### 4. 看运行结果，再决定补什么
 

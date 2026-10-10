@@ -240,11 +240,13 @@ PID is present in `control.py`. Horizontal control uses P, I and D; vertical con
 
 P responds to the current error, I accumulates error, and D responds to its change. Noisy boxes, uneven frame intervals and oversized actions can all affect the result. A missing detection also needs an explicit policy: predict briefly, wait or stop.
 
-#### Related reading: YOLO and Kalman for UAV search
+#### Seeing a related idea in a later UAV paper
 
-I remember reading a UAV paper associated with a university in Sichuan or Chongqing, but cannot recover its title. While revisiting the topic I found [Fast UAV Object-Searching in Large-Scale and Complex Environments](https://researchers.westernsydney.edu.au/en/publications/fast-uav-object-searching-in-large-scale-and-complex-environments/), a 2025 *IEEE Transactions on Cybernetics* paper involving Sichuan University. It combines YOLO and Kalman filtering for object-position estimation in cluttered, occlusion-prone environments, then uses that information for UAV search.
+While building this prototype in 2022–2023, I was already thinking about connecting detection, position estimation across frames and control. YOLO could find a target, but boxes could jitter, targets could move, and a returned position could already be outdated. An accurate detection in one frame did not settle how to act on it.
 
-It illustrates the division between detecting what is visible in a frame and estimating position using information across frames. UAV search additionally needs path planning; my prototype mainly connected screen positions to control. This is related reading found later, not the paper I remember from the project. Its abstract does not establish a PID component.
+Years later I came across [Fast UAV Object-Searching in Large-Scale and Complex Environments](https://researchers.westernsydney.edu.au/en/publications/fast-uav-object-searching-in-large-scale-and-complex-environments/), a 2025 *IEEE Transactions on Cybernetics* paper involving Sichuan University. It combines YOLO and Kalman filtering for object-position estimation in cluttered, occlusion-prone environments, then uses that information for UAV search. What caught my attention was the connection to the chain I had considered years earlier in a game prototype, now developed in a different application as a published study.
+
+My starting point was connecting screen positions to control. The paper also develops search strategies, viewpoint generation and path planning. Reading it made the distance between a working prototype and a complete research study clearer: problem definition, method development and experiments all need further work. My own attempt was small, but the question of what happens after detection was worth pursuing.
 
 ### 4. Use the result to decide what to change
 
