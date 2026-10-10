@@ -274,8 +274,8 @@
     "titleZh": "Bona：YOLO 训练与视觉控制",
     "period": "Internship · 2022–2023",
     "periodZh": "实习 · 2022–2023",
-    "summary": "Household-object detection experiments on company data: YOLO modules, Focal Loss, ablations and training budgets. A separate visual-control prototype connected detections to movement.",
-    "summaryZh": "围绕公司家居数据做 YOLO 模型、Focal Loss 与消融训练；同段实习还尝试了检测接到实时控制的原型。",
+    "summary": "YOLO experiments on a 2080 Ti, a self-collected game dataset and real-time control, followed by PyTorch adaptation and YOLOv5 training on Ascend.",
+    "summaryZh": "2080 Ti 上的 YOLO 消融训练、自采游戏数据与实时控制，以及华为比赛中的昇腾适配和 YOLOv5 训练。",
     "tags": [
       "PyTorch",
       "YOLO",
@@ -284,19 +284,19 @@
     "featured": false,
     "role": "Internship",
     "roleZh": "实习",
-    "ownership": "I worked on model structure, losses and training experiments using existing company data, on Huawei servers. The control prototype built on YOLOv7 and team-written code.",
-    "ownershipZh": "我围绕公司已有数据做结构、损失和训练实验，在华为服务器训练；控制原型基于 YOLOv7 与团队代码。",
+    "ownership": "I worked on company-data training experiments, collected and labeled game data, compared capture methods and used ONNX/TensorRT. The prototype built on YOLOv7 and team code.",
+    "ownershipZh": "我做公司数据上的训练实验，自采和标注游戏数据，比较截图方式并使用 ONNX/TensorRT；原型基于 YOLOv7 与团队代码。",
     "article": "bona-yolo-training",
     "cover": "/images/bona/household-input.webp",
     "details": [
-      "Training and evaluation for a proposed robot-vacuum vision system; no deployment on robot hardware.",
-      "Module substitutions and Focal Loss experiments, with a later reflection on short-budget screening before full training.",
-      "A separate screen-detection prototype used TensorRT inference, target selection and asymmetric PID/P control."
+      "Structure/loss ablations and training-budget choices on a single 2080 Ti; no robot-hardware deployment.",
+      "An enemy/teammate dataset, model-assisted labeling and further capture, plus capture and inference latency work.",
+      "A separate real-time control prototype; later Huawei competition training on Ascend via a YOLOv5 template after compatibility problems."
     ],
     "detailsZh": [
-      "面向扫地机器人视觉识别做训练与评估，未部署到机器人硬件。",
-      "尝试结构模块与 Focal Loss，回顾完整训练成本及短预算筛选的方法。",
-      "另一个屏幕检测原型连接 TensorRT 推理、目标选择与横向 PID / 纵向 P 控制。"
+      "单张 2080 Ti 上的结构/损失消融与训练预算取舍，未部署机器人硬件。",
+      "敌人/队友标注、自采与模型预标注循环，以及截图和推理延迟的比较。",
+      "实时控制原型；后参加华为比赛，昇腾适配遇兼容问题，改用 YOLOv5 模板训练。"
     ]
   },
   {
