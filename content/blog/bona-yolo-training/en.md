@@ -25,7 +25,7 @@ A low camera angle brings shoes, cables, occlusion and reflections into the same
 
 ### Start with the data: more labels did not guarantee better detection
 
-The loss experiments started with the data. I remember some classes performing well while less-represented classes lagged, and suspecting overfitting. My old presentation preserves a screenshot of an analysis document with these counts:
+The loss experiments started with the data. I remember some classes performing well while less-represented classes lagged, and suspecting overfitting. The class annotation counts were:
 
 | Class | Training | Validation | Test |
 | --- | ---: | ---: | ---: |
@@ -36,7 +36,7 @@ The loss experiments started with the data. I remember some classes performing w
 
 These are class annotation counts, not counts of independent images; one image can contain several objects. Training leg annotations outnumbered cables by roughly 4.4 to one. Shoes and paper balls each had more than twice the cable annotations.
 
-The note also records a less intuitive observation: **legs had the most annotations but poorer detection performance.** The analysis suspected noisy labels and connected them to overfitting. Quantity, consistency and visual coverage needed separate attention. The note proposed more data, label review and stronger regularization.
+But quantity was not the whole story. **legs had the most annotations but poorer detection performance.** I suspected label noise in that class and considered overfitting as a possible explanation. Quantity, consistency and visual coverage needed separate attention. More data, label review and stronger regularization were therefore worth considering.
 
 That was the motivation for changing the loss. Class weighting adjusts each class's contribution; Focal reduces the influence of easy predictions. Neither repairs incorrect labels. A mislabeled example may look difficult to the model and receive more weight.
 
@@ -159,7 +159,7 @@ Partial freezing followed by unfreezing is one fine-tuning route, with the freez
 
 If images share a capture segment or scene, keep that group within one fold. Detection images may contain multiple classes; fold assignment needs to consider instance counts and class presence, rather than assign each image one arbitrary label for ordinary stratification.
 
-On one 2080 Ti, cross-validation costs additional training runs. Screening on a fixed validation set first and checking a few finalists across folds is more practical. These are additional training and evaluation options for the data problem; the class notes and loss experiments above describe my historical work.
+On one 2080 Ti, cross-validation costs additional training runs. Screening on a fixed validation set first and checking a few finalists across folds is more practical. Each method addresses a different issue; the choice depends on the data and the training budget.
 
 ### The Ascend competition: get training running first
 
