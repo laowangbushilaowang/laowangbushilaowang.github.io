@@ -324,5 +324,43 @@
     "roleZh": "团队项目",
     "ownership": "I contributed text analysis; the application was delivered by the team. The exact classifier and my share of reactive code remain unverified.",
     "ownershipZh": "我参与文本分析，应用由团队共同交付。具体分类器和 reactive 代码分工尚未核实。"
+  },
+  {
+    "id": "sneaker-trading-platform",
+    "title": "Sneaker trading prototype",
+    "titleZh": "球鞋交易网站",
+    "period": "2021 · Database coursework",
+    "periodZh": "2021 · 数据库课程项目",
+    "summary": "A Django coursework prototype connecting a scraped sneaker catalog, MySQL, inventory and simulated orders.",
+    "summaryZh": "结合球鞋兴趣的数据库课程项目：采集商品目录，用 MySQL 和 Django 连接搜索、库存与模拟订单。",
+    "tags": [
+      "Python",
+      "Django",
+      "MySQL",
+      "Selenium"
+    ],
+    "featured": false,
+    "role": "Course project developer",
+    "roleZh": "课程项目开发",
+    "ownership": "I built the course application; its shop layout uses existing Bootstrap templates.",
+    "ownershipZh": "我开发课程应用；商店界面沿用现成 Bootstrap 模板。",
+    "cover": "/images/sneaker/catalog-reconstruction.webp",
+    "details": [
+      "The saved catalog contains 7,084 product records; historical cumulative collection counts are separate.",
+      "Available inventory is linked to products and sellers; orders retain sold-item relationships.",
+      "Illustrations reconstruct original templates. The old purchase flow has not been revalidated and has no payment integration."
+    ],
+    "detailsZh": [
+      "保存的商品目录为 7,084 条；与历史累计采集口径分开。",
+      "在售库存关联鞋款与卖家，订单保留已售商品关系。",
+      "配图为原模板重制；旧购买流程未重新跑通，没有接入支付。"
+    ],
+    "links": [
+      {
+        "label": "Gitee source",
+        "href": "https://gitee.com/LaoWangB/dbws-project"
+      }
+    ],
+    "article": "sneaker-trading-platform"
   }
 ]
