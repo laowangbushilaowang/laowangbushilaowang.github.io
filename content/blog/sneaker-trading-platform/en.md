@@ -1,94 +1,113 @@
 ---
-title: "A sneaker site: scraping, database design, and a simulated purchase"
+title: "Building a sneaker trading site on my own"
 date: "2026-10-10"
 updated: "2026-10-10"
 language: en
 project: sneaker-trading-platform
-excerpt: "A database course project built around my interest in sneakers: collecting a catalog, separating products from inventory, and connecting orders to a Django interface."
+excerpt: "A database course project: writing a browser-driven scraper, designing MySQL tables, using Django’s ORM, and adapting shop templates one page at a time."
 cover: /images/sneaker/catalog-reconstruction.webp
 coverAlt: "Sneaker catalog reconstructed with the original project templates and stored product records"
 tags: [Django, SQL, Data Engineering, Web]
 draft: false
 ---
 
-For a database course project in 2021, I chose something I was interested in: sneakers. The idea was easy to describe. Buyers find shoes, sellers list them, and a purchase becomes an order. Building it meant deciding how each action mapped to stored data.
+For a database course project in 2021, I built a sneaker trading site. I chose sneakers because I liked them. The website gave the database a purpose: people could find shoes, list stock, and look up an order after purchasing.
 
-I used Python to collect product information, MySQL to store it, and Django for search, brand filters, buyer and seller accounts, inventory, and order pages. This was a coursework trading prototype. Purchasing simulated changes to inventory and orders; it did not process payments.
+I worked on it alone. I wrote the scraper and designed the database, then used Django for the backend. I did not know how to build a frontend from scratch, so I started with an existing shop template and changed it a little at a time. As I remember it, most of the application was in place by the end; payment integration was the remaining piece.
 
-The useful parts of this retrospective are how a scraped catalog became searchable data, and why a shoe model needed to be separate from an item offered by a seller. The purchase handler then shows what I would change if I built it again.
+The difficulty was connecting the parts. Scraped products had to become database records. Those records had to appear on pages. A button had to change the right inventory and leave an order behind. This post follows that path.
 
-*The cover is a reconstruction using the repository’s Django templates, Bootstrap styles, and stored catalog. It is not a screenshot from 2021. Product photographs are source-site assets retained in the project.*
+*The illustrations reconstruct the original templates and styles with stored product records. They are not screenshots from 2021. Product photographs come from source-site assets retained in the project.*
 
-## Turning a product page into a searchable catalog
+## Writing a scraper that operated a browser
 
-The crawler targeted the Sneaker Con catalog. Its page loaded more products through a `Load More` button. Selenium handled that interaction; BeautifulSoup parsed the resulting HTML into names, prices, brands, product codes, and image links. The output was a CSV file.
+The catalog came from Sneaker Con. I extracted product names, prices, brands, product codes, and image links.
 
-```text
-Source catalog page
-  → Selenium loads more products
-  → BeautifulSoup extracts fields
-  → CSV and image files
-  → MySQL product table
-  → Django search and display
-```
+I used Selenium to simulate browser interaction. The saved script opens Edge, waits for a `Load More` button, and clicks it to load additional products. It then takes the browser’s HTML and uses BeautifulSoup to locate product cards and extract their fields into a CSV.
 
-The browser dealt with page interaction, while the parser extracted data from the content it received. An import script inserted records, downloaded available photographs, and assigned a placeholder where an image was unavailable. The website could then read its own catalog without contacting the source on every page request.
-
-Several details were rough. The saved crawler left missing prices and brands empty, and its image selector depended on a particular `alt` value. A price-filling expression in the import script did not retain its returned result. Producing a table was only the start: each missing field could affect what the site displayed. If I repeated the collection today, I would inspect a few pages and measure missingness before scaling it up.
-
-My résumé described 20,000+ collected listings. The product CSV retained in this repository contains **7,084 records with distinct names**. The available files do not establish how the cumulative collection relates to this saved selection. This post uses the preserved version rather than treating those counts as interchangeable.
-
-### Keeping the same search when changing pages
-
-Once the catalog was stored, pagination had to preserve what the user was looking for. Searching a name, selecting a brand, and clicking next should continue through the same result set.
-
-The directory view applies a case-insensitive name query and a brand filter, then uses Django’s paginator to show 12 records per page. The template carries those conditions into subsequent links. An illustrative URL is:
+The division of work was straightforward: let the browser load the content, then parse the resulting page. The collection path was:
 
 ```text
-/sneaker/library?searchkey=Jordan&brand=Jordan&page=2
+Sneaker Con catalog
+  → Selenium opens the browser and clicks Load More
+  → BeautifulSoup reads product cards
+  → CSV and downloaded photographs
+  → Import into MySQL
+  → Query and display on my own site
 ```
 
-Changing `page` moves within the selected results. Dropping the other parameters would send the reader back to the full catalog. This small interaction connects a database query to the user’s ongoing task.
+Writing the scraper meant identifying the page structure myself: where each card began, which tags held its name and price, and what happened when a field was missing. The saved version leaves missing prices and brands empty and has a fairly rough image selector. Today I would compare a sample of extracted rows against the page before expanding the collection.
 
-The layout came from an existing Bootstrap shop template. I connected products, brands, and pagination to it; the template’s visual design was not my original work.
+Collection and display were separate. The scraper produced files, an import script populated the database, and the site queried its own product table. Opening the catalog did not require contacting the source site again. The retained repository contains 7,084 product records.
 
-## Separating a shoe model from an item for sale
+## Designing products, inventory, and orders separately
 
-A product row describes the shoe. It does not tell us who can sell one. Multiple sellers can offer the same model, and each can have several inventory items. Putting a seller directly on the product row would make those relationships awkward.
+This was the central database problem. Several pages showed “shoes,” but the word referred to different things depending on the action.
 
-I separated them into tables. The original names were straightforward:
+Suppose two sellers offered the same Jordan model. Its name, brand, and photograph could be shared. Their inventory needed separate records. Selling one item should leave the other seller’s stock available and keep the shoe model in the catalog.
 
-| Table | Purpose |
+I split those responsibilities across tables:
+
+| Table | Role in the application |
 | --- | --- |
 | `sneaker` | Product name, brand, price, and image |
 | `seller` / `buyer` | Seller and buyer accounts |
-| `inventory` | An available item linked to a shoe and seller |
-| `sold` | A sold record retaining the original inventory ID and shoe relationship |
+| `inventory` | An available item linked to a product and seller |
+| `sold` | A sold record retaining the inventory ID and product relationship |
 | `order` | Buyer, seller, sold record, date, and optional customization |
 | `customization` | Demonstration color options |
 
-As a simplified example, two sellers offering the same model can share its product description while holding separate inventory rows. Selling one row should neither remove the model from the catalog nor affect the other seller’s stock. This illustrates the schema; it is not a claim about a real transaction.
+Listing an item illustrates the design. A seller selects an existing product, and the application creates an inventory row connected to that seller. It does not duplicate the name and photograph. The detail page counts inventory rows linked to the product to display availability.
 
-The detail view counts inventory rows for that model. Listing an item adds an inventory row linked to an existing product instead of copying the product description.
+```text
+Product sneaker ← Available inventory → Seller
 
-![Reconstructed original detail template showing product information and inventory separately](/images/sneaker/detail-reconstruction.webp "Rendered from the original template and a stored product record. Inventory: 3 is an illustrative value and Buy is disabled; this does not verify stock or a purchase.")
+Buyer → Order → Sold record → Product sneaker
+           ├──→ Seller
+           └──→ Customization (optional)
+```
 
-The schema also reveals what the prototype left out. Inventory had no size, condition, or seller-specific asking price; price belonged to the product table. It demonstrated the links among products, sellers, and stock, but could not fully describe a secondhand sneaker marketplace. In a new design, those attributes would belong to the individual listing.
+*Relationship sketch based on the saved models. Available inventory and sold records occupy separate tables.*
 
-## Keeping an order after inventory changes
+![Reconstructed original detail template showing product information and inventory separately](/images/sneaker/detail-reconstruction.webp "Original-template reconstruction. Inventory: 3 is illustrative and Buy is disabled; the image explains the distinction between a product and its stock.")
 
-Purchasing removes an available item. An order must still explain what was bought, from whom, when, and with which customization.
+The purchase handler moves an available item into a sold record and connects an order to it. Removing inventory from sale therefore does not remove the information needed to find the purchased shoe, buyer, and seller later. That was the purpose of the `sold` table.
 
-The old implementation used `sold` to preserve that relationship. An order connects the buyer and seller and points to a sold record, which identifies the shoe. The available inventory row is subsequently deleted. Order queries follow these links to recover the product name and customization color for display.
+The coursework model simplified several things. Inventory had no size, condition, or seller-specific asking price; price belonged to the product table. In a new version, I would attach those attributes to the individual listing. Separating a shoe model from an item for sale makes room for that distinction.
 
-Removing an item from sale and retaining its history serve different purposes. Deleting inventory without preserving its relationships leaves an order unable to identify the purchased shoe. Leaving it available would keep showing it for sale.
+## Using Django’s ORM to connect tables and pages
 
-**Looking at the purchase handler today, I would first fix the write order and consistency.** It creates an order before creating the sold record that the order references, then deletes inventory. Those writes are not grouped in a database transaction. The model’s foreign key points to `sold`, so insertion order must respect that dependency. This review inspected the source; it did not validate the old purchase flow end to end.
+I mainly used Django’s built-in ORM: its interface for working with database records as Python objects. Models lived in `models.py`, request handling in `views.py`, and the results were passed to templates.
 
-A hypothetical case makes the next issue easier to see. Two buyers both see the last available item. Both requests read “in stock.” What prevents them from purchasing the same inventory row? The number on the page cannot decide that. The backend needs to verify availability, create the sale and order, and update inventory within a single transaction. A repeated request must not produce a second order either.
+I used `get()` for a single product, `filter()` for matching products or inventory, `create()` for new records, and `count()` for quantities. These two lines come from the original search and detail handlers:
 
-If I rebuilt the prototype, I would retain the listing and mark it sold, then store the product description and agreed price on the order. Later edits to a listing should not rewrite what an earlier buyer purchased. Authentication, seller authorization, and the representation of prices would also need revision; hiding a button does not enforce a backend rule.
+```python
+s = sneaker.objects.filter(name__icontains=key)
+inv = inventory.objects.filter(sneakerid=id).count()
+```
 
-The project connected a crawler, a database, and a web interface. The part I would reuse is starting with the objects involved in each action: browsing reads products, selling creates available inventory, purchasing changes state, and orders preserve past information. I would check those actions against the data model before adding more interface features.
+The first searches product names; the second counts inventory for a product. Django translates those calls into database queries. The view handles the search term or product ID and decides which results the page needs. The [Django query documentation](https://docs.djangoproject.com/en/5.2/topics/db/queries/) explains these interfaces.
 
-Source: [dbws-project](https://gitee.com/LaoWangB/dbws-project). Its commits are concentrated in late May and early June 2021. The coursework context comes from my recollection; the illustrations reconstruct the surviving templates.
+The ORM saved me from assembling SQL in every view. I still had to design the relationships. Product details needed products and inventory. Order pages began with a buyer’s or seller’s orders and followed their links to product names and customization colors. A Python API cannot resolve a confused data model on its own.
+
+Search and pagination used the same connection. The backend filtered names and brands and displayed 12 records per page. The template rendered cards and navigation links. Those links carried the current filters forward so that changing pages would continue through the same results.
+
+## Adapting a template when I did not know frontend development
+
+I started with an existing Bootstrap shop template. It supplied navigation, product cards, and page layouts. I gradually replaced its content with my data and application actions.
+
+The card loop became a loop over products passed in by Django. Names filled the headings, image fields supplied photographs, and each card linked to the corresponding product detail. The sidebar listed brands. Pagination links carried page numbers and query parameters. Expressions such as `{{ obj.name }}` and `{{ obj.price }}` were where backend records appeared in the page.
+
+The detail page also needed inventory. Sellers needed a way to list items and inspect their stock. Buyers and sellers needed their own order views. Each new interface action needed a corresponding query or write in the backend and somewhere to store its result.
+
+Having a visible template made that work concrete. I could take one part of the page and determine which fields to pass in, which button should submit a form, and which link needed a product ID. The visual layout came from the template; connecting it to my data model and application was my work.
+
+## The payment integration I left unfinished
+
+My recollection is that accounts, the catalog, inventory, buying and selling actions, and orders were mostly assembled. I had not connected payments. Purchasing in the application simulated inventory and order changes; no money was collected.
+
+Reviewing the saved source also reveals work to do in the purchase handler. It inserts an order before the sold record it references, and the writes are not grouped in a database transaction. This is a finding from the current source review, not a newly reproduced failure in the old application. Before extending it with payments, I would fix that consistency and distinguish pending payment, successful payment, and cancellation.
+
+What I remember most is putting the pieces together myself. I adapted templates because frontend development was unfamiliar, collected the product data, designed the tables, and connected them to search, listings, and orders through Django. The tables from a database assignment became an application I could interact with. Payment remained unfinished.
+
+Source: [dbws-project](https://gitee.com/LaoWangB/dbws-project).

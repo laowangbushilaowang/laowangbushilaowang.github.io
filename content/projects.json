@@ -331,8 +331,8 @@
     "titleZh": "球鞋交易网站",
     "period": "2021 · Database coursework",
     "periodZh": "2021 · 数据库课程项目",
-    "summary": "A Django coursework prototype connecting a scraped sneaker catalog, MySQL, inventory and simulated orders.",
-    "summaryZh": "结合球鞋兴趣的数据库课程项目：采集商品目录，用 MySQL 和 Django 连接搜索、库存与模拟订单。",
+    "summary": "An individual database course project: a handwritten browser-driven scraper, MySQL schema, Django ORM, and adapted shop templates. Payments remained unfinished.",
+    "summaryZh": "独立完成的数据库课程项目：手写浏览器爬虫、设计 MySQL 表、用 Django ORM 连接功能，逐页修改商店模板；支付尚未接入。",
     "tags": [
       "Python",
       "Django",
@@ -340,20 +340,20 @@
       "Selenium"
     ],
     "featured": false,
-    "role": "Course project developer",
-    "roleZh": "课程项目开发",
-    "ownership": "I built the course application; its shop layout uses existing Bootstrap templates.",
-    "ownershipZh": "我开发课程应用；商店界面沿用现成 Bootstrap 模板。",
+    "role": "Individual course project",
+    "roleZh": "个人课程项目",
+    "ownership": "I completed the course application on my own, using Django, scraping libraries, and an existing Bootstrap shop template.",
+    "ownershipZh": "我个人完成课程应用，使用 Django、爬虫库与现成 Bootstrap 商店模板。",
     "cover": "/images/sneaker/catalog-reconstruction.webp",
     "details": [
-      "The saved catalog contains 7,084 product records; historical cumulative collection counts are separate.",
-      "Available inventory is linked to products and sellers; orders retain sold-item relationships.",
-      "Illustrations reconstruct original templates. The old purchase flow has not been revalidated and has no payment integration."
+      "I wrote the Selenium/BeautifulSoup scraper; the saved catalog contains 7,084 records.",
+      "Products, seller inventory and sold-item records are separated; Django ORM connects them to catalog and order pages.",
+      "I gradually adapted existing frontend templates. I recall the main application as largely assembled, with payments unfinished; the old purchase flow has not been revalidated."
     ],
     "detailsZh": [
-      "保存的商品目录为 7,084 条；与历史累计采集口径分开。",
-      "在售库存关联鞋款与卖家，订单保留已售商品关系。",
-      "配图为原模板重制；旧购买流程未重新跑通，没有接入支付。"
+      "手写 Selenium/BeautifulSoup 爬虫，现存目录保存 7,084 条商品记录。",
+      "区分鞋款、卖家库存和已售记录，用 Django ORM 连接商品及订单页面。",
+      "当时不会做前端，逐页修改现成模板。本人回忆主要系统已基本搭建，只差支付；旧购买流程未重新验证。"
     ],
     "links": [
       {
