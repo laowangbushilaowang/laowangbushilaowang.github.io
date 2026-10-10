@@ -381,8 +381,8 @@
     "titleZh": "EMRNet：多阶段图像复原",
     "period": "Undergraduate thesis · 2022–2023",
     "periodZh": "本科毕业论文 · 2022—2023",
-    "summary": "An undergraduate exploration of neural networks through image restoration, modifying attention, activations, normalization and cross-stage transfer on an MPRNet foundation.",
-    "summaryZh": "从直观的图像复原开始探索神经网络，以MPRNet为基线，尝试注意力、激活函数、归一化和跨阶段信息传递。",
+    "summary": "An MPRNet-based exploration of ACA, SAB, SCAM, activations and normalization, reflecting on structural changes whose problem-level rationale remained insufficiently established.",
+    "summaryZh": "以MPRNet为基线尝试ACA、SAB、SCAM、激活函数和归一化；回顾结构改动的动机，以及未充分从具体问题原理出发论证的不足。",
     "tags": [
       "Image Restoration",
       "MPRNet",

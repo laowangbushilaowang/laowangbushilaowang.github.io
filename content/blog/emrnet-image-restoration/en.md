@@ -4,7 +4,7 @@ date: "2026-10-10"
 updated: "2026-10-10"
 language: en
 project: emrnet
-excerpt: "I wanted to work with neural networks and see the results directly. Starting from MPRNet, I explored attention, cross-stage information flow and normalization for image restoration."
+excerpt: "I wanted to work with neural networks and see the results directly. Starting from MPRNet, I explored structural changes and reflect on why they did not yet amount to a well-grounded research argument."
 cover: /images/emrnet/architecture.webp
 coverAlt: "EMRNet architecture with two encoder-decoder stages and an original-resolution final stage"
 tags: [Image Restoration, MPRNet, Attention, Undergraduate Thesis]
@@ -15,7 +15,7 @@ My reason for choosing this undergraduate thesis was straightforward: I wanted t
 
 I chose image restoration, built on MPRNet, and called my modified network EMRNet. My work covered attention, activations, normalization and information transfer between stages, with experiments on denoising, deraining and deblurring.
 
-Once I started working through the network, “make the image clearer” became several more specific questions. Which responses should survive? What should one stage send to the next? Downsampling gives context, but what happens to the details?
+I do not consider this a particularly successful thesis. Much of it was an exploration of changes to an existing model: attention, activations, normalization and stage connections. I had not sufficiently established a specific problem, reasoned from its underlying principles and then verified a targeted solution. This retrospective separates the actual changes from the rationale I could give for them.
 
 ## Why restore an image in three stages?
 
@@ -33,17 +33,31 @@ There are two paths to follow in the diagram: processing within each row, and in
 
 Original resolution refers to the main processing branch of the last stage. Earlier multiscale features still need alignment before they enter that branch.
 
+The labels help locate the work: `ACAB` denotes a feature block with adjusted channel attention; `SCAM` sits between the first two stage outputs and the following stage. Yellow `C` and `Concat` indicate feature concatenation; the final `+` is residual addition. Green `ORB` blocks make up ORSNet. SAB, activations and normalization are internal changes that this overall diagram does not expand layer by layer.
+
+The three-stage skeleton, encoder-decoders and ORSNet come from MPRNet. I changed components and connections within that foundation.
+
 This design helped me understand the tradeoff between context and detail. Smaller feature maps make wider spatial relationships easier to process. The final full-resolution branch gives those relationships a route back into local refinement.
 
-## What I changed: channels, locations and stage connections
+## The main changes and their rationale
 
-I adjusted channel attention, calling it ACA; added spatial attention blocks, SAB, in the decoder; and explored supervised channel attention, SCAM, for information passed between stages.
+I adjusted channel attention, calling it ACA; added SAB in the decoder; explored SCAM at stage connections; and tried activations and normalization.
 
-| Change | Question it addresses | Tradeoff to check |
+| Location | MPRNet baseline | My change and intended role |
 | --- | --- | --- |
-| ACA: adjusted channel attention | Which feature responses help restoration? | Weak details can matter as much as strong texture |
-| SAB: spatial attention | Where does the image need more processing? | Rain streaks can resemble real fine edges |
-| SCAM: supervised channel attention | Which information should reach the next stage? | Later stages still need room to correct earlier decisions |
+| Feature blocks | CAB already includes channel attention | ACA adjusts channel weighting; the diagram labels the modified blocks ACAB |
+| Decoder | Multiscale reconstruction and fusion | SAB introduces location-dependent selection |
+| Stage connections | SAM and cross-stage feature fusion | SCAM explores more selective channel transfer |
+| Nonlinearity | PReLU in the main feature blocks | Mish and Swish change responses and gradient behavior |
+| U-Net | No InstanceNorm in the inspected baseline | InstanceNorm adjusts feature statistics, with artifact reduction as a motivation and color fidelity as a concern |
+
+ORSNet is a retained baseline design, not another new component. [Original implementation](https://github.com/swz30/MPRNet/blob/main/Denoising/MPRNet.py)
+
+### ACA: changing attention that was already there
+
+I did not introduce channel attention into a network that lacked it. ACA was an attempt to adjust its selection mechanism for restoration features.
+
+Learned responses may represent edges, texture or color, but strong responses can come from degradation too. Weighting channels is a reasonable direction for retaining useful information; response strength alone does not establish which information belongs to the clean image.
 
 Channels here are learned feature responses, not the three RGB colors. A common channel gate summarizes each channel, generates a weight and multiplies that weight back into the feature map. This short example illustrates the operation rather than reproducing my full ACA implementation:
 
@@ -55,9 +69,13 @@ output = features * weights
 
 For `[B, C, H, W]` features, the summary has shape `[B, C, 1, 1]`. Each channel receives a weight shared across its spatial positions. Spatial attention instead varies weights by location.
 
-That distinction matters when degradation is uneven. Noise, rain streaks and blur need not occupy the same regions or have the same appearance. Channel weighting and spatial selection address different questions. Combining them was a direction I explored; whether the combination preserved better details still requires a controlled comparison.
+### SAB: location selection in the decoder
 
-## Passing more than an output image
+Adding SAB in the decoder gives the network a location-dependent weighting step as multiscale features reunite and spatial detail is reconstructed. Rain, blur and noise can vary across an image, motivating more than uniform processing.
+
+A spatial weight map is not automatically a correct degradation map. A thin line might be rain or a real branch. SAB provides a selection mechanism; whether it distinguishes those cases needs regional output comparisons and controlled experiments. Its name does not establish the result.
+
+## SCAM: choosing what reaches the next stage
 
 A sequence of three networks could simply pass restored images forward. MPRNet also transfers intermediate encoder and decoder features at multiple scales through cross-stage feature fusion, or CSFF. [Baseline implementation](https://github.com/swz30/MPRNet/blob/main/Denoising/MPRNet.py)
 
@@ -71,7 +89,9 @@ Current features → Stage image → Attention weights
 Multiscale encoder / decoder features ───→ Next stage
 ```
 
-My motivation for SCAM was to make this transfer more selective. Its connection to SAM does not make their exact operations interchangeable.
+My motivation for SCAM was to select which feature responses deserved further emphasis and which did not need to be carried forward unchanged. The diagram places SCAM at those stage handoffs.
+
+Baseline SAM already uses a stage image to guide transfer; SCAM emphasizes channel selection. The flow above explains the baseline, not a complete SCAM formula. How channel weights are generated and connected to supervision is essential to evaluating this change. A new box in a diagram does not answer those questions.
 
 The position of a module matters as much as its isolated behavior. A better-looking intermediate image does not necessarily imply better features for the following stage. Stage outputs, connecting features and the final result belong in the same analysis. Cross-stage transfer was already part of MPRNet; my work modified that foundation.
 
@@ -79,7 +99,7 @@ The position of a module matters as much as its isolated behavior. A better-look
 
 I also tried Mish and Swish at different positions and added Instance Normalization in the U-Net. These changes are less visible in an architecture diagram, but affect how each layer handles values.
 
-Swish is $x\sigma(x)$; Mish is $x\tanh(\mathrm{softplus}(x))$. Unlike ReLU, they retain some negative responses and vary smoothly. Neither property by itself establishes better restoration. When several changes are introduced together, their individual contributions become harder to separate.
+Swish is $x\sigma(x)$; Mish is $x\tanh(\mathrm{softplus}(x))$. I tried them to alter nonlinear responses and gradient propagation. MPRNet already uses PReLU in its main feature blocks, which also retains negative responses. Comparing smoothness against ReLU therefore does not establish superiority over this baseline. The mathematical properties motivate a trial; results need a comparison.
 
 InstanceNorm computes statistics separately for each image and channel, without relying on the whole batch. That is convenient for small batches. Restoration, however, must preserve brightness and contrast, precisely the statistics normalization changes. Learnable scale and offset parameters and the layer's placement also matter. [PyTorch definition](https://docs.pytorch.org/docs/stable/generated/torch.nn.InstanceNorm2d.html)
 
@@ -103,6 +123,16 @@ $$
 
 `MAX` is 1 for a 0–1 image or 255 for an 8-bit image. Lower mean squared error gives higher PSNR. SSIM compares local brightness, contrast and structure. Comparisons need consistent cropping, color space and normalization.
 
-I leave improvement percentages out of this retrospective. The useful part is how the changes relate to the task and how to evaluate their contributions. A score for a version containing several changes evaluates that version; attributing gains to an individual component needs ablations with consistent data splits and training budgets.
+A score for a version containing several changes evaluates that version. Attributing gains to an individual component needs ablations with consistent splits and training budgets. Additional parameters or longer training may explain a gain too.
 
-I chose images because the results were easy to see. Working on restoration taught me that seeing a difference and explaining it are separate tasks. What survived, what disappeared, and what reached the next stage became more useful questions than the names of the modules.
+## Why I do not regard it as a particularly successful thesis
+
+Looking back, I was often asking what else I could add or replace in the network. Attention, activations and normalization each have plausible explanations. Combining them gave me design rationales, but those rationales did not yet form a well-established research question.
+
+For ACA, the missing question was where baseline channel selection actually failed. Did it amplify noise or suppress texture? Without first examining that behavior, a replacement was still a module experiment. SAB had the same limitation: location-dependent weighting does not show that the learned weights separate rain from real edges.
+
+SCAM also needs more than “better information transfer” as an explanation. What was missing from the original transfer? What did channel selection change? Did intermediate and final outputs support that account? Otherwise the architecture gained a box while the research question remained vague.
+
+I had not sufficiently connected a concrete failure, an explanation of its cause, a targeted modification and a test of that explanation. Even a better score would not, by itself, establish why a change helped. That is the main reason I view the thesis critically.
+
+As an undergraduate exercise, the work still took me through an entire network: its structure, components, tensors and stage connections. I regard it primarily as practice in modifying a model. It helped me see how much more is required to formulate and answer a research question.
