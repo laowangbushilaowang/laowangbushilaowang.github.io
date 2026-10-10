@@ -23,51 +23,57 @@ I remember a loss-only change improving `mAP@0.5` by about five percentage point
 
 A low camera angle brings shoes, cables, occlusion and reflections into the same view. One archived configuration lists `leg`, `wires`, `shoes` and `paperBall`. I worked on model changes, training and evaluation. I did not collect or annotate this company dataset, or deploy the model on robot hardware.
 
-### Structure and attention: know where a change happens
+### Changing the model for shoes, cables and clutter
 
-I tried backbone and bottleneck replacements, including lightweight MobileNet-style components, as well as attention and activation changes. At the time, I could sometimes connect a component before I understood why it belonged there. An ablation helped test whether a change actually contributed, while keeping other conditions fixed.
+The targets differed substantially. Shoes had recognizable outlines; cables were thin and elongated. Furniture could obscure an object, while reflections added distracting texture. One detector had to handle all of them. Larger models also meant longer experiments on my single 2080 Ti.
+
+I explored two directions: changing backbone and bottleneck components, including integrating YOLOv5 modules into YOLOv7 and trying MobileNet-style lightweight blocks; and changing attention to reweight existing features. I also tried activations and losses, using ablations to compare changes.
 
 ```text
 Image → Backbone: extract features
-      → Neck: combine features across scales
-      → Head: predict boxes, classes and scores
+      → Neck: fuse scales
+      → Head: predict classes, boxes and scores
 ```
 
-A bottleneck is an internal component, not another name for the neck. Lightweight convolutions change computation and representation; attention reweights features; scale fusion changes how information at different resolutions is combined. A head replacement can also affect matching, losses and export compatibility.
+A bottleneck is an internal block; the neck is the scale-fusion part of the detector. Changing one modifies feature computation, while changing the other modifies how resolutions interact. At the time I could sometimes connect a block before I fully understood why it belonged there.
 
-#### Channel, spatial and combined attention
+#### Attention: suppress clutter without losing thin targets
 
-I remember comparing channel attention, spatial attention and a combination of the two. If I designed that experiment again, I would use SE and CBAM to isolate what each change does.
+I remember comparing channel attention, spatial attention and their combination. In household detection, the distinction is useful: channel attention weights feature responses, while spatial attention weights locations.
 
-**Channel attention weights feature responses.** These channels are learned features, not RGB colors. [SE](https://arxiv.org/abs/1709.01507) globally averages each channel, passes the resulting vector through a small network, then multiplies the predicted weights into the original features. With 256 channels and reduction ratio 16, the intermediate vector has 16 entries and the output has 256 weights. The feature shape stays unchanged.
+**Channels are learned features, not RGB colors.** [SE](https://arxiv.org/abs/1709.01507) globally averages each channel and uses a small network to generate weights. With 256 channels and reduction ratio 16, that network follows 256 → 16 → 256. The feature dimensions stay unchanged.
 
-**Spatial attention weights locations.** CBAM's spatial branch takes the mean and maximum across channels, concatenates the resulting maps, and applies a 7×7 convolution and sigmoid to produce spatial weights. Background suppression might help, but a weak cable response could also be suppressed. [Author implementation](https://github.com/Jongchan/attention-module/blob/master/MODELS/cbam.py)
+**Spatial attention retains location information.** CBAM's spatial branch combines the channel-wise mean and maximum through a 7×7 convolution to generate location weights. Suppressing reflections or texture may help, but a weak cable response could be suppressed too. [Author implementation](https://github.com/Jongchan/attention-module/blob/master/MODELS/cbam.py)
 
-**CBAM applies channel attention followed by spatial attention.** Its channel branch combines global average and maximum pooling through a shared small network, differing from SE's average-only aggregation. The combination reweights features twice before prediction. [CBAM paper](https://arxiv.org/abs/1807.06521)
+[CBAM](https://arxiv.org/abs/1807.06521) applies channel weighting before spatial weighting. Its channel branch uses both average and maximum pooling, unlike SE.
 
 ```text
-Fused features F
-  → Channel weights: F₁ = F × M_channel(F)
-  → Spatial weights: F₂ = F₁ × M_spatial(F₁)
-  → Detection head: predict classes and boxes
+Features → Channel weighting → Spatial weighting → Detection
+           Which responses?   Which locations?
 ```
 
-#### Where I would insert it in YOLOv7
+These mechanisms explain both the motivation and the tradeoff. Better shoe detection need not mean better cable detection. Per-class AP, recall and false positives reveal changes that average mAP can hide. The roughly five-point gain I remember from a loss-only replacement does not establish an attention-module gain.
 
-I would start at one fused feature output in the neck, keeping the input and output shape unchanged and leaving the loss alone. That gives a comparison of channel weighting, spatial weighting and their combination.
+#### Integrating YOLOv5 and lightweight blocks
 
-| Variant | Change | What I would inspect |
+I tried integrating YOLOv5 modules into YOLOv7. That was component replacement, distinct from using a complete YOLOv5 training template later in the competition. Shared names such as `Conv` or `Bottleneck` do not guarantee compatible arguments or connections.
+
+YOLOv5's C3 illustrates the interface issue: one path runs through bottlenecks, another takes a shorter route, and their outputs are concatenated and fused. Replacing a class name is only part of integration. [YOLOv5 implementation](https://github.com/ultralytics/yolov5/blob/v6.2/models/common.py)
+
+| Interface | What must match | Failure if it does not |
 | --- | --- | --- |
-| Baseline | Original YOLOv7 | Misses and false positives for shoes, cables and furniture legs |
-| + SE | Channel weighting at the chosen location | Fewer background false positives, but possibly weaker cable responses |
-| + Spatial | CBAM spatial branch only | Recall under occlusion and false positives on reflective floors |
-| + CBAM | Channel then spatial at the same location | Whether the combination beats either branch and justifies its latency |
+| Channels | Input `c1` and output `c2` | Next convolution cannot accept the tensor |
+| Downsampling | Stride and spatial dimensions | Scale-fusion concatenation fails |
+| Residual path | Shapes on both sides of addition | Channel or spatial mismatch |
+| YAML and parser | Arguments, repetition count and feature indices | Wrong construction or wrong feature routing |
 
-First I would change one location. If it helped, I would compare a late backbone location with a neck fusion output. Standard YOLOv7 predicts at strides 8, 16 and 32: a 640×640 input produces feature maps of 80×80, 40×40 and 20×20. The higher-resolution branch deserves attention for cables, but also costs more computation. Adding a module at every scale would not automatically be an improvement. [Original configuration](https://github.com/WongKinYiu/yolov7/blob/main/cfg/training/yolov7.yaml)
+For example, a block occupying `[B, 128, 40, 40] → [B, 256, 20, 20]` must preserve that contract when replaced. These dimensions illustrate an interface; actual channels depend on the configuration. Replacing a block while preserving its output requires less downstream work than replacing an entire backbone. A new backbone needs compatible outputs for the neck's scales. Standard YOLOv7 uses detection strides 8, 16 and 32, producing 80×80, 40×40 and 20×20 feature maps for a 640×640 input. [Original configuration](https://github.com/WongKinYiu/yolov7/blob/main/cfg/training/yolov7.yaml)
 
-Editing YAML is only part of integration. The model parser must recognize the custom module and pass its channel count correctly. Inserting layers also requires checking downstream feature references. After a forward pass works, I would check gradients, training and ONNX / TensorRT export.
+MobileNet-style blocks were my lightweight direction. MobileNetV2 illustrates the approach: expand channels with a pointwise convolution, apply depthwise spatial convolution, then project to the output channels. Residual connections require compatible shapes. The expanded intermediate features still consume memory; fewer parameters alone do not determine training memory or inference latency. [MobileNetV2](https://arxiv.org/abs/1801.04381)
 
-I would not assume that the most elaborate module wins. One possible outcome is fewer shoe false positives but more missed cables, leaving average mAP almost unchanged. Another is slightly better accuracy at a latency cost that the real-time task cannot afford. I would compare per-class AP, recall, false positives at the same threshold and single-image latency, then combine useful structural changes with a loss change. My remembered five-point gain from a loss-only replacement does not establish the outcome of these attention comparisons.
+Ghost blocks use a different approach: generate a smaller set of features with regular convolution, then produce more with cheaper transformations. Both YOLOv5 and YOLOv7 contain Ghost components. Using one Ghost bottleneck is different from replacing the backbone with GhostNet. [GhostNet](https://arxiv.org/abs/1911.11907), [YOLOv7 implementation](https://github.com/WongKinYiu/yolov7/blob/main/models/common.py)
+
+The distinction I took away was between connecting a component and improving detection. A successful forward pass checks only part of the integration; training, gradients and exported outputs still matter. Lightweight blocks also trade computation against representation. For cables, the question is whether thin-target features survive that trade, compared on the same validation set. A promising module name cannot answer it.
 
 ### Focal and Varifocal address different questions
 
