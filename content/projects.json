@@ -274,8 +274,8 @@
     "titleZh": "Bona：YOLO 训练与视觉控制",
     "period": "Internship · 2022–2023",
     "periodZh": "实习 · 2022–2023",
-    "summary": "YOLO-family training for household-object detection, plus a separate real-time visual-control prototype from the same internship. Server-side training was not robot deployment.",
-    "summaryZh": "同一段实习中的家居物体 YOLO 系列训练与另一个实时视觉控制原型。服务器训练不等于机器人端部署。",
+    "summary": "Household-object detection experiments on company data: YOLO modules, Focal Loss, ablations and training budgets. A separate visual-control prototype connected detections to movement.",
+    "summaryZh": "围绕公司家居数据做 YOLO 模型、Focal Loss 与消融训练；同段实习还尝试了检测接到实时控制的原型。",
     "tags": [
       "PyTorch",
       "YOLO",
@@ -284,8 +284,20 @@
     "featured": false,
     "role": "Internship",
     "roleZh": "实习",
-    "ownership": "My work included model and training experiments. The detection task and the visual-control prototype are separate technical strands.",
-    "ownershipZh": "我的工作包含模型与训练实验。检测任务和视觉控制原型是两条分别核验的技术线。"
+    "ownership": "I worked on model structure, losses and training experiments using existing company data, on Huawei servers. The control prototype built on YOLOv7 and team-written code.",
+    "ownershipZh": "我围绕公司已有数据做结构、损失和训练实验，在华为服务器训练；控制原型基于 YOLOv7 与团队代码。",
+    "article": "bona-yolo-training",
+    "cover": "/images/bona/household-input.webp",
+    "details": [
+      "Training and evaluation for a proposed robot-vacuum vision system; no deployment on robot hardware.",
+      "Module substitutions and Focal Loss experiments, with a later reflection on short-budget screening before full training.",
+      "A separate screen-detection prototype used TensorRT inference, target selection and asymmetric PID/P control."
+    ],
+    "detailsZh": [
+      "面向扫地机器人视觉识别做训练与评估，未部署到机器人硬件。",
+      "尝试结构模块与 Focal Loss，回顾完整训练成本及短预算筛选的方法。",
+      "另一个屏幕检测原型连接 TensorRT 推理、目标选择与横向 PID / 纵向 P 控制。"
+    ]
   },
   {
     "id": "geospatial-fairness",
