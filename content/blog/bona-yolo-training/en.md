@@ -15,13 +15,32 @@ This article covers two YOLO projects: improving household detection with compan
 
 ## Company work: household detection for robot vacuums
 
-During my internship at Bona in 2022–2023, I trained YOLO on existing company data to recognize objects near the floor. Range sensors provided obstacle information; images could help distinguish shoes, cables and furniture. I changed network components, attention modules and losses, and used ablations to compare them.
+During my internship at Bona in 2022–2023, I trained YOLO on existing company data to recognize objects near the floor. Range sensors provided obstacle information; images could help distinguish shoes, cables and furniture. With limited data, uneven class counts and differing detection performance, I explored structural changes and losses, using ablations to compare them.
 
-I remember a loss-only change improving `mAP@0.5` by about five percentage points over the original baseline. I considered Focal and Varifocal, but no longer remember which produced that improvement. The experiment table and configuration have not been recovered.
+I remember a loss-only change improving `mAP@0.5` by about five percentage points over the original baseline. I considered Focal and Varifocal, but no longer remember which produced that improvement.
 
 ![Household objects with detection boxes in an archived presentation](/images/bona/household-detection.webp "An archived detection example showing object locations and classes; overall accuracy requires validation-set evaluation.")
 
 A low camera angle brings shoes, cables, occlusion and reflections into the same view. One archived configuration lists `leg`, `wires`, `shoes` and `paperBall`. I worked on model changes, training and evaluation. I did not collect or annotate this company dataset, or deploy the model on robot hardware.
+
+### Start with the data: more labels did not guarantee better detection
+
+The loss experiments started with the data. I remember some classes performing well while less-represented classes lagged, and suspecting overfitting. My old presentation preserves a screenshot of an analysis document with these counts:
+
+| Class | Training | Validation | Test |
+| --- | ---: | ---: | ---: |
+| Furniture legs `leg` | 3,488 | 885 | 446 |
+| Cables `wires` | 799 | 208 | 106 |
+| Shoes `shoes` | 1,836 | 465 | 259 |
+| Paper balls `paperBall` | 1,831 | 542 | 224 |
+
+These are class annotation counts, not counts of independent images; one image can contain several objects. Training leg annotations outnumbered cables by roughly 4.4 to one. Shoes and paper balls each had more than twice the cable annotations.
+
+The note also records a less intuitive observation: **legs had the most annotations but poorer detection performance.** The analysis suspected noisy labels and connected them to overfitting. Quantity, consistency and visual coverage needed separate attention. The note proposed more data, label review and stronger regularization.
+
+That was the motivation for changing the loss. Class weighting adjusts each class's contribution; Focal reduces the influence of easy predictions. Neither repairs incorrect labels. A mislabeled example may look difficult to the model and receive more weight.
+
+A class-performance gap alone does not establish overfitting. Improving training performance alongside rising validation loss or flat or falling validation AP gives a more direct signal. Counts, annotation quality and object difficulty can also explain a gap. For detection I would distinguish per-class AP, recall and false positives rather than call everything accuracy. [Training diagnostics](https://docs.ultralytics.com/yolov5/tutorials/tips-for-best-training-results)
 
 ### Changing the model for shoes, cables and clutter
 
@@ -77,7 +96,7 @@ The distinction I took away was between connecting a component and improving det
 
 ### Focal and Varifocal address different questions
 
-I considered both losses. Ordinary Focal Loss reduces the contribution of easy examples, which matters when easy background predictions vastly outnumber harder cases. Class weighting addresses a different imbalance: how much different classes contribute.
+I considered Focal and Varifocal and also increased weighting for less-represented classes. Class weighting changes a class’s contribution, while ordinary Focal changes an example’s contribution according to prediction difficulty. Ordinary Focal Loss reduces the contribution of easy examples, which matters when easy background predictions vastly outnumber harder cases. Class weighting addresses a different imbalance: how much different classes contribute.
 
 Consider two predictions: an easy background location receives probability 0.9 for its correct label, while a difficult target receives only 0.1. Focal Loss reduces the easy example's contribution so it leaves more room for the difficult one.
 
@@ -122,6 +141,25 @@ I had one 2080 Ti. I often trained a configuration for over a hundred epochs unt
 Looking back, I would screen candidates with a common shorter budget once validation behavior begins to stabilize, then train promising ones thoroughly. Slow starters deserve a second look. Loss values themselves are not directly comparable across loss functions: a weighting change can make them smaller without improving detection.
 
 I also ran into out-of-memory failures with oversized batches. Training stores intermediate activations and gradients as well as weights. Today I would complete a step at a small batch size, measure peak memory, then increase it. Gradient accumulation and mixed precision are possible new experiments, not optimizations I can claim to have used then.
+
+#### Other ways to train with limited, uneven data
+
+The method should match what is missing: quantity, variation or reliable labels.
+
+| Method | Purpose | Tradeoff or check |
+| --- | --- | --- |
+| Pretraining and fine-tuning | Reuse features rather than learn everything from limited data | Partial freezing can save resources; excessive freezing can limit adaptation |
+| Label review, collection and augmentation | Add reliable examples and appearance variation | Transform boxes with images; cropping must handle thin-target labels correctly |
+| Sampling and class weighting | Give scarce targets more training exposure | Sampling selects images, potentially with multiple classes; repeated rare images can overfit |
+| Regularization and early stopping | Limit fitting to the training data | Select checkpoints using validation, rather than waiting for training loss to stop falling |
+
+Partial freezing followed by unfreezing is one fine-tuning route, with the freeze extent chosen through validation. Newly introduced modules still need training. [Transfer-learning example](https://docs.ultralytics.com/yolov5/tutorials/transfer-learning-with-frozen-layers)
+
+**Cross-validation checks evaluation stability.** Three-fold validation trains three independent models, rotating one validation fold against two training folds. Compare per-class AP means and variation. Each fold starts from the same pretrained initialization, not the model from the previous fold. Keep the final test set outside model selection. This creates neither new independent data nor balanced training automatically. [Cross-validation guide](https://scikit-learn.org/stable/modules/cross_validation.html)
+
+If images share a capture segment or scene, keep that group within one fold. Detection images may contain multiple classes; fold assignment needs to consider instance counts and class presence, rather than assign each image one arbitrary label for ordinary stratification.
+
+On one 2080 Ti, cross-validation costs additional training runs. Screening on a fixed validation set first and checking a few finalists across folds is more practical. These are additional training and evaluation options for the data problem; the class notes and loss experiments above describe my historical work.
 
 ### The Ascend competition: get training running first
 
