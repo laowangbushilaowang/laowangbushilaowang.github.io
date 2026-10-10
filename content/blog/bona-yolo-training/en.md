@@ -183,17 +183,16 @@ For a new benchmark I would fix region and resolution, measure capture, preproce
 
 #### Where the milliseconds go
 
-I remember capture reaching a few milliseconds, but the complete benchmark is missing. The following is a **hypothetical serial timing budget, not a historical measurement**.
+I got capture down to a few milliseconds. The next question was where the remaining time went: fast capture still produces outdated positions if the model takes too long to process them.
 
-| Stage | Illustrative budget | Historical evidence |
-| --- | --- | --- |
-| Capture | 3 ms | Recollection of a few milliseconds; exact value and test count missing |
-| Preprocessing and transfers | 2 ms | Code prepares and transfers inputs; no stage logs |
-| Model inference | 8 ms | Retained TensorRT implementation; no verified standalone timing |
-| Box processing, selection and control | 1 ms | Retained code; no stage logs |
-| Serial sum of these stages | 14 ms | Example sum only; excludes display and device response |
+| Stage | Approach and lesson |
+| --- | --- |
+| Capture | Compare PIL, Python capture libraries and Windows paths; capture reached a few milliseconds |
+| Preprocessing and transfers | Resize, normalize and prepare GPU inputs; include copying costs when timing |
+| Model inference | Use a lightweight detector and ONNX → TensorRT acceleration; time single-image inference separately |
+| Detection results and control | Process boxes, select a target, compute the error and produce a control adjustment |
 
-In this example, reducing capture from 3 to 2 ms saves 1 ms. Reducing inference from 8 to 4 ms saves 4 ms. Measuring the stages tells me which work would help most. A 14 ms loop corresponds to roughly 71 iterations per second, not the game's frame rate or the full delay from a visual change to an effective action.
+Stage timings tell me whether further capture work would help or whether the model and inference need attention. I would also measure the complete loop, because returning a detection box leaves result processing and actions still to do.
 
 The old `Done. (...)` timer starts before capture. Different versions include drawing or control at different positions, so it cannot be copied as “YOLO inference time.” A new GPU benchmark would need warm-up and CUDA events or clearly synchronized boundaries. I would measure a sustained run and report the median and slower P95, rather than selecting the fastest frame.
 
