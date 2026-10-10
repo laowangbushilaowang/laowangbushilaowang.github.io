@@ -1,88 +1,115 @@
 ---
-title: "BioFlow: from papers to usable datasets"
+title: "BioFlow: after the download"
 date: "2026-10-09"
 updated: "2026-10-10"
 language: en
 project: single-cell-agent-pipeline
-excerpt: "Finding an accession is the beginning. BioFlow connects paper search, downloads, file readers, and sample metadata—with a smaller role for the language model than I first tried."
+excerpt: "Collecting data for virtual-cell research led me through autonomous agents, constrained workflows, and an unexpectedly important problem: connecting files to samples."
 tags: [Data Engineering, Bioinformatics, LLM, Agents]
 draft: false
 ---
 
-Some rows in a BioFlow extraction CSV contain `Not found`. The field is called `accession_code`.
+A paper lists a dataset accession. Follow it, download the files, and the analysis can begin. Or can it?
 
-That is clearly not an accession. But count nonempty cells and those rows become successes. The CSV has been written, the program has not crashed, and the step can look finished. What is the next stage supposed to download?
+Someone still has to identify the expression matrices, distinguish them from sample tables, and work out how the files belong together. Two matrices might represent different samples or parts of the same sample. The identifiers in their filenames still need to connect to tissue, age, and treatment information. A reader can load a matrix successfully without resolving any of this.
 
-I worked on BioFlow at Guangzhou National Laboratory to collect public omics data for virtual-cell modeling. Doing this manually means following a paper to its files, figuring out how to read them, and assembling the sample information. I initially tried giving an agent more freedom to write and modify data loaders. Hallucinations and unreliable edits made that approach unstable. I eventually settled on fixed stages, with the model helping at a few points that require interpretation.
+I worked on BioFlow at Guangzhou National Laboratory to organize public omics data for a virtual-cell modeling corpus. Much of the work was repetitive: find papers, trace their data sources, download and unpack the files, choose readers, and assemble sample information. Each operation seems manageable in isolation. A new dataset often breaks an assumption that worked for the previous one.
 
-This post follows the data: finding its identifier, reading the downloaded files, and working out what the samples represent. The [Bio_dataflow repository](https://github.com/laowangbushilaowang/Bio_dataflow) contains early scripts. It does not contain all the later omics extensions or the Sentinel prototype discussed here.
+I initially tried giving an agent freedom to write and modify loaders. Later, I narrowed its execution role and arranged the work into fixed stages. This post follows the problems behind that decision: what the model needs to see, how files become samples, and what remains to be done after a matrix has been written.
 
-## After downloading the paper
+## Connecting the stages
 
-A paper can use several public datasets. A database identifier may lead to an entire study rather than an individual sample. GEO, for example, uses `GSE` for series records and `GSM` for sample records. [GEO query guide](https://www.ncbi.nlm.nih.gov/geo/info/qqtutorial.html)
+BioFlow starts with a PubMed search, downloads PDFs, extracts accessions, retrieves the data, and builds datasets with their metadata.
 
-I split the work into five stages: search for papers, download PDFs, extract accessions, download and build datasets, and organize metadata. This is the workflow table from the original project report.
+![BioFlow stages and the model's role](/images/bioflow/data-journey-en.svg "Schematic redrawn from the project design and current source. It describes responsibilities, not guaranteed completion for every dataset.")
 
-![The five-stage table from the original BioFlow report](/images/bioflow/workflow-original.webp "Slide 2 of the original report: stages and their outputs. Exported, cropped, and compressed. Click to enlarge; the original labels are Chinese.")
+I kept the outputs of individual stages: paper lists, download status, accession tables, and the resulting data files. That makes it possible to investigate one section without starting over. A failed download belongs with download handling; an unreadable matrix belongs with the files and their loader.
 
-Each stage saves its own output. If extraction finds nothing, I can check whether the PDF was downloaded and whether its text could be read. If matrix construction fails, I can inspect the files and the loader. Fixing stage four should not mean searching for all the papers again.
+An accession is still only an entry point. A paper may cite several studies, and a matching identifier does not establish that the dataset belongs in this collection. Extraction tries regex first and asks an LLM when no valid match is found. Relevance still needs interpretation.
 
-That also requires more than a success/failure flag. Having no PDF and finding no accession in a readable PDF need different responses. One sends me back to the download; the other sends me to the paper or its supplements. The next action depends on what actually happened.
+The harder part begins with the files behind that identifier.
 
-## Try regex before asking a model
+## A dataset is usually more than one file
 
-Accessions such as `GSE` and `E-MTAB` have recognizable patterns. BioFlow searches the extracted text with regex first, checks that candidates occur in the source and match the expected forms, and filters some obvious placeholders. It asks the LLM only if that produces no valid result.
+A common 10X matrix comes as a group: `matrix.mtx.gz` holds values, `features.tsv.gz` identifies the features, and `barcodes.tsv.gz` identifies the barcodes. The reader needs all three. [10x format documentation](https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/outputs/cr-outputs-mex-matrices)
 
-The two methods do not run independently and merge their answers. A regex match returns immediately, so the model cannot add another set of accessions. That is a tradeoff for making fewer model calls.
+Here is a simplified teaching example, rather than a directory captured from a particular run:
 
-A batch from November 25, 2025 makes this concrete. It had 200 input rows: 43 were processed, 31 produced accessions, 12 did not, and 157 were skipped. The report's success rate was `31/43`, or 72.1%.
+```text
+downloaded_dataset/
+├── sample_A/
+│   ├── matrix.mtx.gz
+│   ├── features.tsv.gz
+│   └── barcodes.tsv.gz
+├── sample_B/
+│   ├── matrix.mtx.gz
+│   ├── features.tsv.gz
+│   └── barcodes.tsv.gz
+└── sample_metadata.tsv
+```
 
-In the paired CSV, every successful row came from regex. Nine rows used the LLM branch without finding an accession; another three had no accession and were labeled `failed`. This batch provides no evidence of an extraction improvement from the model. The 72.1% also stops at extraction, before downloading or building anything.
+Extensions can locate the two matrices, but they do not tell us how to combine them. The metadata table is also tabular data; it is not another expression matrix. Actual downloads may use filename prefixes for samples, nest files in archives, or supply an existing h5ad instead. Choosing a reader requires these relationships.
 
-An identifier in the paper still needs interpretation. It might refer to comparison data or to another study the authors cite. Checking the source text catches some invented identifiers, but it does not establish whether the dataset belongs in this collection.
+My approach was to extract the directory structure, candidate files, and short text excerpts, then give that context to the model. It does not need all the matrix values in its prompt. It needs to choose a reader and identify the files that reader should receive.
 
-## Show the model how the files fit together
+![File context, loader selection, and sample mapping](/images/bioflow/file-to-sample-en.svg "Redrawn from the project's probe, planner, sample resolver, and ID mapping code. sample_A/B are teaching examples; selecting files and reconciling sample IDs are separate operations.")
 
-Consider an attachment containing a matrix, a feature table, and a barcode table. This is an example of the reading problem: the matrix provides values, the feature table identifies genes or peaks, and the barcodes identify observations. The matrix alone leaves much of its meaning unspecified.
+For MTX input, one planned item must contain its matrix, features, and barcodes. Three independent items would lose the grouping required by the reader. I made that relationship explicit in the prompt.
 
-Actual downloads also contain nested archives, per-sample directories, and HDF5 files. Choosing a reader may require the filenames, their relationships, and a little accompanying text. This is where I found a useful role for the model.
+The directory therefore serves two purposes. It gives the model useful context, and it gives me something concrete to inspect if the choice is wrong: which file was omitted, or which metadata table was mistaken for expression data?
 
-BioFlow's `probe` collects a directory summary, candidate files, and short text excerpts. The model returns JSON choosing an existing loader and the files it should read. Python dispatches to that loader through a registry and performs the conversion. The model needs to see how the files relate; it does not need every number in the matrix in its context.
+## Let the agent write a loader, or let it choose one?
 
-Compared with asking the agent to edit loaders on the fly, this gives me a more specific place to investigate. I can inspect the directory summary, the selected reader, and its inputs. A format problem can be fixed in that reader. If the model-selected path does not create the expected output, the outer builder can also try deterministic construction.
+Early on, I tried a broader approach. An agent that can write code should be able to add a reader when an unfamiliar format appears. That would avoid implementing every format in advance.
 
-There are still ways to get it wrong. The directory summary can omit an important attachment when its depth or file-count limit is reached. A written `raw.h5ad` still needs checks for orientation, duplicate features, and sample mapping before I would use it in an analysis.
+In practice, hallucinations and unstable edits on heterogeneous inputs made this unsuitable for handling the whole process. A newly written loader might run, but I would still have to check its file selection, matrix orientation, and sample grouping. More freedom also meant more places to investigate a failure.
 
-## Different omics need different stopping points
+I moved toward an explicitly orchestrated workflow, in the sense of a LangChain-style arrangement: defined stages, inputs, outputs, and tool responsibilities. The model can interpret file structure and select an existing loader. Programs perform the actual reading, conversion, and writing. If the model-planned route fails to produce the expected output, the outer builder can try deterministic construction.
 
-[AnnData](https://anndata.readthedocs.io/en/stable/generated/anndata.AnnData.html) stores an observations-by-features matrix with its annotations. Features can be genes for RNA or peaks for ATAC. Spatial transcriptomics also needs a mapping from observations to coordinates.
+There is still interpretation to do. Filenames are inconsistent, descriptions are scattered, and useful clues can sit in supplementary files. I narrowed the execution scope so that a judgment leads to a particular tool, with a particular place to investigate it.
 
-Downloaded mass-spectrometry files and microscopy images may need substantial processing before they have that form. Giving them the same extension would not do the work.
+This did not solve every format problem. It did make debugging more specific: did the model select the wrong files, or did the existing reader mishandle this input?
 
-When extending BioFlow, I asked to preserve the existing RNA and ATAC paths. RNA, ATAC, and spatial transcriptomics continue through matrix construction. Protein, metabolomics, and imaging first go through file collection, manifests, and dataset/sample metadata. `OmicsProfile` selects the processing mode, and the outputs are separated by omics type.
+## A readable matrix still needs sample identities
 
-![The two output modes in the original BioFlow report](/images/bioflow/output-modes-original.webp "Slide 3 of the original report: matrix construction and file collection. Collection organizes files and metadata; quantitative conversion remains unfinished. Click to enlarge.")
+After building an h5ad, I need to know which sample each cell belongs to. Comparisons by tissue, time, or treatment depend on that relationship.
 
-This lets me collect the material and record what it contains before adding the relevant analysis tools. The collection mode does not yet perform protein or metabolomics quantitative standardization, image segmentation, or feature extraction. Spatial support currently covers basic matrices and spot coordinates.
+The original design document separates datasets, samples, cells, and donors. Keeping only a dataset accession would lose relationships needed later.
 
-## A plausible metadata value can be worse than a missing one
+![Data relationships in the original BioFlow design](/images/bioflow/sample-relations-original.webp "Original figure extracted from the BioFlow v0.2 design document and compressed as WebP. Chinese labels describe the planned relationships; this is not an accuracy result or proof of a deployed relational database.")
 
-Once the files can be read, I still need to know where the samples came from: tissue, time point, and sequencing method. Those descriptions can be scattered across database fields, filenames, papers, and supplementary tables. Different phrases may describe the same thing, which makes text matching a useful task for the model.
+File structure provides clues, but those clues must connect to sample records. BioFlow reads available SDRF or GEO series-matrix mappings and can derive identifiers from source files and directories. A separate LLM operation receives existing sample IDs, cell counts, and source file or directory hints, then returns an old-to-new ID mapping.
 
-BioFlow applies rules and vocabularies first, then supplies raw metadata and related text to the LLM to fill gaps. The write-back step fills only missing values or `Unclassified`; nonempty fields remain. That reduces overwriting, though an existing noncanonical value may also survive unchanged.
+This is distinct from choosing a loader. One operation identifies what to read; the other reconciles identifiers after reading. Separating them makes it easier to find where a wrong association entered the data.
 
-For this pass, I would rather leave `Unclassified`. A gap reminds me to find more material. A plausible time point can quietly become a grouping variable. Imagine comparing stages using a time point filled by the model: even if that value is wrong, the plotting code can still produce a figure. This is an example of the risk, not a reported experimental failure.
+The program checks the returned format and parts of the mapping's completeness, falling back to path-derived identifiers on failure. A path-derived ID preserves a source reference, but it is not necessarily a correct biological sample identity. Even an ID shaped like a GSM accession does not establish its donor or condition.
 
-The fill rate therefore tells me only part of what I need to know. For strict cross-dataset analysis, I would also want the source behind each filled field and manual spot checks. That source tracking and verification still need more work.
+A useful check therefore goes beyond whether an ID was produced. I still need to compare it with source sample tables and check for accidentally merged or split samples. That deserves more attention than polishing the prompt.
 
-## What happens when the job stops?
+## Giving a sample its context
 
-Being able to rerun each stage does not make a long job unattended. Should a stalled download be retried? Can another worker claim an accession that is already being processed? Which files can be kept after a crash?
+Once samples are identified, the next questions concern age, tissue, disease status, and sequencing method. Some information is in database records; some is in papers, supplementary tables, or filenames. The same concept may appear under several names.
 
-The Nova design separates the overall run, each task, and each attempt. The later Sentinel prototype implements part of this with SQLite state, workers, retry classifications, and heartbeats. A failed attempt can keep its record while another is scheduled. Skills describe how a stage should be handled; programs still execute it and save its state.
+I use the model to extract and match descriptions against a field dictionary. Rules handle what they can first. The LLM fills gaps, and the current write-back logic preserves nonempty values, updating missing values or `Unclassified`. Existing noncanonical descriptions can therefore remain and still need checking.
 
-The historical `tiny_e2e` sample did not complete the five stages. Stage one succeeded, stage two failed permanently, and stages three through five were blocked. That is the prototype's demonstrated limit here; I cannot describe it as a completed unattended system.
+Text interpretation is useful here, but a plausible value can lack support. A missing age prompts further investigation. An incorrect age might quietly enter a grouping analysis while the plotting code continues to work.
 
-Recovery also needs further work. Heartbeats run in a separate thread, which can remain alive while the actual subprocess is stuck. An old worker can finish late after a task has been requeued. Execution timeouts and checks that a result belongs to the right attempt are still needed.
+I consequently treat metadata completion and analysis readiness as separate questions. If a field affects the analysis, I want to trace it back to the material supporting it.
 
-If I continue this work, I would start with a fixed small set of datasets and check matrix orientation, sample mapping, and metadata sources. For each failed check, I would keep the reason and the relevant files, then decide whether to fix a loader, retry a download, or return to the paper for missing information.
+Different modalities also reach different stopping points. RNA, ATAC, and spatial data continue along matrix-building paths. Protein, metabolomics, and imaging extensions first collect assets, manifests, and sample information. Their modality-specific quantitative processing remains unfinished; I do not treat every collected file as a ready-to-analyze matrix.
+
+## From a single run to a long-running workflow
+
+After fixing the five stages, I still wanted the agent to handle more scheduling and recovery. Poor success in the early search, download, and extraction stages was also part of why I considered a redesign around Skills.
+
+A Skill can describe how to perform an operation. It does not, by itself, manage that operation's lifecycle. A timed-out download may warrant a retry; an unsuitable dataset should not be retried indefinitely. After a restart, the system must also know what already completed.
+
+The Nova design keeps the existing execution tools and adds a queue, state, and recovery layer. It distinguishes a complete run, an individual task, and each attempt. The later Sentinel prototype implements part of this through SQLite state, workers, retry classification, and heartbeats.
+
+I started by exploring greater autonomy, narrowed execution permissions, and then considered a larger role for the agent in planning and exceptions. The appropriate freedom depends on the operation. Interpreting file relationships needs flexibility; writing outputs, saving state, and deciding retries need explicit rules.
+
+Unattended execution remains incompletely validated. Sentinel's historical small end-to-end sample completed the first stage, failed at the second, and blocked the remaining stages. State and blocking are part of the flow, but this is not yet a complete system I can leave unattended with confidence.
+
+My next step would be a fixed small dataset collection, checking file relationships, sample identities, and metadata sources individually. Before merging two matrices, I want to verify their samples; before filling an age, I want to find its supporting source. I would work through these relationships before expanding the collection further.
+
+The [Bio_dataflow repository](https://github.com/laowangbushilaowang/Bio_dataflow) contains early scripts. It does not include all the later omics extensions or the Sentinel prototype.
