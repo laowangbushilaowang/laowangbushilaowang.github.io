@@ -374,5 +374,46 @@
       }
     ],
     "article": "sneaker-trading-platform"
+  },
+  {
+    "id": "emrnet",
+    "title": "EMRNet: multi-stage image restoration",
+    "titleZh": "EMRNet：多阶段图像复原",
+    "period": "Undergraduate thesis · 2022–2023",
+    "periodZh": "本科毕业论文 · 2022—2023",
+    "summary": "An undergraduate exploration of neural networks through image restoration, modifying attention, activations, normalization and cross-stage transfer on an MPRNet foundation.",
+    "summaryZh": "从直观的图像复原开始探索神经网络，以MPRNet为基线，尝试注意力、激活函数、归一化和跨阶段信息传递。",
+    "tags": [
+      "Image Restoration",
+      "MPRNet",
+      "Attention"
+    ],
+    "featured": false,
+    "role": "Undergraduate thesis",
+    "roleZh": "本科毕业论文",
+    "ownership": "I worked on the EMRNet modifications. The multi-stage foundation, ORSNet and baseline feature-fusion design come from MPRNet.",
+    "ownershipZh": "我围绕EMRNet进行结构改动；多阶段骨架、ORSNet和基线特征融合设计来自MPRNet。",
+    "article": "emrnet-image-restoration",
+    "cover": "/images/emrnet/architecture.webp",
+    "details": [
+      "Retained a three-stage restoration architecture, with encoder-decoder processing followed by an original-resolution branch.",
+      "Explored adjusted channel attention (ACA), decoder spatial attention (SAB) and supervised channel attention (SCAM), along with Mish, Swish and Instance Normalization.",
+      "The retrospective explains design and evaluation choices without quoting unverified improvement percentages."
+    ],
+    "detailsZh": [
+      "保留三阶段恢复结构：前两阶段编码解码，第三阶段在原分辨率处理。",
+      "尝试ACA通道注意力、解码器SAB空间注意力与SCAM监督通道注意力，以及Mish、Swish和Instance Normalization。",
+      "文章解释设计与评价取舍，不引用无法核对的提升百分比。"
+    ],
+    "links": [
+      {
+        "label": "MPRNet · baseline paper",
+        "href": "https://arxiv.org/abs/2102.02808"
+      },
+      {
+        "label": "MPRNet · upstream code",
+        "href": "https://github.com/swz30/MPRNet"
+      }
+    ]
   }
 ]
