@@ -75,6 +75,22 @@ The purchase handler moves an available item into a sold record and connects an 
 
 The coursework model simplified several things. Inventory had no size, condition, or seller-specific asking price; price belonged to the product table. In a new version, I would attach those attributes to the individual listing. Separating a shoe model from an item for sale makes room for that distinction.
 
+### Why split the tables: normal forms and keys
+
+Normalization gives a name to the reasoning behind these splits: put each fact in an appropriate table and avoid repeated data that becomes difficult to update or delete consistently. The first three normal forms ask different questions:
+
+| Principle | Example in this application |
+| --- | --- |
+| 1NF: single values, no repeating groups | An inventory row references one seller; several sellers are represented by several rows. |
+| 2NF: after 1NF, non-key attributes depend on the whole candidate key | With a hypothetical product-plus-seller key, brand depends only on the product. Keep it in the product table. The actual inventory model uses its own ID. |
+| 3NF: after 2NF, avoid transitive dependencies among non-key attributes | A seller’s address belongs to the seller. Inventory references that seller instead of copying the address. |
+
+Copying a shoe name into every inventory row would require many updates when it changed. A separate product row avoids that update anomaly and survives the sale of the last available item. See [Database design basics](https://support.microsoft.com/en-us/access/database-design-basics) for the general rules.
+
+The saved models also define keys and relationships. Most tables use Django’s default `id`; `sold` explicitly uses `soldid` as its primary key. Usernames and product names have uniqueness constraints. Foreign keys connect inventory to products and sellers, and orders to sold records, buyers, sellers, and optional customization.
+
+These choices explain the separation. Certifying the entire schema as 3NF would require checking its candidate keys and business dependencies. Having foreign keys alone does not establish that.
+
 ## Using Django’s ORM to connect tables and pages
 
 I mainly used Django’s built-in ORM: its interface for working with database records as Python objects. Models lived in `models.py`, request handling in `views.py`, and the results were passed to templates.
