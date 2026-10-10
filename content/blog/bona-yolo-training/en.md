@@ -37,6 +37,19 @@ A bottleneck is an internal component, not another name for the neck. Lightweigh
 
 Today I would record the location of each change, the error it is meant to address, and its comparison configuration. Fewer parameters do not guarantee faster inference. A higher average score can also hide a class getting worse.
 
+#### Comparing the ablations
+
+This table organizes the changes I remember. I have not recovered the original Word document, so I have left out invented baseline scores. The five-point improvement is my recollection.
+
+| Comparison | Change | Question or remembered result |
+| --- | --- | --- |
+| Original YOLO baseline | Original structure and loss | Common reference; I no longer remember the absolute score |
+| Lightweight modules | Parts of the backbone / bottleneck | Does reduced computation cost more misses on small objects such as cables? No recovered numbers |
+| Attention | Feature weighting | I tried replacements for difficult backgrounds and occlusion; exact modules and scores are missing |
+| Loss-only replacement | Considered Focal and Varifocal | Remembered gain of about 5 percentage points in `mAP@0.5`; winning loss unknown |
+
+Today I would test each change independently before combining the useful ones, keeping the validation set, input size and training budget fixed. For a lightweight model I would record single-image inference time alongside accuracy. Parameter count alone would not answer the deployment question.
+
 ### Focal and Varifocal address different questions
 
 I considered both losses. Ordinary Focal Loss reduces the contribution of easy examples, which matters when easy background predictions vastly outnumber harder cases. Class weighting addresses a different imbalance: how much different classes contribute.
@@ -168,6 +181,22 @@ There is also a commented `mss` attempt. Capture-library choice does not settle 
 
 For a new benchmark I would fix region and resolution, measure capture, preprocessing, inference and control separately, and report typical and slower behavior over a sustained run.
 
+#### Where the milliseconds go
+
+I remember capture reaching a few milliseconds, but the complete benchmark is missing. The following is a **hypothetical serial timing budget, not a historical measurement**.
+
+| Stage | Illustrative budget | Historical evidence |
+| --- | --- | --- |
+| Capture | 3 ms | Recollection of a few milliseconds; exact value and test count missing |
+| Preprocessing and transfers | 2 ms | Code prepares and transfers inputs; no stage logs |
+| Model inference | 8 ms | Retained TensorRT implementation; no verified standalone timing |
+| Box processing, selection and control | 1 ms | Retained code; no stage logs |
+| Serial sum of these stages | 14 ms | Example sum only; excludes display and device response |
+
+In this example, reducing capture from 3 to 2 ms saves 1 ms. Reducing inference from 8 to 4 ms saves 4 ms. Measuring the stages tells me which work would help most. A 14 ms loop corresponds to roughly 71 iterations per second, not the game's frame rate or the full delay from a visual change to an effective action.
+
+The old `Done. (...)` timer starts before capture. Different versions include drawing or control at different positions, so it cannot be copied as “YOLO inference time.” A new GPU benchmark would need warm-up and CUDA events or clearly synchronized boundaries. I would measure a sustained run and report the median and slower P95, rather than selecting the fastest frame.
+
 #### Target selection and control
 
 The retained code chooses a candidate near the screen center, with a distance limit and vertical offset. Nearest-center selection is not continuous tracking: it may switch between objects. Association across frames would be my first improvement today.
@@ -186,6 +215,12 @@ PID is present in `control.py`. Horizontal control uses P, I and D; vertical con
 ![PID function preserved in the old presentation](/images/bona/pid-original.webp "Original PID code corresponding to the archived control.py: horizontal integral and derivative terms, vertical proportional control.")
 
 P responds to the current error, I accumulates error, and D responds to its change. Noisy boxes, uneven frame intervals and oversized actions can all affect the result. A missing detection also needs an explicit policy: predict briefly, wait or stop.
+
+#### Related reading: YOLO and Kalman for UAV search
+
+I remember reading a UAV paper associated with a university in Sichuan or Chongqing, but cannot recover its title. While revisiting the topic I found [Fast UAV Object-Searching in Large-Scale and Complex Environments](https://researchers.westernsydney.edu.au/en/publications/fast-uav-object-searching-in-large-scale-and-complex-environments/), a 2025 *IEEE Transactions on Cybernetics* paper involving Sichuan University. It combines YOLO and Kalman filtering for object-position estimation in cluttered, occlusion-prone environments, then uses that information for UAV search.
+
+It illustrates the division between detecting what is visible in a frame and estimating position using information across frames. UAV search additionally needs path planning; my prototype mainly connected screen positions to control. This is related reading found later, not the paper I remember from the project. Its abstract does not establish a PID component.
 
 ### 4. Use the result to decide what to change
 
