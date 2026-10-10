@@ -287,7 +287,7 @@
     "ownership": "I worked on company-data training experiments, collected and labeled game data, compared capture methods and used ONNX/TensorRT. The prototype built on YOLOv7 and team code.",
     "ownershipZh": "我做公司数据上的训练实验，自采和标注游戏数据，比较截图方式并使用 ONNX/TensorRT；原型基于 YOLOv7 与团队代码。",
     "article": "bona-yolo-training",
-    "cover": "/images/bona/household-input.webp",
+    "cover": "/images/bona/household-detection.webp",
     "details": [
       "Structure/loss ablations and training-budget choices on a single 2080 Ti; no robot-hardware deployment.",
       "An enemy/teammate dataset, model-assisted labeling and further capture, plus capture and inference latency work.",

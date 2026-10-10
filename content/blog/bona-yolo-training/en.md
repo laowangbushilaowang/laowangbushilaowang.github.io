@@ -4,189 +4,162 @@ date: "2026-10-10"
 updated: "2026-10-10"
 language: en
 project: yolov7-robotics
-excerpt: "Training experiments on a single 2080 Ti, collecting my own game data, capture latency and TensorRT, and a difficult move to Ascend for a competition."
-cover: /images/bona/household-input.webp
-coverAlt: "An indoor input photograph retained in the old YOLO project, showing a slipper, cables and floor reflections"
-tags: [YOLO, Computer Vision, Focal Loss, TensorRT, Ascend]
+excerpt: "Improving detection on company data, then collecting game images and connecting accelerated inference to control: accuracy and real-time behavior presented different problems."
+cover: /images/bona/household-detection.webp
+coverAlt: "A household detection example preserved in my old presentation"
+tags: [YOLO, Computer Vision, Varifocal Loss, TensorRT, Ascend]
 draft: false
 ---
 
-A network change could take a day to train. Another module meant another day. That was the pace of my YOLO experiments during my Bona internship: one 2080 Ti, several ideas for the network, attention, loss and class weights, and a growing list of runs. Compute time limited how many questions I could ask.
+During my internship at Bona in 2022–2023, I worked on visual detection for robot vacuums. The company wanted a camera to recognize objects near the floor. Range sensors could provide obstacle information; an image could help distinguish a shoe from a cable or furniture. I trained YOLO on existing company data, changed network components, attention modules and losses, and ran ablations to compare them.
 
-During 2022–2023, the company wanted to add neural-network vision to a robot vacuum. Range sensors and infrared provided obstacle information; a camera could help identify what the obstacle was. I worked on model changes, training and ablations using existing company data. I was not responsible for collecting or labeling that dataset, and I did not deploy the detector on robot hardware.
+I remember a loss-only change improving `mAP@0.5` by about five percentage points over the original baseline. I considered both Focal Loss and Varifocal Loss, but I no longer remember which produced that improvement. The result is a recollection; I have not recovered its experiment table or configuration.
 
-I later applied the detection and optimization experience to game screens, collecting my own data and connecting detection to real-time control. A Huawei competition introduced another constraint: getting training to work on Ascend. These became three different problems—experiment cost, data and latency, and platform compatibility.
+Later I applied the detection experience to a game-screen prototype. This time I collected and annotated the data myself. The goal also changed: the program had to see a target and respond while the scene was still moving. I will follow that progression here, from training to the real-time prototype, then to training compatibility problems during a Huawei competition.
 
-## Making training experiments fit a 2080 Ti
+## Company data: what I changed and how I compared it
 
-![Slipper, cables and reflective tiles viewed from near the floor](/images/bona/household-input.webp "A retained input example, without detection boxes. Membership in the final training set is unconfirmed. Notice the low viewpoint, cables and floor reflections.")
+![Household objects with detection boxes in an archived presentation](/images/bona/household-detection.webp "An archived detection example showing object locations and classes; overall accuracy requires validation-set evaluation.")
 
-The robot-vacuum view puts shoes, wires and furniture close to reflective tiles. Detection needs both identity and location. A saved household configuration lists `leg`, `wires`, `shoes` and `paperBall`; it helps explain the intended objects, although its exact relationship to the final training split and checkpoint is not preserved.
+A low camera angle brings shoes, cables, occlusion and reflections into the same view. One archived configuration lists `leg`, `wires`, `shoes` and `paperBall`. I worked on model changes, training and evaluation. I did not collect or annotate this company dataset, or deploy the model on robot hardware.
 
-### What does replacing a module actually change?
+### Structure and attention: know where a change happens
 
-I tried backbone and bottleneck changes, lightweight modules such as MobileNet, attention and activation choices. I ran ablations to compare changes. I did not understand every structural choice deeply then: being able to insert a module was easier than explaining why it belonged there.
-
-It helps to separate the parts:
+I tried backbone and bottleneck replacements, including lightweight MobileNet-style components, as well as attention and activation changes. At the time, I could sometimes connect a component before I understood why it belonged there. An ablation helped test whether a change actually contributed, while keeping other conditions fixed.
 
 ```text
 Image → Backbone: extract features
       → Neck: combine features across scales
-      → Head: predict locations, classes and scores
+      → Head: predict boxes, classes and scores
 ```
 
-A bottleneck is an internal block, not another name for the neck. A module replacement needs a more precise description than “I changed the network.”
+A bottleneck is an internal component, not another name for the neck. Lightweight convolutions change computation and representation; attention reweights features; scale fusion changes how information at different resolutions is combined. A head replacement can also affect matching, losses and export compatibility.
 
-The following are **structural examples to explain the choices**, not a recovered list of my historical ablations:
+Today I would record the location of each change, the error it is meant to address, and its comparison configuration. Fewer parameters do not guarantee faster inference. A higher average score can also hide a class getting worse.
 
-| Part | What changes | What to compare |
-| --- | --- | --- |
-| Bottleneck / CSP bottleneck | Convolutions, residual paths and branches | Accuracy, memory and the benefit of extra paths |
-| MobileNet-style depthwise convolution / Ghost blocks | Some of the computation cost | Measured speed against lost detection quality |
-| Multiscale neck fusion, SPP / SPPCSPC | Information at different scales and spatial ranges | Small-object behavior and fusion cost |
-| Detect / IDetect heads | Features become boxes and class predictions | Output contracts, training matching and export support |
+### Focal and Varifocal address different questions
 
-The [YOLOv7 blocks](https://github.com/WongKinYiu/yolov7/blob/main/models/common.py) and [detection heads](https://github.com/WongKinYiu/yolov7/blob/main/models/yolo.py) provide concrete examples. Fewer parameters do not guarantee lower latency on the available hardware. A head replacement can also affect loss, label assignment and export; it is not just a configuration rename.
+I considered both losses. Ordinary Focal Loss reduces the contribution of easy examples, which matters when easy background predictions vastly outnumber harder cases. Class weighting addresses a different imbalance: how much different classes contribute.
 
-### Compare promising runs before training every idea fully
+Varifocal Loss also asks whether a detection score reflects localization quality. A confident shoe prediction can cover only half the shoe, while a better-fitting box has a lower classification score. VarifocalNet learns a score that incorporates localization quality to improve candidate ranking. [Original paper](https://arxiv.org/abs/2008.13367)
 
-I often trained for over a hundred epochs, until loss barely improved. A full trial could take a day. Looking back, I did not need to spend that budget on every candidate during screening.
+![Varifocal Loss formula preserved in my old presentation](/images/bona/varifocal-ppt.webp "The Varifocal Loss formula from my presentation: quality-weighted positives and score-weighted negatives.")
 
-Today I would keep splits, input sizes and budgets consistent, compare validation behavior as it begins to stabilize, and finish training only the promising candidates. Slow starters need a second look. A short run can guide screening; it cannot establish a final ranking.
+Here $p$ is the predicted score and $q$ the training target: typically the matched IoU for positives and zero for negatives. Positive loss uses the soft target $q$ and a $q$ weight; negative loss is weighted by $\alpha p^\gamma$, suppressing easy background predictions. Its $\alpha$ has a different role from ordinary Focal Loss. [Author implementation](https://github.com/hyz-xmaster/VarifocalNet/blob/master/mmdet/models/losses/varifocal_loss.py)
 
-**Loss values from different objectives do not rank detectors directly.** A new objective may produce a smaller number because it downweights examples. I would use consistent validation metrics and missed or false detections, rather than just a falling loss curve.
-
-`mAP@0.5` averages class AP using an IoU threshold of 0.5 for matching. IoU is the intersection area of two boxes divided by their union. The class-level changes matter alongside the average.
-
-### Batch size runs into memory
-
-I also encountered batches that were too large for GPU memory. An `out of memory` error is different from numerical overflow. Training retains intermediate activations and gradients, so a small model file does not establish that a large batch will fit.
-
-For a new run, I would start with a small batch and complete an entire training step, measure peak memory, then increase it. Gradient accumulation and mixed precision are possible options, rather than techniques I claim to have used then. Accumulation changes the update schedule; mixed precision needs stability checks. Resolution, model width and batch size belong in the same budget.
-
-### What Focal Loss changes
-
-Loss was one of the things I changed. Dense detection contains many easy background examples, while object classes can also have different frequencies. Focal Loss changes an example’s weight according to its current difficulty; class weights make a static adjustment by class.
-
-For a binary example, let $p_t$ be the probability assigned to its correct label:
-
-$$
-\mathrm{FL}(p_t)=-\alpha_t(1-p_t)^\gamma\log p_t.
-$$
-
-The static weight is $\alpha_t$. The focusing parameter $\gamma$ determines how strongly easy examples are downweighted. With $\gamma=2$:
-
-| $p_t$ | $(1-p_t)^2$ | Effect on this loss term |
-| --- | --- | --- |
-| 0.9 | 0.01 | Strongly downweighted |
-| 0.5 | 0.25 | Some weight retained |
-| 0.1 | 0.81 | Much less downweighting |
-
-*These are calculated teaching examples, not experiment measurements. The factor also participates in differentiation; the values are not gradient multipliers.*
-
-This standalone PyTorch illustration uses pre-sigmoid `logits` and floating-point binary `targets` with the same shape. It is not recovered historical training code.
+This small teaching example shows the weighting, rather than reconstructing my historical training code. `logits` are pre-sigmoid outputs; `quality` has the same shape and must be built from positive matching and IoU.
 
 ```python
+import torch
 import torch.nn.functional as F
 
-def focal_binary(logits, targets, alpha=0.25, gamma=2.0):
-    ce = F.binary_cross_entropy_with_logits(
-        logits, targets, reduction="none")
+def varifocal_example(logits, quality, alpha=0.75, gamma=2.0):
     p = logits.sigmoid()
-    pt = p * targets + (1 - p) * (1 - targets)
-    alpha_t = alpha * targets + (1 - alpha) * (1 - targets)
-    return (alpha_t * (1 - pt).pow(gamma) * ce).mean()
+    weight = torch.where(quality > 0, quality, alpha * p.pow(gamma))
+    bce = F.binary_cross_entropy_with_logits(
+        logits, quality, reduction="none")
+    return (weight * bce).mean()
 ```
 
-Here, positives get static weight 0.25 and negatives 0.75. Multiclass weighting needs its own design. Compare [Torchvision’s binary implementation](https://docs.pytorch.org/vision/main/generated/torchvision.ops.sigmoid_focal_loss.html) and the [original paper](https://arxiv.org/abs/1708.02002). Default parameters do not guarantee an improvement.
+Integration also requires deciding which output learns the quality score, how positives are matched, and how $q$ is constructed. Passing binary classification labels into this function is not sufficient to implement quality-aware training.
 
-The [official YOLOv7 loss code](https://github.com/WongKinYiu/yolov7/blob/main/utils/loss.py) already has a Focal Loss branch. My work was applying and evaluating training choices on the data. My recollection is that adding Focal Loss improved `mAP@0.5` by about five percentage points over the original baseline. The original tables have not been recovered, so I retain that as a recollection without inventing per-module results.
+`mAP@0.5` averages class AP after matching boxes at IoU 0.5. After changing a loss, the question is whether detection improves, rather than whether the new loss produces a smaller number.
 
-## Collecting game data: label teammates too
+### One 2080 Ti made experiment time part of the problem
 
-For the game prototype, I collected the data myself. Mouse clicks triggered sampling, taking frames at intervals of a few milliseconds. This made it easy to collect the scene in front of me; I no longer remember the exact interval.
+I had one 2080 Ti. I often trained a configuration for over a hundred epochs until loss barely changed; a full trial could take about a day. That limited how many ideas I could test.
 
-One useful lesson was that **labeling only enemies was not enough**. Teammates are similar-looking objects. If the program should react only to enemies, explicitly teaching it to recognize teammates can help with that distinction. With enemy-only labels, teammates can already act as background negatives. A separate teammate class makes the distinction explicit; whether it helps still depends on the data and validation.
+Looking back, I would screen candidates with a common shorter budget once validation behavior begins to stabilize, then train promising ones thoroughly. Slow starters deserve a second look. Loss values themselves are not directly comparable across loss functions: a weighting change can make them smaller without improving detection.
 
-The annotation interface can display enemies in red and teammates in blue or white. Those colors visualize the labels; the training targets are class IDs and coordinates. Human-drawn annotation boxes should not appear in the model’s input images. It needs to learn the cues in the original screen.
+I also ran into out-of-memory failures with oversized batches. Training stores intermediate activations and gradients as well as weights. Today I would complete a step at a small batch size, measure peak memory, then increase it. Gradient accumulation and mixed precision are possible new experiments, not optimizations I can claim to have used then.
 
-In my experience, labeling similar teammates separately helped control mistaken identifications. I do not have a recovered comparison that supports a numerical success rate.
+The game prototype carried these training lessons into a different setting. Now I needed my own data, and the model output had to arrive in time to drive an action.
 
-Data collection continued after the first model:
+## The game prototype: from captured frames to control
+
+I built a vision-to-control prototype around game images: capture a frame, detect a target, select a position, then adjust movement from its offset to the screen center. I collected and labeled images, and worked on capture, model export and control integration.
+
+![Game view and detection preview shown side by side](/images/bona/game-live-detection.webp "An archived prototype demonstration: game image on the left, detection preview on the right.")
+
+Following one frame makes the responsibilities easier to separate:
 
 ```text
-Capture → Label → Train → Inspect misses and mistakes
-   ↑                          ↓
-   └── Capture missing scenes ← Identify data gaps
+Screen → Capture / preprocessing → YOLO / TensorRT → Boxes
+                                                      ↓
+                         Target selection → Offset → PID → Action
 
-Existing model → Rough prelabels → Human corrections → Next training set
+Kalman: position prediction and correction between measurement and control.
+Recorded in the old presentation; its final implementation is not recovered.
 ```
 
-Prelabels reduce the work of drawing every box from scratch. They still need review: otherwise, a model’s mistakes become training answers for the next model.
+### Data: teammates were useful examples too
 
-Today I would also keep neighboring frames together in the same split, separating training and validation by capture segment or scene where possible. Frames a few milliseconds apart are nearly duplicates; random frame splitting can make validation look better than performance in a new scene. That is a present-day improvement to the procedure.
+Mouse clicks triggered short bursts of capture, with frames taken at millisecond intervals. I do not remember the exact interval. It let me gather images from the current scene quickly.
 
-## Real-time inference starts before the model
+![A person annotated in an old game image](/images/bona/game-annotation.webp "The original labelImg annotation canvas, with local paths cropped out. This screenshot comes from the person-labeling stage.")
 
-Waiting a day for training is irritating. Waiting during inference affects the action itself: the game keeps moving, and the detector may be processing a target’s old position.
+An enemy-only task has an awkward near-match: a teammate can look similar. I also labeled teammates so the model could explicitly learn the distinction. In my experience this made mistaken detections easier to control, although I no longer have the full comparison or an accuracy figure.
 
-I compared PIL, other Python capture libraries and Windows capture methods. I remember getting capture down to a few milliseconds, with less difference between PIL and the Windows path than I had expected. The original timing table is missing. That recollection concerns capture alone, not total detection-to-control latency.
+Red, blue or white annotation boxes are display choices. Training uses class IDs and coordinates; the input image should not contain the human-drawn boxes.
 
-The retained code uses Windows `BitBlt` to copy a bitmap from a window or desktop device context and reads its pixels into an array. It also contains traces of an `mss` experiment. Pillow’s [`ImageGrab`](https://pillow.readthedocs.io/en/stable/reference/ImageGrab.html) offers a more convenient capture interface.
+I collected images, annotated them, trained, inspected missed or mistaken detections, then captured the missing scenes. A preliminary model could provide rough labels for manual correction. Skipping that correction would feed its own mistakes back into training.
 
-For a new comparison, I would fix the region and resolution, specify whether timing includes conversion into model input, and measure JPEG saving separately. I would compare continuous-run medians and slower samples, rather than one best-case number.
+If I rebuilt the dataset now, I would split by capture segment or scene. Frames a few milliseconds apart are nearly identical; a random frame split can make validation look better than performance in a new scene.
 
-### PyTorch to ONNX to TensorRT
+### Capture: obtain pixels quickly and preserve coordinates
 
-Native inference was slow enough that I chose lightweight models and used ONNX followed by TensorRT. The constraint differed from training: frames arrived individually, so completion time per frame mattered more than throughput with a large batch.
+I compared PIL, other Python capture packages and Windows capture methods. I remember getting capture down to a few milliseconds, with less difference between PIL and Windows paths than I expected. That recollection is about capture alone, not total response latency.
 
-```text
-Trained PyTorch weights
-    → ONNX: represent the computation graph
-    → TensorRT engine: optimize for a target environment
-    → Load the engine for live inference
-```
+The retained `detect_trt.py` provides a concrete Windows path:
 
-**ONNX is not an automatic speedup.** It gives downstream tools a graph representation, as the [TensorRT ONNX deployment guide](https://docs.nvidia.com/deeplearning/tensorrt/latest/getting-started/quick-start-guide.html) illustrates. Acceleration depends on the backend, supported operations and build configuration. The archive contains `.pt`, `.onnx` and `.trt` files, and the live entry point executes a TensorRT engine.
+| Step | Retained implementation | Purpose |
+| --- | --- | --- |
+| Select region | Central 640×640 region | Limit per-frame data |
+| Copy pixels | Win32 `BitBlt`, then `GetBitmapBits` | Obtain a pixel array |
+| Prepare input | Resize, pad, normalize and convert | Match model input |
+| Restore positions | Subtract padding and divide by scale | Map boxes to the original region |
 
-I favored the lightest models because inference speed and memory were constrained. Today I would compare accuracy, single-frame latency and peak memory together, then choose among models that meet the actual latency requirement. A TensorRT engine also has [hardware and version compatibility constraints](https://docs.nvidia.com/deeplearning/tensorrt/latest/inference-library/engine-compatibility.html); it is not a portable replacement for weights.
+There is also a commented `mss` attempt. Capture-library choice does not settle color channels, copy overhead or resizing. Reading the archive again also revealed an unassigned color-conversion return value, something to verify when rerunning it.
 
-The full wait includes capture, resizing, transfers, postprocessing and control. GPU execution is asynchronous, so Python wall-clock timing can measure submission rather than completion. GPU segments need synchronization or CUDA events as explained in [PyTorch’s timing guidance](https://docs.pytorch.org/docs/main/notes/cuda.html#asynchronous-execution). Model-only timing does not explain the delay felt by the controller.
+For a new benchmark I would fix region and resolution, measure capture, preprocessing, inference and control separately, and report typical and slower behavior over a sustained run.
 
-## Turning detections into movement
+### Inference: lightweight weights, ONNX and TensorRT
 
-Boxes are not actions. The retained prototype selects a candidate nearest the image center, with a distance limit and vertical offset. Its controller uses P, I and D horizontally, and mainly P vertically. The project builds on YOLOv7; the README describes the control package as team-written.
+Native model inference was slow, so I used a lightweight model and the PyTorch → ONNX → TensorRT engine path. For this application, single-frame delay and memory mattered more than large-batch throughput.
 
-P responds to current error, I accumulates past error, and D responds to error changes. They regulate movement rather than identify objects. Noisy measurements, stale detections and excessive movement can all affect the result.
+ONNX represents the exported graph; TensorRT builds an execution engine for the environment. ONNX alone is not an acceleration switch. The archive contains `.pt`, `.onnx` and `.trt` files, and `detect_trt.py` retains engine loading, CUDA tensor preparation and inference execution. [TensorRT deployment guide](https://docs.nvidia.com/deeplearning/tensorrt/latest/getting-started/quick-start-guide.html)
 
-A Kalman filter handles a different job: predict the current position from previous state, then correct it with a new measurement. [SORT](https://arxiv.org/abs/1602.00763) is another reference for association and state estimation after detection. The responsibilities can be separated like this:
+Capture and inference improvements supported the real-time pipeline, but the full timing table is missing. I cannot reconstruct a total delay or speedup. Once boxes appeared, the program still needed to choose a target and decide how far to move.
 
-```text
-Image → YOLO: location and class
-          ↓
-      Association: which previous target is this?
-          ↓
-      State estimate: e.g. Kalman smoothing and prediction
-          ↓
-      Controller: e.g. PID movement from the error
-```
+### Target selection, Kalman and PID have separate jobs
 
-*This diagram explains the roles, rather than reconstructing every historical component. PID is visible in the saved code. Kalman appears in my old personal material, but its final implementation has not been recovered.*
+The retained code chooses a candidate near the screen center, with a distance limit and vertical offset. Nearest-center selection is not continuous tracking: it may switch between objects. Association across frames would be my first improvement today.
 
-I remember a UAV paper using a similar detection-and-estimation idea, but not its university or title. A current related reference is [Fast UAV Object-Searching in Large-Scale and Complex Environments](https://researchers.westernsydney.edu.au/en/publications/fast-uav-object-searching-in-large-scale-and-complex-environments/), published in 2025 with Sichuan University participation. It describes combining YOLO and Kalman position estimation. It may not be the paper I remember, and that description does not establish a PID controller.
+| Component | Input → output | Boundary |
+| --- | --- | --- |
+| YOLO | Image → classes, boxes, scores | Does not choose movement |
+| Target selection | Several boxes → selected target | Does not guarantee identity continuity |
+| Kalman | Previous state and measurement → estimated position | Does not identify enemies or control movement |
+| PID | Position error → adjustment | Does not validate the detection |
 
-If I upgraded the prototype, I would first improve frame-to-frame association so the program did not switch targets whenever another box became closer. State estimation should account for the measured frame interval and delay. Only then would I tune control parameters. Missing detections also need a policy: briefly predict, wait, or stop moving. Those decisions matter beyond another detector swap.
+Kalman predicts from the previous state, then corrects with a new measurement. My old presentation mentions it, but its final code has not been recovered. The table explains its role rather than claiming the retained program includes every stage.
 
-## Ascend: migration took more than a new environment
+PID is present in `control.py`. Horizontal control uses P, I and D; vertical control mainly uses P.
 
-After the company work, I participated in a Huawei competition and tried training on an Ascend NPU through a PyTorch adaptation environment. This was not MindSpore development.
+![PID function preserved in the old presentation](/images/bona/pid-original.webp "Original PID code corresponding to the archived control.py: horizontal integral and derivative terms, vertical proportional control.")
 
-The YOLO implementation encountered several compatibility problems with that PyTorch stack and its supported operations. During debugging, I suspected a matrix-related function. I no longer have the logs or a minimal reproducer, so that is a suspected cause, not a verified vendor defect. We switched to a YOLOv5 template and trained on the Ascend server.
+P responds to the current error, I accumulates error, and D responds to its change. Noisy boxes, uneven frame intervals and oversized actions can all affect the result. A missing detection also needs an explicit policy: predict briefly, wait or stop.
 
-My experience was frustrating: migration took more effort than expected, and training felt slow. Time intended for model experiments went into compatibility work. That describes the environment I used then; identifying the exact bottleneck or generalizing to other Ascend setups would need the original versions and logs.
+The prototype reached a capture–detection–selection–relative-control pipeline, with demonstration images and retained entry-point and control code. It used existing YOLO methods, and the README describes the control package as team-written. The household model and game prototype had different data and purposes.
 
-The current [Ascend PyTorch documentation](https://www.hiascend.com/document/detail/zh/Pytorch/2600/index/index.html) explains the adaptation layer, and the official [ModelZoo](https://github.com/ascend/modelzoo) provides model adaptation entry points. These are current references, not evidence that I used today’s versions.
+## The Ascend competition: get training running first
 
-For another migration, I would first run a few steps of an already-adapted model, check inputs, loss and parameter updates, then reintroduce changes. If an operator looked wrong, I would isolate a small input and compare outputs across platforms before debugging the entire detector.
+After the company work, I participated in a Huawei competition and tried training on Ascend NPU hardware. Before this, I had been choosing between data, model and runtime changes. Here software compatibility became the first obstacle.
 
-AI could now help with configuration bookkeeping, error explanations, timing scripts and export checks. It would remove some repetitive work. I would still need to decide what to change, which objects to label, and what constitutes an improvement. The day-long runs, millisecond captures and failed migration attempts made those questions much less abstract.
+The environment adapted PyTorch to the platform. YOLO encountered several version or operator-support errors. I suspected a matrix-related function, but no minimal reproduction or historical logs remain, so I cannot call it a confirmed vendor bug. We eventually used a YOLOv5 template for training on the Ascend server.
+
+My experience was that migration was cumbersome and training was slow. Time intended for model work went into compatibility problems. That describes my environment at the time, not every Ascend setup; identifying the bottleneck would require those versions and logs.
+
+Today I would start with an already adapted model, run a few training steps and check inputs, loss and parameter updates before adding changes. For a suspected operator problem, a small independent input compared across platforms would be easier to diagnose than the whole detector. [Ascend PyTorch documentation](https://www.hiascend.com/document/detail/zh/Pytorch/2600/index/index.html)
+
+What I would keep from this work is specific: compare loss changes under the same evaluation conditions, collect confusing near-matches rather than only desired targets, and measure capture, inference and control separately. AI assistance could reduce configuration and debugging work today. It would still need a clear comparison to implement.
