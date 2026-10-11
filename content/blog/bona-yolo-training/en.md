@@ -164,7 +164,7 @@ Two company-data loss trials have complete validation outputs: 586 images, 2,100
 | Focal | 78.1% | 66.9% | 72.6% | 42.2% |
 | Varifocal | 71.6% | 70.6% | 74.0% | 43.2% |
 
-Varifocal scored **1.4 percentage points higher** on mAP@0.5 and had higher recall, but lower precision. It did not improve every aspect of detection. The validation implementation selects precision and recall at each run’s maximum mean F1. The operating points may differ, so these values do not establish a change in false positives at one shared threshold and are not substitutes for AP.
+Varifocal scored **1.4 percentage points higher** on mAP@0.5 and had higher recall, but lower precision. Precision describes one confidence threshold, whereas AP summarizes the precision–recall curve across thresholds, so lower precision at one operating point can coexist with higher AP. It did not improve every aspect of detection. The validation implementation selects precision and recall at each run’s maximum mean F1. The operating points may differ, so these values do not establish a change in false positives at one shared threshold and are not substitutes for AP.
 
 The class breakdown shows where the difference appeared:
 
