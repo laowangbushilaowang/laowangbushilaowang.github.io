@@ -17,7 +17,7 @@ This article covers two YOLO projects: improving household detection with compan
 
 During my internship at Bona in 2022–2023, I trained YOLO on existing company data to recognize objects near the floor. Range sensors provided obstacle information; images could help distinguish shoes, cables and furniture. With limited data, uneven class counts and differing detection performance, I explored structural changes and losses, using ablations to compare them.
 
-I remember a loss-only change improving `mAP@0.5` by about five percentage points over the original baseline. I considered Focal and Varifocal, but no longer remember which produced that improvement.
+The work took place in 2022–2023. I separate data, architecture, loss and training decisions below, rather than combine gains from different runs.
 
 ![Household objects with detection boxes in an archived presentation](/images/bona/household-detection.webp "An archived detection example showing object locations and classes; overall accuracy requires validation-set evaluation.")
 
@@ -122,47 +122,62 @@ Ghost blocks use a different approach: generate a smaller set of features with r
 
 The distinction I took away was between connecting a component and improving detection. A successful forward pass checks only part of the integration; training, gradients and exported outputs still matter. Lightweight blocks also trade computation against representation. For cables, the question is whether thin-target features survive that trade, compared on the same validation set. A promising module name cannot answer it.
 
-### Selecting a model: accuracy, file size and inference time
+### Model selection: what accuracy and timing can tell us
 
-I also compared standard YOLOv5, v6 and v7 variants. Most runs used 300 epochs, but batch size, pretraining and input conditions differed. This is a model-selection comparison, not a controlled component ablation.
+The main validation results below supported model selection. Training batches, pretraining and configurations differed, so a cross-model difference is not a component's isolated contribution.
 
-| Model / configuration | Epochs / Batch | Validation input | Validation mAP@0.5 | Model file | Inference |
-| --- | --- | --- | ---: | ---: | ---: |
-| YOLOv5s | 300 / 8 | 640 | 69.5% | 14 MB | — |
-| YOLOv5m | 300 / 8 | 640 | 71.0% | 40 MB | — |
-| YOLOv5l | 300 / 8 | 640 | 70.8% | 89 MB | — |
-| YOLOv5x | 300 / 4 | 640 | 71.3% | 165 MB | — |
-| YOLOv7, no pretraining | 300 / 8 | 640 | 73.8% | 76 MB | — |
-| YOLOv7, pretrained | 300 / 8 | 640 | 77.4% | 76 MB | 4.3 ms |
-| YOLOv6s, pretrained | 300 / 16 | 640 | 76.9% | 36.2 MB | 2.79 ms |
-| YOLOv7-tiny, configuration labeled 512 | 300 / 8 | 640 | 71.6% | 11.6 MB | 1.1 ms |
-| Same 512 configuration, different validation input | 300 / 8 | 512 | 40.8% | 11.6 MB | 0.8 ms |
-| YOLOv7-tiny, configuration labeled 640 | 300 / 8 | 640 | 72.6% | 11.6 MB | 1.6 ms |
-| YOLOv7-tiny + CA, no pretraining | 300 / 8 | 640 | 31.8% | 11.6 MB | 1.6 ms |
-| YOLOv6-tiny | 300 / 16 | 640 | 74.1% | 31.6 MB | 2.15 ms |
-| YOLOv6n | 200 / 32 | 640 | 64.8% | 9.32 MB | 1.02 ms |
+| Model / configuration | Validation mAP@0.5 | Model file | Amortized validation inference |
+| --- | ---: | ---: | ---: |
+| YOLOv5s, reference | 69.5% | 14 MB | — |
+| YOLOv7, no pretraining | 73.8% | 76 MB | — |
+| YOLOv7, pretrained | 77.4% | 76 MB | 4.3 ms |
+| YOLOv6s, pretrained | 75.9% / 76.9%¹ | 36.2 MB | 2.79 ms |
+| YOLOv7-tiny, 640 configuration | 72.6% | 11.6 MB | 1.6 ms |
+| YOLOv6-tiny | 74.1% | 31.6 MB | 2.15 ms |
+| YOLOv6n | 64.8% | 9.32 MB | 1.02 ms |
 
-A dash means no corresponding timing was available. Epochs / Batch describes training; inference comes from the individual validation outputs, not a single-frame benchmark at one shared batch size. It excludes capture and the complete control loop. File size is not parameter count. Another comparison gives YOLOv6s 75.9%; this table retains the model-selection result of 76.9%, without treating them as one run.
+¹ Two YOLOv6s results differ and have not been fully matched to their checkpoints. Both are retained rather than selecting the higher as a definitive score. A dash means no paired timing. Most variants used 300 training epochs, versus 200 for YOLOv6n; YOLOv5 results are references.
 
-A few decisions followed from these results:
+The validation program divides accumulated inference time by the number of processed images. This is not batch-one response latency and excludes capture, preprocessing and control. Different validation batches and environments prevent a controlled claim about speedup. [YOLOv7 timing implementation](https://github.com/WongKinYiu/yolov7/blob/main/test.py)
 
-- **Larger models did not help much on these data.** YOLOv5 grew considerably from s to x, while the score moved from 69.5% to 71.3%.
-- **Lightweight variants need an explicit tradeoff.** YOLOv6n approached 1 ms, but scored below the tiny and s variants. Fastest did not necessarily mean most useful.
-- **Input scale needed checking.** Changing validation input from 640 to 512 for the configuration labeled 512 made inference slightly faster but changed the score dramatically. The final diagnosis was not established; matching training, preprocessing and evaluation scale was an essential check.
+Full YOLOv7 scored higher; tiny had a smaller file and shorter recorded inference. YOLOv6n saved more computation but lost detection performance. These comparisons helped define what accuracy cost was acceptable for a smaller model.
 
-The CA result of 31.8% is also a different configuration from the earlier 65.9% architecture trial. Initialization and model versions were not fully aligned; the shared module name does not establish the cause of the failure.
+#### Anomalous results need checking before interpretation
 
-One Varifocal trial reached validation mAP@0.5 of 74.0%, but its timing revealed another bottleneck:
+| Anomalous entry | What needs checking |
+| --- | --- |
+| tiny validation input 640 → 512, score 71.6% → 40.8% | The drop is large; confirm matching weights, metric columns, preprocessing and validation settings before attributing it to resolution |
+| One CA configuration scored 31.8%, versus 65.9% in the architecture comparison | The configurations are not fully paired; these cannot establish one CA effect |
+| Varifocal validation: inference 1.0 ms, NMS 60.3 ms | Focal validation reported NMS at 0.8 ms; this does not establish that Varifocal caused slow postprocessing |
+| Focal validation reported `Premature end of JPEG file` | Inspect the affected image and decoded input; the warning alone does not establish an effect on the score |
 
-| Validation at 640×640, batch 32 | Time per image |
-| --- | ---: |
-| Inference | 1.0 ms |
-| NMS | 60.3 ms |
-| Combined | 61.3 ms |
+These values are preserved, but excluded from the normal selection comparison. Weight identity, inputs, thresholds, candidate-box counts and repeatable timing need checking first. Those are diagnostic questions, not established causes.
 
-NMS filters duplicate boxes. In this run, postprocessing dominated an already fast network. This was separate from the game's TensorRT benchmark, and the conditions do not establish a clean loss-only gain for the 74.0% result. Quoting only “1 ms inference” would hide the expensive part of the pipeline.
+The 60.3 ms NMS value is one validation output, not established steady-state latency. It must also stay separate from the game's 4 ms single-frame TensorRT timing. Inference, postprocessing and full response time need distinct definitions.
 
 ### Focal and Varifocal address different questions
+
+Two company-data loss trials have complete validation outputs: 586 images, 2,100 object annotations, 640×640 inputs and validation batch size 32.
+
+| Loss trial | Precision | Recall | mAP@0.5 | mAP@0.5:0.95 |
+| --- | ---: | ---: | ---: | ---: |
+| Focal | 78.1% | 66.9% | 72.6% | 42.2% |
+| Varifocal | 71.6% | 70.6% | 74.0% | 43.2% |
+
+Varifocal scored **1.4 percentage points higher** on mAP@0.5 and had higher recall, but lower precision. It did not improve every aspect of detection. The validation implementation selects precision and recall at each run’s maximum mean F1. The operating points may differ, so these values do not establish a change in false positives at one shared threshold and are not substitutes for AP.
+
+The class breakdown shows where the difference appeared:
+
+| Class | Focal AP@0.5 | Varifocal AP@0.5 | Change, percentage points |
+| --- | ---: | ---: | ---: |
+| Furniture legs | 50.1% | 52.9% | +2.8 |
+| Cables | 74.3% | 76.0% | +1.7 |
+| Shoes | 82.9% | 84.1% | +1.2 |
+| Paper balls | 83.2% | 82.9% | −0.3 |
+
+Furniture legs remained the hardest class. The validation size and inputs match, but training budgets and checkpoints have not been fully paired. These are two loss-trial results, rather than a verified single-variable ablation.
+
+I separately remember a loss-only improvement of about five percentage points, without remembering whether Focal or Varifocal produced it. That recollection cannot be merged with this 1.4-point difference. The game-data loss comparison appears separately later.
 
 I considered Focal and Varifocal and also increased weighting for less-represented classes. Class weighting changes a class’s contribution, while ordinary Focal changes an example’s contribution according to prediction difficulty. Ordinary Focal Loss reduces the contribution of easy examples, which matters when easy background predictions vastly outnumber harder cases. Class weighting addresses a different imbalance: how much different classes contribute.
 
