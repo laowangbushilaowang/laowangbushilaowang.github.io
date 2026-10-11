@@ -44,7 +44,29 @@ We used **ACS five-year estimates**, which offer more observations for small-are
 
 My main question was whether the Black–white commute gap was consistent across places. The regional analysis covered 2016–2021. We compared annual commute hours by area and race, then connected the results to a map.
 
-One practical obstacle was geography. The data used codes; the client needed recognizable places. Public geographic information helped connect those codes to labels and boundaries. A **PUMA**, or Public Use Microdata Area, is a statistical geography rather than a ZIP code, county, or town. Labels and definitions also changed across years. A successful map join did not, by itself, establish that every comparison used equivalent areas.
+### Matching PUMA codes to states and places
+
+An awkward part of this work was turning PUMA codes into recognizable states and places. It meant consulting geographic documents and PDFs for the relevant years, before the map could tell the client anything useful.
+
+**A five-digit PUMA code is not nationally unique.** Matching requires the state code as well. Leading zeros matter too: a numeric `100` will not directly match a name table containing the string `00100`. The identity has three parts:
+
+```text
+State code + five-digit PUMA code + geography vintage
+                         ↓
+Names and boundaries from that vintage
+```
+
+The [official directory](https://www.census.gov/programs-surveys/geography/guidance/geo-areas/pumas.html) provides separate [2010](https://www2.census.gov/geo/pdfs/reference/puma/2010_PUMA_Names.pdf) and [2020](https://www2.census.gov/geo/pdfs/reference/puma2020/2020_PUMA_Names.pdf) name PDFs. Their titles are geography vintages, not a rule to match the survey year to the same number.
+
+| What to check | Why it matters |
+| --- | --- |
+| State code together with PUMA | The PUMA code alone can identify a place in another state |
+| Geography vintage used by the records | Names and boundaries from different vintages cannot simply be mixed |
+| Full area name and coverage | A PUMA can combine towns or cover only part of a county |
+
+The [ACS handbook](https://www.census.gov/content/dam/Census/library/publications/2021/acs/acs_pums_handbook_2021_ch02.pdf) explains that records through 2011 use 2000-based geography, while 2012–2021 records use 2010-based geography. Five-year files spanning the transition can contain both. Our 2016–2021 regional analysis therefore does not switch to 2020-based geography just because it includes 2020; analyses extending further back need a separate check.
+
+Looking up a name answers **where a code points**. Reconciling boundaries answers **whether different years describe the same place**. A successful name lookup does not establish the latter. PUMAs are statistical areas, not ZIP codes or necessarily whole counties or towns. This is why the results below retain qualifiers such as `North`, `Central`, and `& Others`: removing them changes the scope of the claim.
 
 We kept the sign of the difference: **Black annual commute hours minus white annual commute hours**. Positive values mean longer travel for Black commuters; negative values mean longer travel for white commuters.
 
