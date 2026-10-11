@@ -415,5 +415,35 @@
         "href": "https://github.com/swz30/MPRNet"
       }
     ]
+  },
+  {
+    "id": "mental-health-chatbot",
+    "title": "Mental-health chatbot",
+    "titleZh": "心理健康聊天机器人",
+    "period": "Undergraduate NLP project",
+    "periodZh": "本科 NLP 项目",
+    "summary": "A counseling QA prototype connecting data collection, topic classification, response generation, and reader evaluation.",
+    "summaryZh": "连接咨询问答采集、主题分类、回答生成与人工评估的 NLP 原型。",
+    "tags": [
+      "NLP",
+      "DialoGPT",
+      "Transformer",
+      "Django"
+    ],
+    "featured": false,
+    "role": "NLP project participant",
+    "roleZh": "NLP 项目实践",
+    "ownership": "I participated in this undergraduate project. The report and presentation are jointly authored; the results describe the project experiments.",
+    "ownershipZh": "我参与了这项本科项目；报告与演示共同署名，文中的指标来自项目实验。",
+    "cover": "/images/chatbot/web-interface.webp",
+    "article": "mental-health-chatbot",
+    "details": [
+      "Collected counseling QA text, used a bidirectional LSTM for topic classification, and compared an encoder–decoder Transformer with a 345M-parameter DialoGPT model.",
+      "Reader evaluation had 37 valid submissions: DialoGPT scored higher on quality but lower on appropriateness."
+    ],
+    "detailsZh": [
+      "从咨询问答文本出发，用双向 LSTM 做主题分类，比较编码器—解码器 Transformer 与 345M 参数的 DialoGPT。",
+      "人工评价得到 37 份有效反馈：DialoGPT 的整体质量更高，适切性评分却更低。"
+    ]
   }
 ]
