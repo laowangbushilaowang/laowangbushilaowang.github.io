@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import "@/app/globals.css";
 import "katex/dist/katex.min.css";
@@ -8,16 +8,20 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { LanguageProvider } from "@/components/i18n/LanguageProvider";
 import { siteProfile } from "@/content/site";
 
-const displayFont = Fraunces({
-  subsets: ["latin"],
+const displayFont = localFont({
+  src: "./fonts/fraunces-latin.woff2",
   variable: "--font-display",
-  weight: ["400", "500", "600", "700"],
+  weight: "400 700",
+  display: "swap",
+  adjustFontFallback: "Times New Roman",
 });
 
-const sansFont = Plus_Jakarta_Sans({
-  subsets: ["latin"],
+const sansFont = localFont({
+  src: "./fonts/plus-jakarta-sans-latin.woff2",
   variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
+  weight: "400 700",
+  display: "swap",
+  adjustFontFallback: "Arial",
 });
 
 const siteUrl =
