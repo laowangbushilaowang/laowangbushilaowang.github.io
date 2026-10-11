@@ -332,10 +332,10 @@
     "id": "data-days-for-good",
     "title": "Data Days for Good",
     "titleZh": "Data Days for Good",
-    "period": "BU × MassMutual",
-    "periodZh": "BU × MassMutual",
-    "summary": "A team R Shiny product built from survey data and free text. My reported focus was cleaning comments, sentiment groups, and frequent words.",
-    "summaryZh": "基于问卷和自由文本的团队 R Shiny 产品。我确认的个人重点是评论清洗、情绪分组与高频词。",
+    "period": "Spring 2024 · BU × MassMutual",
+    "periodZh": "2024 年春 · BU × MassMutual",
+    "summary": "A four-day survey-analysis project delivered as an R Shiny report. I focused on cleaning comments, grouping sentiment, and extracting frequent words; readers can explore questions and demographic groups.",
+    "summaryZh": "四天内把学生体验问卷做成 R Shiny 交互报告。我重点处理评论清洗、情绪分组与组内高频词，报告支持自选问题和背景群体。",
     "tags": [
       "R Shiny",
       "Text analysis",
@@ -344,8 +344,24 @@
     "featured": false,
     "role": "Team project",
     "roleZh": "团队项目",
-    "ownership": "I contributed text analysis; the application was delivered by the team. The exact classifier and my share of reactive code remain unverified.",
-    "ownershipZh": "我参与文本分析，应用由团队共同交付。具体分类器和 reactive 代码分工尚未核实。"
+    "ownership": "I contributed comment analysis and visualization to a shared survey-report product.",
+    "ownershipZh": "我参与评论分析与可视化，和团队共同交付问卷报告。",
+    "cover": "/images/data-days/interactive-report.webp",
+    "article": "data-days-for-good",
+    "details": [
+      "The report connects survey context, written findings, and self-service question/demographic controls.",
+      "2024 received 1,088 responses, with 895 retained under the completion rule. Question-level denominators differ; current group-percentage output requires reconciliation with its instructions."
+    ],
+    "detailsZh": [
+      "报告把调查背景、已有解释和自助问题／群体筛选接在一起。",
+      "2024 原始 1,088 份，按完成度规则保留 895 份；逐题分母不同，当前部分群体比例输出仍需与说明核对。"
+    ],
+    "links": [
+      {
+        "label": "Interactive report",
+        "href": "https://jun8.shinyapps.io/dd4g-bu-tech-majors-survey/"
+      }
+    ]
   },
   {
     "id": "sneaker-trading-platform",
