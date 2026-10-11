@@ -69,37 +69,37 @@ Image → Backbone: extract features
 
 A bottleneck is an internal block; the neck is the scale-fusion part of the detector. Changing one modifies feature computation, while changing the other modifies how resolutions interact. At the time I could sometimes connect a block before I fully understood why it belonged there.
 
-#### Attention: suppress clutter without losing thin targets
+#### Changing blocks and locations: the actual results
 
-I remember comparing channel attention, spatial attention and their combination. In household detection, the distinction is useful: channel attention weights feature responses, while spatial attention weights locations.
+I first tested attention and lightweight components on YOLOv7-tiny. This architecture comparison used a non-pretrained tiny baseline, separate from the later pretrained model comparison.
 
-**Channels are learned features, not RGB colors.** [SE](https://arxiv.org/abs/1709.01507) globally averages each channel and uses a small network to generate weights. With 256 channels and reduction ratio 16, that network follows 256 → 16 → 256. The feature dimensions stay unchanged.
-
-**Spatial attention retains location information.** CBAM's spatial branch combines the channel-wise mean and maximum through a 7×7 convolution to generate location weights. Suppressing reflections or texture may help, but a weak cable response could be suppressed too. [Author implementation](https://github.com/Jongchan/attention-module/blob/master/MODELS/cbam.py)
-
-[CBAM](https://arxiv.org/abs/1807.06521) applies channel weighting before spatial weighting. Its channel branch uses both average and maximum pooling, unlike SE.
-
-```text
-Features → Channel weighting → Spatial weighting → Detection
-           Which responses?   Which locations?
-```
-
-These mechanisms explain both the motivation and the tradeoff. Better shoe detection need not mean better cable detection. Per-class AP, recall and false positives reveal changes that average mAP can hide. The roughly five-point gain I remember from a loss-only replacement does not establish an attention-module gain.
-
-#### Attention experiments: adding a block did not ensure improvement
-
-A YOLOv7-tiny architecture comparison tested attention blocks at specific locations:
-
-| Configuration | Location | mAP@0.5 | mAP@0.5:0.95 |
+| Configuration | Change location | mAP@0.5 | mAP@0.5:0.95 |
 | --- | --- | ---: | ---: |
 | YOLOv7-tiny baseline | — | 66.2% | 36.4% |
 | CA | After Backbone P2–P5 | 65.9% | 33.5% |
 | SE | End of Backbone | 66.0% | 36.5% |
 | CBAM | After Backbone P1 and P2 | 64.7% | 35.8% |
+| CBAM | In the Head | 67.1% | 37.2% |
+| MobileNetV2 components | Lightweight tiny structure | 66.4% | 36.7% |
+| GnConv | Convolution replacement | 65.0% | 36.3% |
 
-SE was essentially unchanged; CA and CBAM scored below the baseline on both metrics. Block choice and insertion location changed together, so these results evaluate the listed configurations. They do not establish that an attention method is ineffective everywhere.
+**CBAM lost performance near the front of the Backbone, but improved slightly in the Head.** That is more informative than saying I tried channel and spatial attention: placement changes how the detector uses features.
 
-CA barely changed AP at the looser IoU threshold, but the metric averaged across IoU thresholds declined more noticeably. Looking only at AP@0.5 would hide part of the localization problem. Other insertion configurations were prepared later; unrun configurations are not results.
+Channel attention weights feature responses; spatial attention weights locations. [SE](https://arxiv.org/abs/1709.01507) mainly does the former, while [CBAM](https://arxiv.org/abs/1807.06521) combines both. Suppressing clutter may also suppress a thin cable, so the principle alone cannot establish a benefit.
+
+These configurations change both the block and its location. One unsuccessful placement does not make CBAM unsuitable everywhere. The tiny MobileNetV2 variant largely retained the score while reducing the model file from about 11.6 to 10.3 MB. GnConv did not improve this configuration.
+
+Replacing the full YOLOv7 Backbone was a separate comparison:
+
+| Full-model configuration | mAP@0.5 | mAP@0.5:0.95 | Model file |
+| --- | ---: | ---: | ---: |
+| YOLOv7 baseline | 73.8% | 43.2% | 76 MB |
+| MobileNetV2 Backbone | 69.8% | 40.9% | 47.4 MB |
+| MobileNetV3 Backbone | 67.4% | 37.5% | 46 MB |
+
+Both replacements reduced file size and detection scores. The MobileNetV3 variant retained SPPF, leaving two pyramid-style components in the structure. Shrinking the Backbone did not automatically produce a sensible overall architecture.
+
+I also combined CA with changes to upsampling, downsampling and activations, obtaining 67.5% / 37.3% with a 20.6 MB model file. That result belongs to the combined variant; it cannot be credited to CA alone. Prepared but unrun configurations are not listed as results.
 
 #### Integrating YOLOv5 and lightweight blocks
 
@@ -116,13 +116,51 @@ YOLOv5's C3 illustrates the interface issue: one path runs through bottlenecks, 
 
 For example, a block occupying `[B, 128, 40, 40] → [B, 256, 20, 20]` must preserve that contract when replaced. These dimensions illustrate an interface; actual channels depend on the configuration. Replacing a block while preserving its output requires less downstream work than replacing an entire backbone. A new backbone needs compatible outputs for the neck's scales. Standard YOLOv7 uses detection strides 8, 16 and 32, producing 80×80, 40×40 and 20×20 feature maps for a 640×640 input. [Original configuration](https://github.com/WongKinYiu/yolov7/blob/main/cfg/training/yolov7.yaml)
 
-I also replaced the YOLOv7 Backbone with MobileNetV3 while retaining SPPF, leaving two pyramid-style components in the structure. The variant scored 67.4% / 37.5% on mAP@0.5 / mAP@0.5:0.95, compared with 73.8% / 43.2% for the full YOLOv7 baseline. Its model file was smaller, but detection performance suffered. This variant was not a satisfactory tradeoff.
-
 MobileNet-style blocks were my lightweight direction. MobileNetV2 illustrates the approach: expand channels with a pointwise convolution, apply depthwise spatial convolution, then project to the output channels. Residual connections require compatible shapes. The expanded intermediate features still consume memory; fewer parameters alone do not determine training memory or inference latency. [MobileNetV2](https://arxiv.org/abs/1801.04381)
 
 Ghost blocks use a different approach: generate a smaller set of features with regular convolution, then produce more with cheaper transformations. Both YOLOv5 and YOLOv7 contain Ghost components. Using one Ghost bottleneck is different from replacing the backbone with GhostNet. [GhostNet](https://arxiv.org/abs/1911.11907), [YOLOv7 implementation](https://github.com/WongKinYiu/yolov7/blob/main/models/common.py)
 
 The distinction I took away was between connecting a component and improving detection. A successful forward pass checks only part of the integration; training, gradients and exported outputs still matter. Lightweight blocks also trade computation against representation. For cables, the question is whether thin-target features survive that trade, compared on the same validation set. A promising module name cannot answer it.
+
+### Selecting a model: accuracy, file size and inference time
+
+I also compared standard YOLOv5, v6 and v7 variants. Most runs used 300 epochs, but batch size, pretraining and input conditions differed. This is a model-selection comparison, not a controlled component ablation.
+
+| Model / configuration | Epochs / Batch | Validation input | Validation mAP@0.5 | Model file | Inference |
+| --- | --- | --- | ---: | ---: | ---: |
+| YOLOv5s | 300 / 8 | 640 | 69.5% | 14 MB | — |
+| YOLOv5m | 300 / 8 | 640 | 71.0% | 40 MB | — |
+| YOLOv5l | 300 / 8 | 640 | 70.8% | 89 MB | — |
+| YOLOv5x | 300 / 4 | 640 | 71.3% | 165 MB | — |
+| YOLOv7, no pretraining | 300 / 8 | 640 | 73.8% | 76 MB | — |
+| YOLOv7, pretrained | 300 / 8 | 640 | 77.4% | 76 MB | 4.3 ms |
+| YOLOv6s, pretrained | 300 / 16 | 640 | 76.9% | 36.2 MB | 2.79 ms |
+| YOLOv7-tiny, configuration labeled 512 | 300 / 8 | 640 | 71.6% | 11.6 MB | 1.1 ms |
+| Same 512 configuration, different validation input | 300 / 8 | 512 | 40.8% | 11.6 MB | 0.8 ms |
+| YOLOv7-tiny, configuration labeled 640 | 300 / 8 | 640 | 72.6% | 11.6 MB | 1.6 ms |
+| YOLOv7-tiny + CA, no pretraining | 300 / 8 | 640 | 31.8% | 11.6 MB | 1.6 ms |
+| YOLOv6-tiny | 300 / 16 | 640 | 74.1% | 31.6 MB | 2.15 ms |
+| YOLOv6n | 200 / 32 | 640 | 64.8% | 9.32 MB | 1.02 ms |
+
+A dash means no corresponding timing was available. Epochs / Batch describes training; inference comes from the individual validation outputs, not a single-frame benchmark at one shared batch size. It excludes capture and the complete control loop. File size is not parameter count. Another comparison gives YOLOv6s 75.9%; this table retains the model-selection result of 76.9%, without treating them as one run.
+
+A few decisions followed from these results:
+
+- **Larger models did not help much on these data.** YOLOv5 grew considerably from s to x, while the score moved from 69.5% to 71.3%.
+- **Lightweight variants need an explicit tradeoff.** YOLOv6n approached 1 ms, but scored below the tiny and s variants. Fastest did not necessarily mean most useful.
+- **Input scale needed checking.** Changing validation input from 640 to 512 for the configuration labeled 512 made inference slightly faster but changed the score dramatically. The final diagnosis was not established; matching training, preprocessing and evaluation scale was an essential check.
+
+The CA result of 31.8% is also a different configuration from the earlier 65.9% architecture trial. Initialization and model versions were not fully aligned; the shared module name does not establish the cause of the failure.
+
+One Varifocal trial reached validation mAP@0.5 of 74.0%, but its timing revealed another bottleneck:
+
+| Validation at 640×640, batch 32 | Time per image |
+| --- | ---: |
+| Inference | 1.0 ms |
+| NMS | 60.3 ms |
+| Combined | 61.3 ms |
+
+NMS filters duplicate boxes. In this run, postprocessing dominated an already fast network. This was separate from the game's TensorRT benchmark, and the conditions do not establish a clean loss-only gain for the 74.0% result. Quoting only “1 ms inference” would hide the expensive part of the pipeline.
 
 ### Focal and Varifocal address different questions
 
@@ -171,6 +209,23 @@ I had one 2080 Ti. I often trained a configuration for over a hundred epochs unt
 Looking back, I would screen candidates with a common shorter budget once validation behavior begins to stabilize, then train promising ones thoroughly. Slow starters deserve a second look. Loss values themselves are not directly comparable across loss functions: a weighting change can make them smaller without improving detection.
 
 I also ran into out-of-memory failures with oversized batches. Training stores intermediate activations and gradients as well as weights. Today I would complete a step at a small batch size, measure peak memory, then increase it. Gradient accumulation and mixed precision are possible new experiments, not optimizations I can claim to have used then.
+
+#### Revisiting the split and training budget
+
+I wrote a random-split program for more than 2,900 images, using 90% for training and 10% for validation. The original YOLOv7-tiny used batch size 12 and a budget of 1,000 epochs; its best checkpoint was at epoch 303:
+
+| Metric | Result |
+| --- | ---: |
+| Precision | 81.24% |
+| Recall | 71.69% |
+| mAP@0.5 | 77.95% |
+| mAP@0.5:0.95 | 46.46% |
+
+There was no new attention block behind this result. The split and training budget changed, so subtracting an earlier score would not measure a module's contribution. Checking data and training arrangements could be more useful than another architectural replacement. A random split can still put similar scenes on both sides, so 77.95% does not directly establish performance on unseen scenes.
+
+![Training and validation losses for household detection](/images/bona/company-training-loss.webp "Training losses above keep falling while validation objectness loss below rises. This is a household-detection run, not the game model or the later 90:10 split experiment.")
+
+This curve explains why I returned to the data. Fitting the training samples better did not improve validation behavior. It supports concern about overfitting, but does not isolate the contributions of imbalance, label noise or repeated scenes.
 
 #### Other ways to train with limited, uneven data
 
