@@ -36,7 +36,7 @@ The loss experiments started with the data. I remember some classes performing w
 
 These are class annotation counts, not counts of independent images; one image can contain several objects. Training leg annotations outnumbered cables by roughly 4.4 to one. Shoes and paper balls each had more than twice the cable annotations.
 
-But quantity was not the whole story. **legs had the most annotations but poorer detection performance.** I suspected label noise in that class and considered overfitting as a possible explanation. Quantity, consistency and visual coverage needed separate attention. More data, label review and stronger regularization were therefore worth considering.
+But quantity was not the whole story. **legs had the most annotations but poorer detection performance.** I suspected label noise in that class. Training objectness loss kept falling while validation objectness loss rose, which was the direct signal that made me suspect overfitting. Quantity, consistency and visual coverage needed separate attention. More data, label review and stronger regularization were therefore worth considering.
 
 That was the motivation for changing the loss. Class weighting adjusts each class's contribution; Focal reduces the influence of easy predictions. Neither repairs incorrect labels. A mislabeled example may look difficult to the model and receive more weight.
 
@@ -86,6 +86,21 @@ Features → Channel weighting → Spatial weighting → Detection
 
 These mechanisms explain both the motivation and the tradeoff. Better shoe detection need not mean better cable detection. Per-class AP, recall and false positives reveal changes that average mAP can hide. The roughly five-point gain I remember from a loss-only replacement does not establish an attention-module gain.
 
+#### Attention experiments: adding a block did not ensure improvement
+
+A YOLOv7-tiny architecture comparison tested attention blocks at specific locations:
+
+| Configuration | Location | mAP@0.5 | mAP@0.5:0.95 |
+| --- | --- | ---: | ---: |
+| YOLOv7-tiny baseline | — | 66.2% | 36.4% |
+| CA | After Backbone P2–P5 | 65.9% | 33.5% |
+| SE | End of Backbone | 66.0% | 36.5% |
+| CBAM | After Backbone P1 and P2 | 64.7% | 35.8% |
+
+SE was essentially unchanged; CA and CBAM scored below the baseline on both metrics. Block choice and insertion location changed together, so these results evaluate the listed configurations. They do not establish that an attention method is ineffective everywhere.
+
+CA barely changed AP at the looser IoU threshold, but the metric averaged across IoU thresholds declined more noticeably. Looking only at AP@0.5 would hide part of the localization problem. Other insertion configurations were prepared later; unrun configurations are not results.
+
 #### Integrating YOLOv5 and lightweight blocks
 
 I tried integrating YOLOv5 modules into YOLOv7. That was component replacement, distinct from using a complete YOLOv5 training template later in the competition. Shared names such as `Conv` or `Bottleneck` do not guarantee compatible arguments or connections.
@@ -100,6 +115,8 @@ YOLOv5's C3 illustrates the interface issue: one path runs through bottlenecks, 
 | YAML and parser | Arguments, repetition count and feature indices | Wrong construction or wrong feature routing |
 
 For example, a block occupying `[B, 128, 40, 40] → [B, 256, 20, 20]` must preserve that contract when replaced. These dimensions illustrate an interface; actual channels depend on the configuration. Replacing a block while preserving its output requires less downstream work than replacing an entire backbone. A new backbone needs compatible outputs for the neck's scales. Standard YOLOv7 uses detection strides 8, 16 and 32, producing 80×80, 40×40 and 20×20 feature maps for a 640×640 input. [Original configuration](https://github.com/WongKinYiu/yolov7/blob/main/cfg/training/yolov7.yaml)
+
+I also replaced the YOLOv7 Backbone with MobileNetV3 while retaining SPPF, leaving two pyramid-style components in the structure. The variant scored 67.4% / 37.5% on mAP@0.5 / mAP@0.5:0.95, compared with 73.8% / 43.2% for the full YOLOv7 baseline. Its model file was smaller, but detection performance suffered. This variant was not a satisfactory tradeoff.
 
 MobileNet-style blocks were my lightweight direction. MobileNetV2 illustrates the approach: expand channels with a pointwise convolution, apply depthwise spatial convolution, then project to the output channels. Residual connections require compatible shapes. The expanded intermediate features still consume memory; fewer parameters alone do not determine training memory or inference latency. [MobileNetV2](https://arxiv.org/abs/1801.04381)
 
