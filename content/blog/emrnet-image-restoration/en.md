@@ -1,7 +1,7 @@
 ---
 title: "EMRNet: my undergraduate project in image restoration"
 date: "2026-10-10"
-updated: "2026-10-10"
+updated: "2026-10-11"
 language: en
 project: emrnet
 excerpt: "I wanted to work with neural networks and see the results directly. Starting from MPRNet, I explored structural changes and reflect on why they did not yet amount to a well-grounded research argument."
@@ -16,6 +16,27 @@ My reason for choosing this undergraduate thesis was straightforward: I wanted t
 I chose image restoration, built on MPRNet, and called my modified network EMRNet. My work covered attention, activations, normalization and information transfer between stages, with experiments on denoising, deraining and deblurring.
 
 I do not consider this a particularly successful thesis. Much of it was an exploration of changes to an existing model: attention, activations, normalization and stage connections. I had not sufficiently established a specific problem, reasoned from its underlying principles and then verified a targeted solution. This retrospective separates the actual changes from the rationale I could give for them.
+
+## What the model was meant to do
+
+The input is a degraded image; the output is a restored image of the same scene at the corresponding size. Denoising, deraining and deblurring differ in the degradation to remove, rather than the objects to identify.
+
+| Part of the project | Scope |
+| --- | --- |
+| Starting point | MPRNet's three-stage restoration architecture |
+| Changes | ACA channel attention, decoder SAB, SCAM stage connections, activations and normalization |
+| Output | A restored image, rather than labels or bounding boxes |
+| Evaluation | Restoration examples and PSNR / SSIM under matched conditions, followed by individual ablations |
+
+A compact description of the task is:
+
+$$
+\hat{I}=f_\theta(I_{\mathrm{degraded}}).
+$$
+
+$I_{\mathrm{degraded}}$ denotes the input, $\hat{I}$ the prediction and $\theta$ the learned parameters. Supervised training constrains the prediction with a corresponding clean image. This describes the task, not a recovered thesis loss formula.
+
+The architecture explains where my changes sit. Dataset-specific results and ablation tables are needed to establish their benefit; the diagram alone cannot establish a performance gain.
 
 ## Why restore an image in three stages?
 

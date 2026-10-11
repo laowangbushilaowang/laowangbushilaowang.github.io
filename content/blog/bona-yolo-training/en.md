@@ -1,17 +1,17 @@
 ---
 title: "From robot vacuums to game screens: working with YOLO"
 date: "2026-10-10"
-updated: "2026-10-10"
+updated: "2026-10-11"
 language: en
 project: yolov7-robotics
 excerpt: "Company-data detection experiments and a personal visual aim-assistance prototype: separate goals, training decisions and real-time engineering lessons."
 cover: /images/bona/household-detection.webp
-coverAlt: "A household detection example preserved in my old presentation"
+coverAlt: "Household detection example"
 tags: [YOLO, Computer Vision, Varifocal Loss, TensorRT, Ascend]
 draft: false
 ---
 
-This article covers two YOLO projects: improving household detection with company data during my Bona internship, and collecting game images for a visual aim-assistance prototype. They had different data and goals. The company section covers model experiments and training migration; the personal section follows the loop from data to detections, actions and further improvements.
+This article covers two YOLO projects: improving household detection with company data during my Bona internship, and a game-vision course project completed with a classmate, using images I collected and annotated for an aim-assistance prototype. They had different data and goals. The company section covers model experiments and training migration; the personal section follows the loop from data to detections, actions and further improvements.
 
 ## Company work: household detection for robot vacuums
 
@@ -42,9 +42,22 @@ That was the motivation for changing the loss. Class weighting adjusts each clas
 
 A class-performance gap alone does not establish overfitting. Improving training performance alongside rising validation loss or flat or falling validation AP gives a more direct signal. Counts, annotation quality and object difficulty can also explain a gap. For detection I would distinguish per-class AP, recall and false positives rather than call everything accuracy. [Training diagnostics](https://docs.ultralytics.com/yolov5/tutorials/tips-for-best-training-results)
 
+### Establishing a baseline before changing components
+
+I compared YOLOv7 with and without pretrained weights. Both runs used 300 epochs and a batch size of 8:
+
+| Initialization | Validation mAP@0.5 | Model file size |
+| --- | ---: | ---: |
+| No pretrained weights | 73.8% | 76 MB |
+| Pretrained weights | 77.4% | 76 MB |
+
+The pretrained run reached a strong result around epoch 40 and then deteriorated, so I selected its best checkpoint. Training from scratch was still converging slowly at epoch 300. Initialization was already an important decision before any architecture change. These numbers compare initialization; they are not a loss-function ablation.
+
+Some company runs used two RTX 2080 Ti cards. My recollection of day-long single-card trials concerns other experiments, rather than one shared hardware configuration for every row.
+
 ### Changing the model for shoes, cables and clutter
 
-The targets differed substantially. Shoes had recognizable outlines; cables were thin and elongated. Furniture could obscure an object, while reflections added distracting texture. One detector had to handle all of them. Larger models also meant longer experiments on my single 2080 Ti.
+The targets differed substantially. Shoes had recognizable outlines; cables were thin and elongated. Furniture could obscure an object, while reflections added distracting texture. One detector had to handle all of them. Larger models also meant longer experiments on the available 2080 Ti hardware.
 
 I explored two directions: changing backbone and bottleneck components, including integrating YOLOv5 modules into YOLOv7 and trying MobileNet-style lightweight blocks; and changing attention to reweight existing features. I also tried activations and losses, using ablations to compare changes.
 
@@ -134,7 +147,7 @@ Integration also requires deciding which output learns the quality score, how po
 
 `mAP@0.5` averages class AP after matching boxes at IoU 0.5. After changing a loss, the question is whether detection improves, rather than whether the new loss produces a smaller number.
 
-### One 2080 Ti made experiment time part of the problem
+### Training budgets: when to stop an experiment
 
 I had one 2080 Ti. I often trained a configuration for over a hundred epochs until loss barely changed; a full trial could take about a day. That limited how many ideas I could test.
 
@@ -180,7 +193,7 @@ Imagine a frame with the crosshair at the center and a target moving sideways. B
 
 The starting point was Call of Duty. I saw someone use AI to recognize the game image and drive aim assistance, and wanted to try that approach myself. At the time, I felt memory-reading assistance was outdated. That was my motivation, rather than a claim that vision had no limitations of its own.
 
-My prototype needed to find targets in captured frames and connect their positions to movement. I collected and annotated the data myself, then worked on capture, inference and control. The archived images below are from my prototype in Apex, not the Call of Duty demonstration that inspired it.
+This prototype became a neural-network course project coauthored with a classmate. I collected and annotated my game images and worked on training and the real-time program. The prototype needed to find targets in captured frames and connect their positions to movement. I collected and annotated the data myself, then worked on capture, inference and control. The archived images below are from my prototype in Apex, not the Call of Duty demonstration that inspired it.
 
 ![Game view and detection preview shown side by side](/images/bona/game-live-detection.webp "My archived prototype in an Apex scene: game image on the left, detection preview on the right.")
 
@@ -217,7 +230,20 @@ Native model inference was slow, so I used a lightweight model and the PyTorch �
 
 ONNX represents the exported graph; TensorRT builds an execution engine for the environment. ONNX alone is not an acceleration switch. The archive contains `.pt`, `.onnx` and `.trt` files, and `detect_trt.py` retains engine loading, CUDA tensor preparation and inference execution. [TensorRT deployment guide](https://docs.nvidia.com/deeplearning/tensorrt/latest/getting-started/quick-start-guide.html)
 
-Capture and inference improvements supported the real-time pipeline, but the full timing table is missing. I cannot reconstruct a total delay or speedup. Once boxes appeared, the program still needed to choose a target and decide how far to move.
+The game-data loss comparison used 2,000 epochs, batch size 32 and images resized to 640×640:
+
+| Loss | AP@0.5 |
+| --- | ---: |
+| Focal Loss | 90.58% |
+| Varifocal Loss | 91.12% |
+
+Varifocal improved the score by **0.54 percentage points**. This was a modest improvement on game data, separate from the company experiments discussed earlier.
+
+We also extended training to roughly 4,500 epochs. Validation did not keep improving, and we subsequently chose a budget around 2,000 epochs.
+
+![Training and validation losses for the game model](/images/bona/game-training-loss.webp "Training losses are above, validation losses below. Training objectness loss keeps falling while validation objectness loss rises later. The original horizontal axis is labeled Step.")
+
+The two objectness panels explain why waiting longer was unhelpful: fitting the training data better was no longer improving validation behavior.
 
 ### 3. Runtime: from one frame to an action
 
@@ -229,7 +255,16 @@ Pixels → Preprocessing → TensorRT detections → Target selection → Error 
 
 #### Capture and coordinates
 
-I compared PIL, other Python capture packages and Windows capture methods. I remember getting capture down to a few milliseconds, with less difference between PIL and Windows paths than I expected. That recollection is about capture alone, not total response latency.
+I compared several capture paths:
+
+| Capture package / interface | Capture time |
+| --- | ---: |
+| PIL | 18 ms |
+| win32gui | 10 ms |
+| pyautogui | 20 ms |
+| mss | 12 ms |
+
+The Windows path was fastest in this comparison. It required more interface code, but capture ran on every frame. My recollection of later getting down to a few milliseconds concerns subsequent work; it does not replace these comparison values.
 
 The retained `detect_trt.py` provides a concrete Windows path:
 
@@ -246,18 +281,16 @@ For a new benchmark I would fix region and resolution, measure capture, preproce
 
 #### Where the milliseconds go
 
-I got capture down to a few milliseconds. The next question was where the remaining time went: fast capture still produces outdated positions if the model takes too long to process them.
+Inference was measured separately:
 
-| Stage | Approach and lesson |
-| --- | --- |
-| Capture | Compare PIL, Python capture libraries and Windows paths; capture reached a few milliseconds |
-| Preprocessing and transfers | Resize, normalize and prepare GPU inputs; include copying costs when timing |
-| Model inference | Use a lightweight detector and ONNX → TensorRT acceleration; time single-image inference separately |
-| Detection results and control | Process boxes, select a target, compute the error and produce a control adjustment |
+| Model format | Single-frame inference |
+| --- | ---: |
+| PyTorch `.pt` | 11 ms |
+| TensorRT `.trt` | 4 ms |
 
-Stage timings tell me whether further capture work would help or whether the model and inference need attention. I would also measure the complete loop, because returning a detection box leaves result processing and actions still to do.
+Inference became about 2.75 times faster, while overall image processing still took roughly 18–26 ms. Capture, preprocessing and result handling remained. After accelerating the model, capture deserved more attention.
 
-The old `Done. (...)` timer starts before capture. Different versions include drawing or control at different positions, so it cannot be copied as “YOLO inference time.” A new GPU benchmark would need warm-up and CUDA events or clearly synchronized boundaries. I would measure a sustained run and report the median and slower P95, rather than selecting the fastest frame.
+These timings describe this prototype, rather than guaranteed performance on another machine. The program's `Done. (...)` timer starts before capture and must not be presented as neural-network inference time alone.
 
 #### Target selection and control
 
@@ -294,6 +327,6 @@ If I rebuilt the dataset now, I would split by capture segment or scene. Frames 
 
 Different failures lead to different work. Confusing teammates with enemies sends me back to examples and labels. Outdated positions call for measuring capture, inference and control separately. Correct boxes with unstable movement call for checking target switches, estimation and control parameters. A new detector is not the answer to every failure.
 
-The result was a prototype spanning collection, annotation, training, real-time detection and relative control. The presentation contains demonstration images; the archive retains `detect_trt.py` and `control.py`. Millisecond capture is a recollection, and the full timing table is missing. The work builds on existing YOLO methods, with the README describing the control package as team-written.
+We connected collection, annotation, training, real-time detection and relative control into a working prototype. My data preparation and training work formed part of a jointly authored course project; the control package also carried team attribution.
 
 The useful lesson was to examine the model in use: collect examples of what it misses, measure the stage that is slow, and inspect control when detection is correct but movement is not.
