@@ -1,7 +1,7 @@
 ---
 title: "Data Days: a survey report people can keep questioning"
 date: "2026-10-11"
-updated: "2026-10-11"
+updated: "2026-10-12"
 language: "en"
 project: "data-days-for-good"
 excerpt: "Turning a student-experience survey into an R Shiny report in four days: cleaning comments, comparing groups, choosing denominators, and reading two survey waves together."
@@ -62,6 +62,18 @@ Questions were optional, and some course questions appeared only for relevant ma
 The survey used a prize draw to encourage participation. The report notes that some respondents submitted after completing little of it. Filtering addresses low-completion records, but it does not make the remaining respondents representative of all students. Participation was voluntary.
 
 For any comparison, we still need to ask who answered this question, which routing conditions applied, and how much support each group has.
+
+## Where do departmental experiences differ?
+
+A single score for departmental climate hides useful distinctions. Students might feel respected without finding their department friendly, or receive support while finding collaboration difficult. We used radar charts to put those dimensions next to one another.
+
+![Departmental climate profiles for Electrical Engineering and Linguistics and Computer Science](/images/data-days/majors-radar.webp)
+
+*The project's comparison of two majors, using the same 1–5 scale for respect, support, friendliness, collaboration, inclusion, and other attributes. The notes at right summarize positive and negative descriptions.*
+
+Electrical Engineering has a broader outward profile in this figure. Linguistics and Computer Science sits further inward on friendliness, support, and collaboration. That gives the next question a direction: are students missing help with coursework, opportunities to connect with others, or both? We can return to the relevant responses and comments to investigate.
+
+The chart is useful for comparing profiles; individual axes matter more than polygon area. It does not show response counts or uncertainty by major, so I would not treat its highest/lowest summary as an established ranking. Its value is in identifying where to ask the next question.
 
 ## Read comments within their sentiment groups
 
