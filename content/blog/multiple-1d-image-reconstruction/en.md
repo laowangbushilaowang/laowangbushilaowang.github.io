@@ -11,21 +11,65 @@ tags: [Image reconstruction, Greedy sampling, Interpolation, Neural fields]
 draft: false
 ---
 
-With 10,240 randomly selected pixels, the reconstructed cat was blurry. Selecting pixels by the current reconstruction error made its eyes and outline much clearer. Then I added two apparently sensible preferences: cover edges and spread the points out. The result was worse than random sampling.
+What interested me about neural fields was representing an image as a queryable function: give it a position, get a color. With Fourier features, an MLP can fit detailed textures and outlines. My master's thesis explored a different representation built from one-dimensional projections, interpolation, and selected pixels.
 
-That experiment became one of the most useful parts of my master's thesis. It pushed me toward a concrete question: **after a point passes through projection and interpolation, which parts of the image does it actually help recover?**
+I completed *Image Reconstruction Through Multiple 1D Approximations* at Boston University; it entered the university repository in 2025. This post starts with the neural-field background and network comparison, then follows the 1D method and its sampling, direction, and budget experiments.
 
-I completed *Image Reconstruction Through Multiple 1D Approximations* at Boston University; it entered the university repository in 2025. The idea was to represent a two-dimensional image through several one-dimensional curves. This post follows the method, sampling experiments, representation budget, and model comparisons. Figures and measurements are from the thesis experiments.
+## Neural fields: representing images and scenes as functions
 
-## Why represent an image with curves?
-
-Neural fields offer an appealing view of an image: give a function a coordinate, and it returns a color.
+An image is usually stored as a pixel array. A neural field instead fits a multilayer perceptron, or MLP, that takes a coordinate and returns its color:
 
 $$
-I(x,y)=(R,G,B).
+f_\theta(x,y)=(R,G,B).
 $$
 
-A neural network can learn that mapping. Its capacity to represent a function, however, does not tell us the cost of fitting it, how to allocate storage, or where a particular prediction comes from. I wanted to explore whether simpler one-dimensional interpolants could provide a useful coordinate-to-color representation.
+Each pixel supplies a coordinate and a target color. Prediction error updates the weights; querying a coordinate grid reconstructs the image. The network learns a representation of this image, rather than an object classifier. The [neural-fields survey](https://arxiv.org/abs/2111.11426) describes applications to images, shapes, and scenes.
+
+### Why NeRF is a useful example
+
+NeRF predicts density and color from a spatial position and viewing direction. Samples along camera rays are combined into pixels. Training matches photographs with known camera poses; new viewpoints query the same learned scene. [NeRF paper](https://arxiv.org/abs/2003.08934)
+
+![NeRF's official Lego scene illustration](/images/multiple-1d/nerf-classic.webp)
+
+*Source: [Mildenhall et al., NeRF project page](https://www.matthewtancik.com/nerf), ECCV 2020. Scene-network predictions are combined along camera rays. This is a reference illustration, not my experiment.*
+
+The representation suits view synthesis: photographs constrain a shared three-dimensional scene. Density handles occlusion, color can depend on viewing direction, and volume rendering connects predictions to photographs. It introduces cross-view structure while avoiding a densely stored voxel grid. These help explain original NeRF's results against contemporary view-synthesis baselines, rather than establishing superiority for every neural-field task. [Method and comparisons](https://arxiv.org/html/2003.08934v2)
+
+## Fourier features before the MLP
+
+A plain coordinate MLP often fits broad color regions before fine texture. This preference for lower frequencies is called spectral bias. In an image, high frequency means rapid color changes with position—thin lines, texture, and sharp boundaries—not simply a large resolution. [Frequency Principle](https://arxiv.org/abs/1901.06523)
+
+Fourier features transform coordinates into sine and cosine signals before the network:
+
+$$
+\gamma(p)=\big[\sin(2\pi pB),\cos(2\pi pB)\big].
+$$
+
+For $p=(x,y)$, columns of $B$ specify frequencies and directions. Here is the core mapping in my notebook; $B$ is a fixed random matrix:
+
+```python
+phase = (2 * np.pi * coords) @ B
+features = torch.cat([torch.sin(phase), torch.cos(phase)], dim=-1)
+rgb = mlp(features)
+```
+
+The target remains RGB and the loss remains MSE. The richer input gives the network oscillations to combine. NeRF's positional encoding uses a related sinusoidal idea, but its original frequency choices differ from random Gaussian Fourier features. [Project explanation](https://bmild.github.io/fourfeat/)
+
+![Fourier feature mapping and reconstruction comparisons from the reference paper](/images/multiple-1d/fourier-features-reference.webp)
+
+*Source: [Tancik et al., NeurIPS 2020](https://bmild.github.io/fourfeat/). Top: without the mapping; bottom: with it. Inspect texture and small Lego structures. These are reference experiments, not mine.*
+
+Frequency scale matters. Too low can underfit; too high can fit noise or unstable variation between observations. The paper uses the neural tangent kernel to explain the adjustable effective bandwidth. Continuous queries do not guarantee recovery of unobserved detail. [Fourier features paper](https://arxiv.org/html/2006.10739v1)
+
+In my thesis comparison near the 66,800-scalar budget, the Fourier-feature network reached **51.83 dB**, versus **27.08 dB** for the plain network. These are the image results tabulated later, not NeRF's three-dimensional measurements or proof that every other training condition was matched.
+
+![Actual reconstruction comparison at the largest budget](/images/multiple-1d/model-comparison.webp)
+
+*My thesis Figure 5.19. Top: original, Fourier-feature network, plain network. Bottom: my 1D approximations, Kernel Regression, LinearNDInterpolator. Compare eyes and fur first, then the background and colors.*
+
+## Why explore 1D approximations as well?
+
+Coordinate networks worked well. I wanted to investigate representation cost and prediction provenance: could a set of inspectable curves retain the coordinate-to-color interface? Sample positions, curves, and combination weights offer a direct way to inspect how a limited budget is used.
 
 Images made the experiment easy to inspect. Blurred details, stripes, and selected points are visible. Another reference was adaptive support-point selection in the AAA rational approximation algorithm: add points according to the current error. I borrowed that selection idea; the representation here uses projections and linear interpolation, rather than applying AAA directly to a two-dimensional image.
 
@@ -165,10 +209,6 @@ I compared ordinary and Fourier-feature networks, Kernel Regression, LinearNDInt
 | LinearNDInterpolator | 15.79 | 22.60 | 27.46 |
 
 *Tables 5.6–5.8, PSNR in dB. Actual network weight counts are 4,419 / 17,027 / 66,819; the other methods use budgets of 4,400 / 17,000 / 66,800.*
-
-![Actual reconstruction comparison at the largest budget](/images/multiple-1d/model-comparison.webp)
-
-*Figure 5.19, approximately 66,800 scalars. Top row: original, Fourier-feature network, plain network. Bottom row: 1D approximations, Kernel Regression, LinearNDInterpolator. Inspect both the eyes and the background colors and stripes.*
 
 The Fourier-feature network is clearly strongest. My method exceeds the plain network and traditional baselines at the largest budget, loses to the plain network at the smallest, and is slightly below the traditional baselines at the middle budget. One summary sentence in the thesis states the advantage too broadly. The tables support a representation with particular trade-offs, rather than general superiority over neural networks.
 
