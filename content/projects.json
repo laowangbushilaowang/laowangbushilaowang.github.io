@@ -280,7 +280,7 @@
     "ownership": "I reimplemented a coordinate-to-latent pipeline and compared models. SUICA, STINR and other reference methods belong to their original authors.",
     "ownershipZh": "我重实现了坐标到 latent 的流程并比较模型。SUICA、STINR 等参考方法属于原作者。",
     "article": "spatial-neural-field",
-    "cover": "/images/spatial-neural-field/three-dimensional-volume.webp",
+    "cover": "/images/spatial-neural-field/research-overview.webp",
     "detailsZh": [
       "从二维点位表达重建扩展到三维切片，比较MLP、Fourier网络、SIREN及归一化变体。",
       "重写GAE→低维表示→坐标网络→解码器流程，分阶段对齐表示与调整表达输出。",

@@ -5,8 +5,8 @@ updated: "2026-10-12"
 language: "en"
 project: "spatial-neural-field"
 excerpt: "Moving coordinate networks from images to gene expression: compressing sparse outputs, comparing SIREN and Fourier networks, and discovering why good two-dimensional fits did not establish reliable predictions between slices."
-cover: "/images/spatial-neural-field/three-dimensional-volume.webp"
-coverAlt: "Three-dimensional visualization of Pcp4 expression in the spatial modeling project"
+cover: "/images/spatial-neural-field/research-overview.webp"
+coverAlt: "Spatial neural field research roadmap, including exploratory goals not yet validated"
 tags: [Spatial transcriptomics, Neural fields, SIREN, Graph autoencoder]
 draft: false
 ---
@@ -16,6 +16,22 @@ In my [master's thesis](/blog/multiple-1d-image-reconstruction/), a coordinate n
 The purpose was practical. Spatial transcriptomics retains measurement positions, but the data still consist of discrete locations and tissue sections. What happens between measured locations, or on an unmeasured slice? Could a coordinate model support imputation, denoising, and analysis of continuous spatial variation? I explored these questions at Guangzhou Laboratory in summer 2025.
 
 I started in two dimensions, extended the inputs to three, and experimented with a time coordinate. Early two-dimensional visualizations were encouraging. Predicting between slices—and deciding whether a smooth expression map was useful—proved harder.
+
+## Research overview: from discrete sections to a queryable field
+
+![Research overview of the spatial neural field project](/images/spatial-neural-field/research-overview.webp)
+
+*An early project roadmap. The upper path connects coordinates to expression reconstruction; the lower branches show intended interpolation and analysis uses. Its 4D and cell-fate branches are exploratory goals, not completed validation results.*
+
+The upper path starts with measurement positions, section membership, and sample stage. The network connects those relationships to expression. A section index identifies a section; it represents physical spacing only when calibrated to real distances.
+
+The lower branches describe three intended uses:
+
+1. **Reconstruction and denoising:** recover expression at measured locations and inspect retained tissue structure.
+2. **Interpolation:** hold the model fixed and query unmeasured section positions or times. This requires separate evaluation.
+3. **Variation analysis:** examine spatial expression gradients and determine whether their biological interpretation is justified.
+
+They share an interface but answer different questions. The experiments below follow these branches.
 
 ## From three colors to thousands of genes
 
@@ -34,6 +50,12 @@ $G$ is the number of modeled genes. Each $e_g$ is a preprocessed expression valu
 Changing the output layer is only part of the adaptation. RGB has three values; expression can have thousands of dimensions, many zeros, variable measurement depth, and noise. A measured zero does not automatically mean a gene has no biological role at that location.
 
 One rewritten pipeline selected 5,000 highly variable genes, normalized total counts, and applied `log1p`. This limited output size and reduced measurement-depth effects. It also meant predictions covered a selected gene set, and errors in normalized expression were not raw-count errors.
+
+![Coordinate-network training and reconstruction design](/images/spatial-neural-field/training-reconstruction.webp)
+
+*A project design diagram: measured positions and expression supervise training at left; frozen weights answer new coordinate queries at right. This depicts the overall interface, not the layer-by-layer GAE prototype below. Time queries still require independent validation.*
+
+During training, expression is the target. For an unmeasured position, inference receives coordinates rather than its true expression. That distinction also motivates checking which measurements reach the encoder later in the pipeline.
 
 ## Compress expression before learning coordinates
 
@@ -96,6 +118,12 @@ A section may contain many measured locations. Across a few sections, total samp
 *Reference expression, SIREN-BN, original SIREN, and FFN for `sec=4`. The associated presentation describes four of seven sections used for training. The figure shows shape and intensity differences, not independent test-set error statistics.*
 
 Both SIREN outputs recover part of the central shape while differing from the reference in intensity and detail. FFN is low across much of this example. This documents differences in one experiment, not a general failure of FFN or a solved three-dimensional imputation problem.
+
+![Pcp4 section comparison for MixNet and MixFusion-3D](/images/spatial-neural-field/mixed-network-comparison.webp)
+
+*Reference expression, MixNet, and MixFusion-3D from the same presentation, all on a 0–6 color scale. Compare the location, intensity, and local variation of high-expression regions with the preceding figure.*
+
+The comparisons also included mixed-network outputs. MixNet forms more contiguous high-expression regions with a few bright local peaks; MixFusion-3D retains more local variation, while its central shape still differs from the reference. These support specific visual observations, rather than a model ranking without matched splits and metrics.
 
 In subsequent between-section predictions, a good fit on training layers did not translate into stable intermediate layers. One explanation was that high-frequency networks could pass through the observed points in many ways. Those functions could have similarly low training errors and different values in the unobserved intervals. Registration error and measurement noise could also be fitted.
 
