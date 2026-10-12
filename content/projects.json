@@ -278,7 +278,19 @@
     "role": "Exploratory research",
     "roleZh": "探索性研究",
     "ownership": "I reimplemented a coordinate-to-latent pipeline and compared models. SUICA, STINR and other reference methods belong to their original authors.",
-    "ownershipZh": "我重实现了坐标到 latent 的流程并比较模型。SUICA、STINR 等参考方法属于原作者。"
+    "ownershipZh": "我重实现了坐标到 latent 的流程并比较模型。SUICA、STINR 等参考方法属于原作者。",
+    "article": "spatial-neural-field",
+    "cover": "/images/spatial-neural-field/three-dimensional-volume.webp",
+    "detailsZh": [
+      "从二维点位表达重建扩展到三维切片，比较MLP、Fourier网络、SIREN及归一化变体。",
+      "重写GAE→低维表示→坐标网络→解码器流程，分阶段对齐表示与调整表达输出。",
+      "二维拟合与切片间预测分开评价；原型编码器访问验证表达，不作为完全不可见切片测试。梯度不等于细胞移动或命运。"
+    ],
+    "details": [
+      "Extended two-dimensional expression modeling to three-dimensional sections, comparing MLP, Fourier networks, SIREN, and normalized variants.",
+      "Reimplemented a GAE-to-latent-to-coordinate-network pipeline with staged alignment and decoder adjustment.",
+      "Distinguished fitting from between-section prediction; encoder access to validation expression limits the prototype evaluation. Gradients do not establish movement or fate."
+    ]
   },
   {
     "id": "yolov7-robotics",
