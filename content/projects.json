@@ -228,6 +228,18 @@
         "label": "Boston University thesis",
         "href": "https://hdl.handle.net/2144/49595"
       }
+    ],
+    "article": "multiple-1d-image-reconstruction",
+    "cover": "/images/multiple-1d/model-comparison.webp",
+    "detailsZh": [
+      "同一10,240点、128方向设置下，贪心选点PSNR为25.72 dB，随机采样为19.96 dB；边缘和空间分散先验反而下降。",
+      "比较点数、方向数、线性与spline插值，以及选点方向和重建方向的衔接。",
+      "高预算时优于普通网络和两种传统对照；Fourier-feature网络整体更强。表示规模不等于实际运行成本。"
+    ],
+    "details": [
+      "At 10,240 samples and 128 directions, greedy selection reaches 25.72 dB versus 19.96 dB for random sampling; edge and diversity preferences hurt.",
+      "Experiments compare sample and direction counts, linear and spline interpolation, and the relationship between selection and reconstruction directions.",
+      "At the largest budget, the method exceeds a plain network and traditional baselines; the Fourier-feature network remains strongest. Representation count does not establish runtime efficiency."
     ]
   },
   {
