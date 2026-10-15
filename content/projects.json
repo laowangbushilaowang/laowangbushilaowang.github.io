@@ -243,6 +243,37 @@
     ]
   },
   {
+    "id": "niche-time-pseudotime",
+    "title": "Sample Time and Cell Pseudotime",
+    "titleZh": "样本时间与细胞拟时序",
+    "period": "Guangzhou Laboratory · Autumn 2025",
+    "periodZh": "广州实验室 · 2025年秋",
+    "summary": "An early study of age-associated expression beyond cell-state changes: trajectory selection, overlapping states, binned comparisons, and inspectable model baselines.",
+    "summaryZh": "从轨迹选择与状态覆盖入手，比较基因表达沿样本年龄和拟时序的变化，再尝试残差回归、NAM与VAE。",
+    "tags": [
+      "Single-cell",
+      "Pseudotime",
+      "Regression"
+    ],
+    "featured": false,
+    "role": "Exploratory team research",
+    "roleZh": "探索性团队研究",
+    "ownership": "I worked on preprocessing, trajectory analysis and model comparisons. This preceded SCage / TempoFactor; sample-time associations do not identify environmental causes.",
+    "ownershipZh": "我参与预处理、轨迹分析和模型比较。这是SCage / TempoFactor的前序研究；样本时间关联不等于微环境因果。",
+    "article": "niche-time-pseudotime",
+    "cover": "/images/niche-time-pseudotime/retina-trajectories.webp",
+    "details": [
+      "Compared pseudotime and sample-age patterns while checking branch selection and state coverage.",
+      "Explored polynomial residual regression, binned stability scores, NAMs, and a covariate-supervised VAE.",
+      "Sparse overlap and correlated time axes limited factor identification; the later task narrowed toward sample-time prediction."
+    ],
+    "detailsZh": [
+      "比较拟时序与样本年龄两条轴，先检查分支选择、预处理和共同状态覆盖。",
+      "尝试多项式残差回归、分箱稳定性评分、NAM与协变量监督VAE。",
+      "状态覆盖不足及两轴相关限制因素识别，后续任务收紧到样本时间预测。"
+    ]
+  },
+  {
     "id": "tempofactor",
     "title": "SCage / TempoFactor",
     "titleZh": "SCage / TempoFactor",
