@@ -599,5 +599,36 @@
       "梳理 Appium 客户端、服务端与 Android 驱动的关系，对照 HaTickets 使用的 Python uiautomator2 入口。",
       "从源码比较控件定位、页面状态、计时范围，以及结果返回值如何用于判断一轮操作是否完成。"
     ]
+  },
+  {
+    "id": "stardew-farm-planner",
+    "title": "Stardew Farm Blueprint",
+    "titleZh": "星露谷农场蓝图",
+    "period": "Personal project · 2026",
+    "periodZh": "个人项目 · 2026",
+    "summary": "A local tile-based farm plan with three construction stages, entrance checks and a rule-based next-action list.",
+    "summaryZh": "把农场改造拆成三个阶段，用格子坐标表达建筑与道路，检查出入口，再生成下一步建设清单。",
+    "tags": [
+      "Canvas",
+      "Geometry",
+      "Codex"
+    ],
+    "featured": false,
+    "role": "Personal planning tool",
+    "roleZh": "个人规划工具",
+    "ownership": "I set the two-player farm requirements and revised the layout with Codex-assisted implementation. Game and Stardew Planner art belong to their creators.",
+    "ownershipZh": "我提出双人农场的需求与改图判断，Codex协助实现。游戏与Stardew Planner素材保留原作者归属。",
+    "article": "stardew-farm-blueprint",
+    "cover": "/images/stardew/planner-interface.webp",
+    "details": [
+      "Separates sprite bounds, ground footprints and entrance offsets on an80×65Canvas grid.",
+      "Checks modeled occupancy, roads, fields, reserves and entrance access using BFS to a road tile.",
+      "Three fixed stage layouts and manual-state action rules; no measured in-game profit/time gain or global optimization claim."
+    ],
+    "detailsZh": [
+      "在80×65格的Canvas上，分别记录建筑图片、地面占地与入口位置。",
+      "检查建模范围内的重叠、道路、农田、预留地，并从门口搜索到道路。",
+      "三套阶段方案配合手填状态的规则清单；尚无游戏内收益/耗时对照或全局最优证明。"
+    ]
   }
 ]
