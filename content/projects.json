@@ -621,7 +621,7 @@
     "article": "stardew-farm-blueprint",
     "cover": "/images/stardew/planner-interface.webp",
     "details": [
-      "Separates sprite bounds, ground footprints and entrance offsets on an80×65Canvas grid.",
+      "Separates sprite bounds, ground footprints and entrance offsets on an 80×65 Canvas grid.",
       "Checks modeled occupancy, roads, fields, reserves and entrance access using BFS to a road tile.",
       "Three fixed stage layouts and manual-state action rules; no measured in-game profit/time gain or global optimization claim."
     ],
