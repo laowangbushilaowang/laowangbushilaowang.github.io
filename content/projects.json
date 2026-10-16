@@ -557,5 +557,35 @@
       "从 Notebook 和模块化 Python 原型，逐渐转向学校实际院系名单、逐人读主页与 CSV 分步续跑。",
       "BU 的一次保存结果虽有 1,424 条记录，仍未完成全范围；后来港科广 AI/DSA 名单将 35 与 34 条学域归属合并为 65 人，保留 4 位跨聘和主页缺口。"
     ]
+  },
+  {
+    "id": "ticket-tool-research",
+    "title": "Android ticket-tool research",
+    "titleZh": "票务工具与 Android 自动化调研",
+    "period": "2026 · Open-source investigation",
+    "periodZh": "2026 · 开源工具调研",
+    "summary": "A reading of open-source ticket tools to understand Android control paths, page state, latency boundaries, and result confirmation.",
+    "summaryZh": "阅读几份开源票务工具，理解安卓控制链路、页面状态、计时范围和结果确认。",
+    "tags": [
+      "Android",
+      "Appium",
+      "Automation",
+      "Code Reading"
+    ],
+    "featured": false,
+    "role": "Tool comparison and code reading",
+    "roleZh": "工具比较与源码阅读",
+    "ownership": "A personal investigation of third-party projects: WECENG/ticket-purchase, Guyungy/damaihelper, and currycan/HaTickets. Their implementations are credited in the article.",
+    "ownershipZh": "个人工具调研，讨论 WECENG/ticket-purchase、Guyungy/damaihelper 与 currycan/HaTickets 的第三方实现，文章保留原作者链接。",
+    "cover": "/images/ticket-reading/control-paths.svg",
+    "article": "android-ticket-tool-reading",
+    "details": [
+      "Traced the Appium client/server/Android-driver path and the separate Python uiautomator2 entry used by HaTickets.",
+      "Compared element lookup, page-state detection, timing boundaries, and how return values are checked before reporting an outcome."
+    ],
+    "detailsZh": [
+      "梳理 Appium 客户端、服务端与 Android 驱动的关系，对照 HaTickets 使用的 Python uiautomator2 入口。",
+      "从源码比较控件定位、页面状态、计时范围，以及结果返回值如何用于判断一轮操作是否完成。"
+    ]
   }
 ]
