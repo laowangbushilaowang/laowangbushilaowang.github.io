@@ -630,5 +630,36 @@
       "检查建模范围内的重叠、道路、农田、预留地，并从门口搜索到道路。",
       "三套阶段方案配合手填状态的规则清单；尚无游戏内收益/耗时对照或全局最优证明。"
     ]
+  },
+  {
+    "id": "texas-equity",
+    "title": "Texas Equity",
+    "titleZh": "德州概率计算器",
+    "period": "Personal project · 2026",
+    "periodZh": "个人项目 · 2026",
+    "summary": "A web and SwiftUI poker calculator for random-deal equity, player-count comparisons and faster card entry.",
+    "summaryZh": "从网页到 SwiftUI，计算随机对手下的牌局权益，解释人数与平分的影响，并改进手机输牌。",
+    "tags": [
+      "SwiftUI",
+      "Monte Carlo",
+      "Codex"
+    ],
+    "featured": false,
+    "role": "Personal calculator prototype",
+    "roleZh": "个人计算器原型",
+    "ownership": "I defined the requirements and iterated on an iPhone 13 Pro. Codex assisted implementation; web replay and native source are described separately.",
+    "ownershipZh": "我提出功能需求，并用 iPhone 13 Pro 反复调整操作和布局，Codex 协助实现。网页演示与原生源码分别描述。",
+    "article": "texas-equity",
+    "cover": "/images/texas-equity/web-demo.webp",
+    "details": [
+      "Samples legal deals without replacement, evaluates seven-card hands, and splits tied equity by the number of winners.",
+      "Separates draw-hit probability, an approximate post-improvement equity view, and hand-category distributions.",
+      "Continuous and text card entry; native background tasks reject stale results. Random opponent hands, no range model or optimal betting policy."
+    ],
+    "detailsZh": [
+      "无放回模拟合法牌局，比较七张牌中的最佳牌型，并按共同获胜人数分摊权益。",
+      "分别展示听牌命中率、补强后的近似权益与牌型分布，避免把几个概率混为一谈。",
+      "连续选牌与文本输入；原生计算任务防止旧结果覆盖。对手为随机手牌，未实现范围建模或最优下注策略。"
+    ]
   }
 ]
