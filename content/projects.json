@@ -729,5 +729,46 @@
       "用手工整理的 C 系列颜色对应表和 AppKit 输出孔位图，从同一网格统计各色数量。",
       "已整理三个人物图案及 PNG；屏幕配色仍是近似，未验证实物成品与色差。"
     ]
+  },
+  {
+    "id": "astockquant",
+    "title": "AStockQuant research notes",
+    "titleZh": "AStockQuant：公告与量价信号",
+    "period": "Personal research · June 2026",
+    "periodZh": "个人研究 · 2026 年 6 月",
+    "summary": "A small A-share data workflow with filing-event alignment and a fixed price-volume ranker; neither baseline established a usable strategy.",
+    "summaryZh": "接入小样行情与公告，检查事件对齐和固定权重量价排序；两条基线均未形成可用策略。",
+    "tags": [
+      "Python",
+      "Quant Research",
+      "Data Engineering"
+    ],
+    "featured": false,
+    "role": "Codex-assisted data and signal research",
+    "roleZh": "Codex 协助的数据与信号研究",
+    "ownership": "I specified the data source and storage approach and challenged the data/test scope. Codex implemented the workflow, with a-stock-data, Qlib and QuantMind as third-party references.",
+    "ownershipZh": "我提出数据来源、存储要求并追问数据与测试范围；Codex 实现流程，a-stock-data、Qlib 与 QuantMind 为第三方参考。",
+    "article": "astock-signals",
+    "cover": "/images/astock/event-results.webp",
+    "details": [
+      "16-stock price sample: 28,703 bars, with 5,344 filings covering nine stocks.",
+      "238 eligible filing rows represent 211 stock-and-return intervals; title-rule results remain weak.",
+      "Fixed five-feature ranker, not trained Qlib/LightGBM; no promoted strategy or live execution."
+    ],
+    "detailsZh": [
+      "16 只股票共 28,703 行行情；5,344 条公告覆盖其中 9 只股票。",
+      "238 条可用事件对应 211 个股票—交易区间，标题规则的表现较弱。",
+      "五特征固定权重排序，未完成真实 Qlib/LightGBM 训练，无晋级策略或实盘执行。"
+    ],
+    "links": [
+      {
+        "label": "a-stock-data",
+        "href": "https://github.com/simonlin1212/a-stock-data"
+      },
+      {
+        "label": "Qlib",
+        "href": "https://github.com/microsoft/qlib"
+      }
+    ]
   }
 ]
