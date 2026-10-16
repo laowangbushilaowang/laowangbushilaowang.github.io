@@ -888,5 +888,42 @@
         "href": "https://github.com/zexianzhang36-prog/cn-company-radar-toolbox"
       }
     ]
+  },
+  {
+    "id": "rental-radar-adaptation",
+    "title": "Rental radar adaptation",
+    "titleZh": "租车雷达适配",
+    "period": "Personal adaptation · September 2026",
+    "periodZh": "个人适配 · 2026 年 9 月",
+    "summary": "A small adaptation of Zuche Radar for returning availability, same-period quote comparisons, and Web-based monitoring controls.",
+    "summaryZh": "基于开源神州车型雷达，补充返场车源、同租期报价比较和网页监控设置。",
+    "tags": [
+      "Python",
+      "Personal tools",
+      "Open source"
+    ],
+    "featured": false,
+    "role": "Requirements and Codex-assisted adaptation",
+    "roleZh": "需求设计与 Codex 协助的局部适配",
+    "ownership": "Built on LuckinSven's open-source Zuche Radar. I defined the stock-change and comparison requirements and iterated the local additions with Codex.",
+    "ownershipZh": "基础应用来自 LuckinSven 的开源神州车型雷达。我提出车源变化和比较需求，通过 Codex 迭代局部功能。",
+    "article": "rental-availability-monitor",
+    "cover": "/images/car-rental/availability-replay.webp",
+    "details": [
+      "Distinguishes a model first entering the library from a known model becoming rentable again for the same dates.",
+      "Compares the lowest available list price only within the same city, model, and exact rental period; location mix and final charges remain separate.",
+      "Adds Web controls for rotating rental windows, a compact change list, and a display reset that retains history."
+    ],
+    "detailsZh": [
+      "区分车型首次入库和已知车型在同一租期重新可租。",
+      "在同城市、同车型、相同取还时间内比较最低可租列表价；保留网点变化和最终费用的区别。",
+      "网页设置轮换查询的租期和周期，收起价格细节，清空已读变化时保留历史。"
+    ],
+    "links": [
+      {
+        "label": "Zuche Radar · upstream project",
+        "href": "https://github.com/LuckinSven/8093-zuche-radar-public"
+      }
+    ]
   }
 ]
