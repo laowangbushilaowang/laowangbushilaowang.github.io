@@ -770,5 +770,46 @@
         "href": "https://github.com/microsoft/qlib"
       }
     ]
+  },
+  {
+    "id": "comfy-video",
+    "title": "ComfyUI video experiments",
+    "titleZh": "ComfyUI 视频尝试",
+    "period": "Personal use and workflow adaptation · August 2026",
+    "periodZh": "个人使用与流程适配 · 2026 年 8 月",
+    "summary": "Two saved H3 clips, a memory-mode diagnosis on an A6000 and a three-segment workflow adaptation that remained unvalidated.",
+    "summaryZh": "两段 H3 视频输出、一次 A6000 显存模式排查，以及尚未验证成片的三段连续工作流适配。",
+    "tags": [
+      "ComfyUI",
+      "Video Generation",
+      "MiniMax H3"
+    ],
+    "featured": false,
+    "role": "Using and adapting existing workflows with Codex",
+    "roleZh": "借助 Codex 使用与适配现成流程",
+    "ownership": "I supplied reference photos, directed the action/outfit experiments and questioned the memory diagnosis. Codex adapted configurations. ComfyUI, MiniMax H3 and the continuation suite are third-party work.",
+    "ownershipZh": "我提供参考图、提出动作和换装需求，并追问显存诊断；Codex 适配配置。ComfyUI、MiniMax H3 和连续视频插件来自第三方。",
+    "article": "comfyui-video-workflows",
+    "cover": "/images/comfy/fight-frames.webp",
+    "details": [
+      "Saved outputs: 15.083-second action clip and 5.167-second outfit test. The latter changed identity and failed the intended task.",
+      "Historical process check: 48 GB A6000 with about 30 GB free, launched with --novram and custom nodes disabled.",
+      "Prepared a BF16 three-segment configuration; no verified continuous output or controlled acceleration benchmark."
+    ],
+    "detailsZh": [
+      "保存了 15.083 秒动作片和 5.167 秒换装测试；换装结果连人物也改变，未达预期。",
+      "历史进程检查：48 GB A6000，近 30 GB 空闲，同时带着 --novram 且禁用自定义节点。",
+      "准备了 BF16 三段流程，未验证连续成片，也没有同条件加速对照。"
+    ],
+    "links": [
+      {
+        "label": "ComfyUI",
+        "href": "https://github.com/Comfy-Org/ComfyUI"
+      },
+      {
+        "label": "H3 continuation suite",
+        "href": "https://github.com/HerrgottMargott/Herrgotts-H3-Infinite-Continuation-Suite"
+      }
+    ]
   }
 ]
