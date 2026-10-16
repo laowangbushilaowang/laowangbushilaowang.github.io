@@ -811,5 +811,46 @@
         "href": "https://github.com/HerrgottMargott/Herrgotts-H3-Infinite-Continuation-Suite"
       }
     ]
+  },
+  {
+    "id": "local-search-mcp",
+    "title": "Local search MCP for Qwen",
+    "titleZh": "本地 Qwen 搜索 MCP",
+    "period": "Personal tool integration · September 2026",
+    "periodZh": "个人工具接入 · 2026 年 9 月",
+    "summary": "A small search entry point with Bing-first retrieval, DuckDuckGo fallback and explicit engine notices, paired with the existing browser tool.",
+    "summaryZh": "用小型搜索入口查候选网页，Bing 优先、DuckDuckGo 回退，并与已有浏览器工具分工。",
+    "tags": [
+      "MCP",
+      "Qwen Code",
+      "TypeScript"
+    ],
+    "featured": false,
+    "role": "Codex-assisted MCP implementation and integration",
+    "roleZh": "Codex 协助的 MCP 实现与接入",
+    "ownership": "I identified the lack of useful web discovery and approved a dedicated tool. Codex implemented it using the MCP SDK, Playwright request contexts and Cheerio.",
+    "ownershipZh": "我发现模型不主动搜索的问题并同意增加专用工具；Codex 借助 MCP SDK、Playwright 请求上下文和 Cheerio 实现。",
+    "article": "local-search-mcp",
+    "cover": "/images/local-search/search-results.svg",
+    "details": [
+      "One callable local_web_search entry point returns titles, URLs, snippets and engine/fallback notices.",
+      "Saved tests show a configuration query returning generic pages before the fallback change and official documentation after it.",
+      "Search relevance remains heuristic; browser inspection and reliable model tool selection remain separate concerns."
+    ],
+    "detailsZh": [
+      "local_web_search 返回标题、网址、摘要和实际引擎/回退原因。",
+      "保存测试中，同一配置查询从泛产品页变为回退后的官方文档。",
+      "相关性仍是粗略规则；打开正文与模型稳定选择工具仍需分别检查。"
+    ],
+    "links": [
+      {
+        "label": "MCP TypeScript SDK",
+        "href": "https://github.com/modelcontextprotocol/typescript-sdk"
+      },
+      {
+        "label": "Qwen Code",
+        "href": "https://github.com/QwenLM/qwen-code"
+      }
+    ]
   }
 ]
