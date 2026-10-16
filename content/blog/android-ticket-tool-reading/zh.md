@@ -1,5 +1,5 @@
 ---
-title: "票务工具阅读：Appium 怎样控制一台安卓手机"
+title: "Appium 怎样控制安卓手机"
 date: "2026-10-16"
 updated: "2026-10-16"
 language: "zh"

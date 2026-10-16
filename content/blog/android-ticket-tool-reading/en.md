@@ -1,5 +1,5 @@
 ---
-title: "Reading ticket tools: how Appium controls an Android phone"
+title: "How Appium controls an Android phone"
 date: "2026-10-16"
 updated: "2026-10-16"
 language: "en"
