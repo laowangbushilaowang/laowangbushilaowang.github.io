@@ -1,130 +1,107 @@
 ---
-title: Cancellation and state readback in a local workbench
+title: From local scripts to a private Web workbench
 date: '2026-10-09'
 publishedAt: "2026-10-09T12:35:31Z"
-updated: '2026-10-09'
+updated: '2026-10-16'
 language: en
 translationKey: local-workbench-state
 project: private-workbench
-excerpt: Cancelling a wait, stopping a local worker, and reversing an external action have different meanings. How a private workbench handles shared reads, execution identity, and stale results.
+excerpt: Bringing orders, queries, execution, and archiving into one interface, with enough context to understand progress, failures, and retries.
 tags:
-  - Web engineering
-  - Async workflows
+  - Python
+  - JavaScript
   - Codex
 ---
 
-An old result can stay on screen after a query fails, provided it is clearly an old result. Trouble starts when a background refresh replaces the error with a saved snapshot labelled “current.” The request is still broken, but the interface has declared victory.
+The first version was a local subscription-management tool. I could prepare inputs on a Web page, run a script, open a browser, and query the result. The individual functions existed, but using them still meant moving between pages.
 
-My local workbench brings together orders, account queries, browser execution, and receipt management for private subscription-related tasks. I had a few concrete requirements: show errors beside the relevant stage, limit repeated clicks on every external operation, and let a running button become its own Stop button. They led to a larger question: the page, the local executor, and the external service run on separate clocks. Which one gets to decide what the screen shows now?
+Adding an order backend made the gaps more obvious. The backend knew which order I was handling; the execution page needed the inputs again. A script could finish while the screen still showed progress from the previous attempt. I had to keep the pieces aligned myself.
 
-I developed the workbench with Codex. I supplied requirements, layout choices, and feedback from use; Codex helped implement and check the changes. This post covers the general engineering decisions.
+I wanted a private workbench that carried a task from its order through execution, readback, and archiving. I had looked at the open-source [chatgpt-specimen-toolbox](https://github.com/1837620622/chatgpt-specimen-toolbox) early on. I supplied workflow requirements, layout choices, and feedback from use; Codex helped implement and check the changes. This post covers the general engineering decisions.
 
-## Where cancellation reaches
+## Connect the whole task
 
-After a click, the browser may be waiting for a response, a local subprocess may be running, and an external service may already be handling the request.
+One of my requests was to review the process from the backend through archiving. Where could I remove another copy-and-paste or another page to find?
 
-An `AbortController` can end supported operations such as fetch and response-body consumption. [MDN describes its scope](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/abort). What the server did with an earlier request is a separate question.
+Selecting an order should carry its context into execution. Frequently used information should be easy to copy. Queries, execution, and archiving need their own controls, with one step's output available to the next.
 
-The workbench therefore cancels the page operation and sends another request asking the local executor to stop. That cancellation request needs its own controller. Reusing the aborted signal would prevent it from being sent.
+The operator's path has four parts:
 
-The executor identifies the attempt by `operation_id`. A lock protects both the cancellation marker and process registration. If cancellation arrives first, a later stage cannot start. If the subprocess has started, the executor sends `SIGTERM` to the process group created by this application, escalates to `SIGKILL` if necessary, then checks that it exited. Another operation's process is outside that scope.
+1. **Select an order** and establish the current task and inputs.
+2. **Check and execute** the relevant operation.
+3. **Watch progress and inspect the result** beside that task.
+4. **Finish up** by reading back external state and archiving as needed, with a separate path for manual handling.
 
-The page stays busy while waiting for the cancellation acknowledgement. Otherwise a new attempt could start before the previous worker's exit was confirmed. If acknowledgement fails, the message says that the page stopped waiting and the local worker's termination remains unconfirmed. A green check would be easier to draw, but less useful.
+The page handles selection and display. The backend stores records, while a local executor runs scripts or a browser. A request can return before the work has finished, so I placed live progress beside the order.
 
-Stopping the local process cannot recall a request that has reached an external service. Read the original record before deciding whether to retry. A lost connection alone does not establish that an action never happened.
-
-## Sharing a read without sharing every wait
-
-A progress poll and a foreground refresh often ask for the same detail URL at almost the same time.
-
-The API wrapper keeps in-flight GET requests in a Map, keyed by method and URL. A second caller receives the same Promise. The entry is removed when it settles. Mutations use a separate set and reject a second concurrent call with the same key.
-
-This handles overlap within one page. It is neither a persistent response cache nor protection against duplicate submissions from another tab or process. The key also omits request parameters and an authorization version. If those vary at the same URL, the sharing rule needs to change.
-
-There is another ownership issue. Suppose a background read starts first and a foreground operation later waits for it. The user stops the foreground operation, but the background consumer still needs its result.
-
-The foreground caller can stop waiting without aborting that existing read. Here is the wrapper used in the project, with the surrounding calls removed:
-
-```javascript
-function awaitOperation(value, signal) {
-  const pending = Promise.resolve(value);
-  if (!signal) return pending;
-
-  return new Promise((resolve, reject) => {
-    let finished = false;
-    const finish = (settle, result) => {
-      if (finished) return;
-      finished = true;
-      signal.removeEventListener('abort', abort);
-      settle(result);
-    };
-    const abort = () => finish(reject, signal.reason);
-    pending.then(
-      result => finish(resolve, result),
-      error => finish(reject, error)
-    );
-    if (signal.aborted) abort();
-    else signal.addEventListener('abort', abort, { once: true });
-  });
-}
+```text
+Web page: select a task, start work, inspect progress
+                         ↓
+Backend: order records and task state
+                         ↓
+Local executor: script / browser
+                         ↓
+Read back the result → update the task → archive as needed
 ```
 
-The wrapper settles this caller's wait and removes its listener. It also attaches a rejection handler to the original Promise, even if that Promise rejects after cancellation. The execution wrapper checks the signal before and after waiting so the next operation cannot be sent.
+*An overview of responsibilities; the business-specific steps are omitted.*
 
-This assumes the original read was not itself bound to the foreground signal. If the current operation started the fetch with that signal, aborting it can still terminate the underlying request. Sharing a Promise does not automatically change who owns the fetch.
+Keeping the selected order attached to its inputs and results was the useful change here. If I still had to remember which order a result belonged to, the pages were not connected well enough.
 
-## A late response needs permission to render
+## Progress should explain a failure
 
-Responses can arrive out of order. The page has to remember which selection they belong to.
+A spinner looks much the same after ten seconds as it does after a minute. I wanted to know what it was waiting for: had the local task started, was an external request pending, or had the final query failed?
 
-An operator selects order A and then switches to B before A's details arrive. Cancellation might be too late. Rendering A's response into B's card would still be wrong. The workbench increments `generation` when the selection changes. A read captures the generation at its start and compares it again before rendering.
+I asked for status and errors at each stage, next to the current order. A failed manual query also needed a visible response in the query panel.
 
-Two other identifiers handle different changes:
+![Current order and stage-by-stage progress in the workbench](/images/projects/private-workbench/query-replay.webp)
 
-| Identifier | What changes | What it prevents |
+*Actual interface components replayed with synthetic test data. The order, timestamp, and HTTP 503 are fixture values; all mutations are disabled. The first stage fails and later stages remain pending.*
+
+The query result is on the left and execution progress on the right. The layout shows where work stopped and which stages have not run. Detailed errors belong in this private workbench; the external-facing page only needs the relevant status.
+
+A subtler problem occurs when a query fails and a background refresh restores an earlier successful snapshot. Keeping an old result is useful, provided it remains clearly old. Automatic refresh must not erase the latest query error.
+
+Manual handling also remains available. I may complete an operation outside the page, then return to check and update the record. An administrator marking an order successful and a program verifying completion have different meanings. A database `success` value alone cannot establish that every stage ran automatically.
+
+## Retries need an identity; Stop needs an acknowledgement
+
+I repeatedly reported progress from the previous run remaining lit when I started again. An order can have several attempts, so its order ID cannot identify the progress currently on screen.
+
+Three identifiers cover different changes:
+
+| Change | Identifier | What it prevents |
 |---|---|---|
-| `generation` | The selected order | A's details appearing in B's view |
-| `operation_id` | A new attempt on an order | Previous execution events appearing as current progress |
-| `querySeq` | An explicit user query | An earlier poll overwriting that query |
+| Switch from order A to B | Page selection version | A's late response appearing in B |
+| Run an order again | Execution ID | Old completion lighting up the new attempt |
+| Start an explicit query | Query sequence | An earlier poll replacing the new query |
 
-An order ID alone cannot distinguish attempts. The same order can have an old completed attempt and a new one that has barely started. Applying the old completion to the new progress display would turn the stages green before the new task reached them.
+The operator need not see these values. The interface uses them to decide which results still belong on screen. A new attempt follows its own progress; a late response from the previous one cannot complete it.
 
-During an active attempt, the workbench uses events matching its `operation_id`. Explicit queries have their own sequence so progress can refresh without replacing the query currently in flight.
+I also asked for limits on every externally acting button. Within one page, callers can share an identical read already in flight. Concurrent duplicate mutations are rejected. This addresses overlapping page requests; cross-tab or cross-process duplicates require backend handling too.
 
-These identifiers answer questions about rendering and ownership. None of them establishes that an external action completed.
+A running button becomes its own Stop button. Clicking it ends the page's wait and asks the local executor to stop the matching task. The controls remain busy until that request is acknowledged, so another attempt cannot start while the previous one is still being stopped.
 
-## Keep a failed query separate from an old snapshot
+**Stopping a local worker cannot recall a request that an external system has already received.** If the acknowledgement fails, the page says that the worker's exit is unconfirmed. Read the original record before deciding whether to retry; a lost connection does not establish that nothing happened.
 
-This is a replay of the actual workbench components. It uses the project's template and scripts, with synthetic read-only responses and every mutation disabled.
+These timings make useful test cases: delay an old response, cancel before and after worker startup, and check that stopping one task leaves another untouched. A smooth run alone would miss them.
 
-![Actual workbench components showing a failed query and an unresolved first stage](/images/projects/private-workbench/query-replay.webp)
+## The directory had to catch up
 
-*Actual interface replayed with synthetic test data. The order, timestamp, and HTTP 503 are fixture values, not a real transaction or a production incident.*
+As functions accumulated, I asked to organize the directory, use Git for versions, and put the working conventions in `AGENTS.md`. Otherwise the next Codex session would have to guess which entry point was active and which files were earlier experiments.
 
-The left card reports the query failure. The progress card identifies the failed stage and leaves later stages pending. HTTP status and an application error code are displayed separately, so a local error can still explain itself without an HTTP response.
+The main project separates these roles:
 
-I asked for errors directly beneath the relevant stage because “failed” did not tell me what to do next. Preparation failing, a submitted request with an unknown result, and a failed final readback require different recovery paths. The last two need the original execution record to remain available.
+```text
+app.py                     Local Web and backend entry point
+chrome_checkout_runner.mjs Browser executor
+web/                       Pages and order backend
+config/                    Committable configuration examples
+runtime/                   Sessions, runtime state, debug files
+business_records/          Ledger and receipts
+archive/                   Earlier prototypes and debug artifacts
+```
 
-Snapshots require the same care. After the latest query fails, automatic progress refresh must not erase the error with an older saved state. The workbench retains the current query error until an appropriate event clears it: a successful query, a credential change, or an order switch.
+Runtime data, business records, and archived debug artifacts have separate locations outside Git. Source updates preserve them. Rolling back code does not mean rolling back newly created records. Configuration examples travel with the code; real configuration stays in the running environment.
 
-The review also exposed a distinction in the success path: an administrator can mark an order successful manually. A database `success` value therefore cannot, on its own, prove that automated execution was verified. The interface retains manual handling, while interpretation of a result also needs its source and verification record.
-
-## Poll around the operator's work
-
-A polling interval decides how often to ask. It does not decide when asking is inappropriate.
-
-The current source checks the order list every five seconds. The workbench timer ticks every 1.5 seconds, with an additional ten-second minimum between idle polls. Visibility, a closed panel, another refresh, and an explicit query can make it skip a tick. Unchanged list data is not redrawn. A transient failure retains the list; an authentication failure clears the private view.
-
-I have not measured the full latency or server-load effect of these choices. They are scheduling rules, not a quantified performance improvement.
-
-Regression checks can put awkward timing under control: a read resolving after Stop must not trigger another write; controls must remain locked until cancellation is acknowledged; old progress must not replace a new attempt; and an old snapshot must not erase the latest query error. Local worker tests also launch a temporary sleep subprocess, confirm that cancellation stops it, and check that another operation is untouched. These checks passed during this review.
-
-The review found a weakness in the tests as well. An uncommitted polling test extracts code by string position. A function had been renamed and the timer moved to the end of the file, so its four admin cases failed to register the timer. That does not establish broken product polling, and it does prevent claiming a completely passing suite. Extracting the asynchronous logic into importable modules would be more reliable than repeatedly repairing substring anchors.
-
-## After the process restarts
-
-The local process registry and cancellation markers are in memory. They control the current run; recovery after a process restart needs a separate persistence design. Blocking repeated clicks in the browser also cannot replace server-side idempotency.
-
-I would store execution history separately from external-action results. An attempt has its own start, finish, cancellation, and timeout. An external action needs its own request identity and readback result. After a restart, unresolved records should be reconciled before another attempt begins. Cancellation markers also need an explicit retention period. Multiple-tab and restart tests would follow.
-
-This review did not execute real payments or validate a cloud workflow end to end. The next case I want to test is a restart after a request has been sent: close the page, restart the executor, then find the original record when returning. Browser-side identifiers alone cannot resolve that case.
+The workbench remains private, and browser interactions and external interfaces still need maintenance. This code review is not current end-to-end production acceptance, and I have not measured an automatic completion rate. Its practical purpose is clear to me: open a task and find its inputs, controls, and result together, instead of reconstructing the process across several pages from memory.

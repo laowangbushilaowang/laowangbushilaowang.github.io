@@ -138,12 +138,12 @@
     "titleZh": "私有本地工作台",
     "period": "Personal tool · 2026",
     "periodZh": "个人工具 · 2026",
-    "summary": "A private Web desk connecting orders, account queries, browser execution, and receipt management, with explicit cancellation and state readback.",
-    "summaryZh": "把订单、账号查询、浏览器执行与收据管理放在一处的私有 Web 工作台，处理取消、重复请求和状态回读。",
+    "summary": "A private Web workbench connecting orders, local scripts, browser execution, progress, and archiving.",
+    "summaryZh": "将订单、本地脚本、浏览器执行、进度与归档接在一起的私有 Web 工作台。",
     "tags": [
       "Python",
       "JavaScript",
-      "Async workflows"
+      "Codex"
     ],
     "featured": false,
     "role": "Personal tool, developed with Codex",
@@ -152,16 +152,16 @@
     "ownershipZh": "我提出工作流要求，选择布局和停止方式，并在使用中反馈故障；Codex 协助实现与检查。",
     "article": "local-workbench-state",
     "details": [
-      "The local Web interface brings private task records and execution controls together. The public case study covers general engineering design and a synthetic replay of actual components.",
-      "In-flight reads share a Promise within one page; duplicate concurrent mutations are rejected. Page generations, execution IDs, and query sequences give different responses different permission to render.",
-      "Stop ends the foreground wait and asks the local executor to stop the matching worker. A cancellation acknowledgement does not undo an external request that has already been sent.",
-      "Cancellation and progress checks, plus five local-worker tests, passed during review. Four cases in an uncommitted polling test failed because its source-extraction anchors were stale. Real payments, current deployment, and cloud end-to-end completion were not validated in this review."
+      "Carries the selected order into execution, with queries, stage-level feedback, manual handling, and archiving in the same workbench.",
+      "Uses selection versions, execution IDs, and query sequences to keep old responses and previous attempts out of the current view. Stops wait for a local acknowledgement; external requests already sent still need readback.",
+      "Separates source and configuration examples from private runtime data, business records, and earlier prototypes. I chose the workflow and interface behaviour; Codex helped implement and check it.",
+      "The article includes actual interface components replayed with synthetic read-only data. It does not claim a measured completion rate or current end-to-end production acceptance."
     ],
     "detailsZh": [
-      "本地 Web 将私有任务记录和执行控件放在一起。公开案例展开通用工程设计，配图为实际组件的合成数据重放。",
-      "同一页面共享进行中的读取，拒绝相同键的并发重复写操作；页面版本、执行标识与查询序号分别限制响应的渲染范围。",
-      "停止会结束前台等待，并请求本机执行器终止对应任务。取消回执不能撤销已经发出的外部请求。",
-      "本次复查的取消/进度检查和5项本机任务测试通过；未提交轮询测试的4项用例因旧源码截取位置失败。本次没有验收真实付款、当前部署或云端全流程。"
+      "从选中订单进入执行，在同一工作台完成查询、分阶段反馈、人工处理与归档。",
+      "用页面选择版本、执行标识与查询序号区分旧响应和不同尝试；停止等待本机回执，已经发出的外部请求仍需回读结果。",
+      "源码与配置示例、私有运行资料、业务记录及旧原型分开存放。我提出工作流与界面要求，Codex 协助实现和检查。",
+      "文章配图是实际界面组件的只读合成数据重放；未宣称自动完成率或当前生产全流程验收。"
     ]
   },
   {
