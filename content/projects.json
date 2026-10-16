@@ -57,8 +57,8 @@
     "titleZh": "BioFlow：组学数据采集与标准化",
     "period": "Guangzhou Laboratory",
     "periodZh": "广州实验室",
-    "summary": "A five-stage pipeline connecting papers, accessions, dataset files, and sample metadata. Language models assist with selected judgments; Python tools perform the data processing.",
-    "summaryZh": "把论文、数据编号、数据文件和样本元数据接起来的五阶段流程。语言模型参与部分判断，Python 工具执行数据处理。",
+    "summary": "A data-curation workflow for a virtual-cell corpus: interpret heterogeneous files, link cells to samples, and recover metadata through tools and focused model judgments.",
+    "summaryZh": "为虚拟细胞语料整理公开组学数据：判断异构文件、对应细胞与样本，再用规则和模型补齐元信息。",
     "tags": [
       "Data engineering",
       "LLM",
@@ -71,23 +71,24 @@
     "ownershipZh": "我在广州国家实验室参与的项目，围绕受约束流程设计，后续提出隔离扩展组学与按 Skill 拆分阶段的要求，Codex 协助实现和排障。AnnData、Scanpy 等库提供各自组件。",
     "article": "bioflow-dataset-pipeline",
     "details": [
-      "The project began with a need to collect public omics data for virtual-cell modeling. Each stage leaves inspectable outputs so a format fix can reuse earlier literature and downloads.",
-      "Regex-first accession extraction, a directory probe and registered-loader planner, and missing-value metadata enrichment address different kinds of uncertainty. They do not establish data relevance or scientific validity by themselves.",
-      "RNA, ATAC, and spatial data have matrix-building paths. Protein, metabolomics, and imaging currently use collection bundles with separate output roots; their quantitative or image-analysis processing is not implemented here.",
-      "The later Sentinel prototype implements SQLite task state, workers, retries, and heartbeats. Eight existing unit tests passed in this review, while a historical tiny_e2e run stopped at stage two. Production adoption and complete real-data execution remain unverified."
+      "The initial three-month assignment aimed to replace manual collection and curation; that goal is distinct from measured automation coverage.",
+      "I moved from autonomous loader editing toward an explicit workflow, then narrowed ATAC classification context to GSM summaries after user feedback.",
+      "File-tree planning, sample mappings and source-specific metadata enrichment address different decisions. A saved reference comparison checked field-value sets, not per-cell or end-to-end accuracy.",
+      "RNA, ATAC and spatial data have separate routes; other modalities use file collections first. Nova/Sentinel long-running execution remains a partially implemented prototype."
     ],
     "detailsZh": [
-      "项目起于为虚拟细胞模型收集公开组学数据的需求。各阶段留下可检查的产物，修格式适配时可以沿用已经完成的文献与下载材料。",
-      "正则优先的编号提取、目录探测与已注册 loader 选择、缺失元数据补充，分别处理不同的不确定性；这些步骤本身不能证明数据相关性或科学有效性。",
-      "RNA、ATAC、空间数据有各自的矩阵构建路径。蛋白、代谢和影像目前采用目录隔离的 collection bundle，这里没有完成它们的定量处理或图像分析。",
-      "后来的 Sentinel 原型实现 SQLite 任务状态、worker、重试和心跳。本次复查通过现有 8 项单元测试，历史 tiny_e2e 小样则停在第二阶段；生产采用与完整真实数据链路仍未验收。"
+      "最初三个月任务以替代人工收集整理为目标；目标与实际验证范围分开。",
+      "从自由修改loader转向显式工作流，实际使用反馈又推动ATAC判断改为读取GSM摘要。",
+      "文件树读取计划、样本映射、分来源补metadata分别处理不同关系；保存的参考对照统计字段取值集合，不是逐细胞或端到端准确率。",
+      "RNA、ATAC与空间数据分别构建；其他类型先保存文件集合。Nova/Sentinel长期执行仍为部分实现的原型。"
     ],
     "links": [
       {
         "label": "Early public scripts · 早期公开脚本",
         "href": "https://github.com/laowangbushilaowang/Bio_dataflow"
       }
-    ]
+    ],
+    "cover": "/images/bioflow/workflow-original.webp"
   },
   {
     "id": "hermes-local-agent",

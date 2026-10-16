@@ -1,116 +1,150 @@
 ---
-title: "BioFlow: organizing research data with an agent"
+title: "BioFlow: turning public omics files into usable datasets"
 date: "2026-10-09"
-updated: "2026-10-10"
-language: en
-project: single-cell-agent-pipeline
-excerpt: "Three decisions behind BioFlow: how much freedom to give the agent, how downloaded files connect to samples, and how different omics can share a workflow."
+updated: "2026-10-16"
+language: "en"
+project: "single-cell-agent-pipeline"
+excerpt: "A three-month brief to build a data-curation agent. The difficult parts were interpreting heterogeneous attachments, linking cells to samples, and recovering experimental conditions."
+cover: "/images/bioflow/workflow-original.webp"
+coverAlt: "Five-stage workflow table from the BioFlow project presentation"
 tags: [Data Engineering, Bioinformatics, LLM, Agents]
 draft: false
 ---
 
-I worked on BioFlow at Guangzhou National Laboratory to organize public omics data for a virtual-cell modeling corpus. Doing this manually involves finding papers, tracing their data sources, downloading and unpacking files, choosing readers, reconciling samples, and assembling metadata.
+The paper is found. The files are downloaded. How much work remains? With public omics data, that can still mean unpacking attachments, determining how to read the matrix, identifying samples, and checking webpages and supplementary tables for age, tissue, and treatment.
 
-I wanted an agent to take over repeated reading and interpretation while keeping data processing dependable. I first tried a more autonomous agent, then moved to a five-stage workflow. Later, Nova and Sentinel explored scheduling and recovery.
+At Guangzhou Laboratory, my brief was to build an agent within three months, with the goal of replacing manual collection and curation for a virtual-cell data corpus. That was the assignment, rather than an achieved level of automation. Heterogeneous files and metadata remained the difficult parts.
 
-This post focuses on three choices:
+The earlier [sample-time and pseudotime work](/blog/niche-time-pseudotime/) had already exposed this dependency. To compare cells across developmental stages, I first needed reliable sample identities and conditions. A model can train perfectly well on incorrectly assembled data and answer the wrong question.
 
-- **Give the agent freedom to interpret.** The model chooses a reading approach; existing tools perform the reads and writes. Each part can be checked separately.
-- **Show the model how files relate.** File trees, sample tables, and source paths are more useful for this task than placing an entire matrix in the context.
-- **Choose outputs by data type.** Matrix-ready inputs follow matrix-building paths; assets needing specialized processing first become organized file collections with sample information.
+BioFlow became a five-stage workflow: find papers, obtain full texts, extract accessions, construct datasets, and fill metadata. Most of my effort went into the last two stages and deciding where the agent should make judgments.
 
-![BioFlow stages and model responsibilities](/images/bioflow/data-journey-en.svg "Redrawn from the project design and source: paper search, PDF download, accession extraction, data construction, and metadata organization.")
+![The five stages of BioFlow](/images/bioflow/workflow-original.webp)
 
-## Agent autonomy and workflow design
+*The five stages and their responsibilities. Each stage saves intermediate outputs for the next one.*
 
-Early on, I deployed a local model and tried letting the agent write and modify loaders—the programs that read datasets. With so many attachment formats, could it handle an unfamiliar one as it appeared?
+## From an autonomous agent to an explicit workflow
 
-Those attempts ran into hallucinations and unstable edits. A program that ran still needed checks: correct files, correct matrix orientation, and correct sample grouping. Debugging meant investigating both the input and newly generated code.
+I considered LangChain and more autonomous agent approaches, deployed a local model, and tried letting the agent write or modify loaders when it encountered an unfamiliar format.
 
-I moved toward explicit orchestration, in the sense of a LangChain-style workflow: defined stages, inputs, outputs, and available tools, with the model handling judgments that are difficult to encode as fixed rules.
+The attraction was obvious. A CSV could contain expression values or sample descriptions. MTX files could be separated into sample directories or mixed together under filename prefixes. Maintaining a rule for every packaging choice was tedious.
 
-| Approach | What the model can do | What I need to inspect |
+Generating code introduced another moving part. The agent could choose the wrong file or change the reading logic incorrectly. Even after an h5ad appeared, I still had to check matrix orientation, gene names, and sample grouping. Debugging became harder when both the data interpretation and the program were changing.
+
+I moved toward an explicit workflow with fixed tools and a few model-assisted decisions. “LangChain-style” describes that orchestration approach here; it does not establish a particular historical dependency version.
+
+| Model judgment | Context supplied | Program responsibility |
 | --- | --- | --- |
-| Earlier autonomous agent | Write or modify a loader for the input | File selection, generated code behavior, and outputs |
-| Constrained workflow | Select an existing reader and return a structured plan | The selection and the corresponding tool's output |
+| Locate data accessions | Paper text and availability statements | Extract and record accessions; use regex first for obvious matches |
+| Choose a reader | File tree, candidate matrices, small text excerpts | Invoke a registered loader, construct matrices, write outputs |
+| Normalize metadata | Current sample information and controlled vocabulary | Fill missing fields and save results and status |
 
-I concentrated the model's role at three points:
+An unfamiliar dataset no longer required the model to rewrite its reader. The model proposed a plan for existing tools. If that route failed, an outer builder could attempt a deterministic fallback.
 
-| Judgment | Context supplied | Program responsibility |
-| --- | --- | --- |
-| Find data sources | Paper text and accession clues | Check extraction and save identifiers; valid regex matches return first |
-| Choose a reader | File tree, candidates, short descriptions | Run an existing loader, convert data, and write outputs |
-| Organize metadata | Original fields, source text, controlled vocabulary | Standardize deterministic fields, fill gaps, and save results |
+I still wanted an agent. I had become more specific about which decisions benefited from one and which operations already had dependable implementations.
 
-What helped me was being able to inspect interpretation and execution separately. Wrong file selection sends me to the directory summary and plan. A format-specific reading error belongs with its loader. If the model-planned route fails to produce the expected output, the outer builder can try deterministic construction.
+## Let the model inspect file relationships
 
-### Adding autonomy after fixing the stages
+Stage four receives a directory, not a clean table. Archives may be nested; raw matrices, processed matrices, and metadata may sit together. Their relationships matter before any loader runs.
 
-I still wanted longer runs with less manual intervention. Nova and Sentinel explore that direction: keep the processing tools, and add planning, exception handling, and recovery above them.
-
-Skills describe operations. Task state records what completed. Retry rules distinguish a transient download failure from unsuitable data. A failed task should not require repeating every completed stage. These pieces serve the same goal: reduce the work of watching a run and repeatedly handling exceptions.
-
-Nova is a design; Sentinel implements part of the queue, state, worker, and retry logic. Its historical small sample completed stage one, failed at stage two, and blocked later stages. Fully unattended execution remains incompletely validated.
-
-## Using file structure to interpret data and identify samples
-
-Even with the workflow defined, data construction needs interpretation: how should the downloaded files become a dataset?
-
-In a common 10X representation, a matrix, feature table, and barcode table must be read together. Here is a simplified teaching example, not a directory captured from a particular run. [10x format documentation](https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/outputs/cr-outputs-mex-matrices)
+For example, an early download directory in the project contained the following files. Other samples are omitted:
 
 ```text
-downloaded_dataset/
-├── sample_A/
-│   ├── matrix.mtx.gz
-│   ├── features.tsv.gz
-│   └── barcodes.tsv.gz
-├── sample_B/
-│   ├── matrix.mtx.gz
-│   ├── features.tsv.gz
-│   └── barcodes.tsv.gz
-└── sample_metadata.tsv
+GSE119562_RAW/
+├── GSM3377673_sample1h.csv.gz
+├── GSM3377674_sample2h.csv.gz
+├── GSM3377675_sample3h.csv.gz
+├── ...
+├── GSM3377679_sample1m.csv.gz
+└── GSM3377680_sample2m.csv.gz
 ```
 
-**The directories reveal two groups of related files.** The three files under sample_A belong together, as do those under sample_B. The metadata table supplies descriptions; it is not a third expression matrix.
+The names provide sample clues. They do not justify guessing experimental conditions from their suffixes. Headers, orientation, and sample descriptions still need checking.
 
-Real downloads may use filename prefixes instead of directories, contain nested archives, or mix raw and processed tables. Extensions alone miss some of these relationships. I first extract file structure and text hints, then ask the model for a reading plan: which loader, which files, and how to group them.
+MTX has a different relationship: matrix, features, and barcodes form a unit. Treating them as separate inputs misidentifies the data unit. With several prefixed triplets in one directory, pairing becomes part of the task.
 
-![File context, reading plans, and sample identifiers](/images/bioflow/file-to-sample-en.svg "Redrawn from probe, planner, sample-resolution, and ID-mapping code. sample_A/B are teaching examples.")
+I built a probe that collects relative paths, suffixes, sizes, candidate files, and selected text headers. The model uses those clues to return a short JSON plan specifying a loader and its inputs. The expression matrix itself stays out of the prompt.
 
-There are three distinct operations:
+Reading files and identifying samples are separate operations:
 
-1. **Identify the files to read.** For MTX input, each planned item specifies its matrix, features, and barcodes together; a program executes the plan.
-2. **Associate the loaded data with samples.** Use available SDRF or GEO series-matrix mappings and source paths. A separate LLM operation receives existing IDs, cell counts, and file hints to propose an old-to-new ID mapping.
-3. **Associate samples with study conditions.** Collect tissue, age, treatment, and other fields from database records, papers, and supplements.
+1. **Read a valid group.** For MTX, load the matching matrix, features, and barcodes into a cell-by-feature object.
+2. **Resolve sample identity.** Prefer mappings from SDRF or GEO series matrices, retaining source-file and directory information; use model-assisted identifier mapping where needed.
+3. **Preserve the mapping after concatenation.** Cells need their sample identifiers to inherit age, tissue, and treatment correctly.
 
-The file tree explains how the material is organized. Sample mapping explains what the data belongs to. Both relationships matter before using a combined matrix.
+Path-derived identifiers preserve provenance when stronger mappings are absent. They do not verify biological sample identity. A syntactically valid mapping can still merge two samples incorrectly.
 
-![Data relationships in the original BioFlow design](/images/bioflow/sample-relations-original.webp "Original figure from the BioFlow v0.2 design document, compressed as WebP. Chinese labels separate Dataset, Sample, Cell, and Donor information; this is a relationship design.")
+Over time I added handling for multi-column features files, multiple 10X sets in one directory, multi-sample concatenation, damaged MTX inputs, and download integrity. These changes addressed different packaging of the same underlying data relationships.
 
-### Checking the model's proposed relationships
+## Metadata: choose the right level and the right context
 
-The program checks mapping format and parts of its completeness, falling back to path-derived IDs when necessary. Those IDs preserve source hints; even an identifier shaped like a GSM accession does not establish biological sample identity. Source sample tables still need checking for accidental merging or splitting.
+A readable matrix still leaves questions: which tissue, which control or treatment, which donor age, and which assay?
 
-Metadata needs similar care. A model can match terminology to a vocabulary and fill missing descriptions. Fields used to group an analysis need supporting source material. Current write-back fills missing values or `Unclassified` while preserving nonempty values, so existing noncanonical values also need inspection.
+One paper can describe several donors; a donor can contribute several samples; a sample contains many cells. Copying a paper-level description onto every cell can get those conditions wrong.
 
-The useful lesson for me is to **supply concrete context, then check the relationships the model establishes**. Successful file creation or a full metadata table does not establish analysis readiness.
+![Dataset, sample, cell, and donor relationships](/images/bioflow/sample-relations-original.webp)
 
-## Extending across omics while preserving their data forms
+*Relationship diagram from the project design document. Information belongs at different levels; a dataset description cannot substitute for each sample's conditions.*
 
-The initial matrix path handled a portion of the single-cell inputs. Extending to other modalities raised another decision: which steps can be reused, and which outputs need to differ?
+I used rules for fields that could be resolved directly, then model assistance for missing values. Sources included GEO SOFT and series matrices, ArrayExpress SDRF/IDF, sample webpages, and available supplementary tables.
 
-RNA can use a cell-by-gene matrix; ATAC can use cells by peaks. Spatial data also needs observations connected to coordinates. Raw protein, metabolomics, and imaging assets often require specialized processing before they yield suitable quantitative measurements. Changing an extension does not perform that processing.
+![Metadata collection, rules, and model-assisted filling](/images/bioflow/metadata-flow-original.webp)
 
-I asked to preserve the existing RNA and ATAC paths while routing by modality:
+*Metadata workflow: distinguish dataset and sample information, align sample-level fields by sample_id, apply rules, then use model-assisted enrichment. Cropped from the project presentation.*
 
-| Data type | Current processing scope |
+### An ATAC classification problem changed the prompt input
+
+Colleagues using the workflow reported errors in omics type and reference-genome classification. Both affect the processing route: the first can select the wrong reader; the second can affect interpretation of fragment coordinates.
+
+I suspected that mixed context was contributing to the problem. A GSE describes a study collection, while GSM records provide more specific sample information. I changed classification to use a GSM metadata summary, instructed the model to ignore dataset-level context, and skipped model classification when that summary was unavailable.
+
+| Change | Purpose |
 | --- | --- |
-| RNA / ATAC | Matrix construction, sample organization, and metadata |
-| Spatial transcriptomics | Basic matrices and spot coordinates; missing coordinates are recorded |
-| Protein / metabolomics / imaging | Asset collection, manifests, and dataset/sample information; quantitative processing remains to be integrated |
+| Resolve GSM records from the series matrix or GSE page, then collect sample information | Ground classification in sample descriptions |
+| Prefer an explicit Genome_build or Assembly | Avoid relying only on organism-based inference; this is a prompt instruction, not a measured accuracy guarantee |
+| Cap GSM fetching and reuse cached pages | Control the cost of retrieving many sample pages |
+| Skip the model when GSM summaries are missing | Leave an unresolved case instead of requesting a guess |
 
-Paper discovery, provenance, and task management can be shared while the representations retain their own requirements. Organized files and sample relationships provide a starting point for the appropriate downstream tools.
+This narrowed the evidence used for the decision. Measuring its accuracy gain would require a paired comparison on the same datasets.
 
-BioFlow was later used in the team's data collection work. My next priority would be checking a fixed small dataset collection thoroughly: whether the files are grouped correctly, which samples the cells belong to, where grouping fields came from, and whether the flow can recover from failure. I would check those relationships before expanding the collection further.
+Stage-five metadata enrichment had a related constraint: the current sample's row and matching supplementary records should take priority over broad study descriptions. I arranged context blocks by priority and length budgets so long background text would not displace relevant sample fields.
 
-The [Bio_dataflow repository](https://github.com/laowangbushilaowang/Bio_dataflow) contains early scripts; it does not include all later omics extensions or the Sentinel prototype.
+Later, I worked with colleagues collecting data, using their feedback to improve the workflow. I tried to turn a reported failure into support for a recurring format or condition, rather than a patch for one file.
+
+## Checking whether curation was correct
+
+At first, the appearance of `raw.h5ad` or `meta.h5ad` made completion look straightforward. Comparison with manually curated data showed how much lay between producing an object and matching the intended dataset.
+
+I wrote a notebook that intersected GSE accessions between the workflow and a curated reference, then compared the sets of distinct values in each field. For example, did both sides contain the same status labels, rather than merely a column with the same name?
+
+| Saved comparison | Result |
+| --- | --- |
+| Datasets with comparison results | 15; one additional dataset had a missing result |
+| Exact agreement of field-value sets, aggregated by reference-field count | 39.31% |
+| Mean of per-dataset agreement rates | 40.75% |
+
+These are **neither per-cell accuracy nor end-to-end success rates**. Where a GSE had multiple reference files, the script selected the one with the highest exact-set agreement. This was exploratory comparison.
+
+Two empty sets also count as agreement. Matching value sets can hide labels assigned to the wrong cells. Different sets can reflect identifier suffixes, vocabulary, or different curation scope. In one inspected pair, both sides contained 34,966 cell identifiers but their identifier sets differed. Matching `sample_ID` sets likewise did not establish correct assignment for every cell.
+
+The comparison was useful for locating discrepancies: missing sources, naming differences, or incorrect relationships. Each needed examination. A more complete-looking table was not necessarily a better dataset.
+
+A separate early accession-extraction run processed 43 rows, found accessions in 31, found none in 12, and recorded no runtime errors. It describes that stage only and is not the same experiment as the metadata comparison.
+
+## Extending omics and recovering long-running tasks
+
+As the RNA path developed, I added ATAC and spatial routes. The shared interface covered tasks, sources, and status; the data still required modality-specific treatment.
+
+| Data | Distinction to preserve |
+| --- | --- |
+| RNA | Cell/gene correspondence; raw counts versus processed expression |
+| ATAC | Peaks or fragments, genome assembly, and barcodes; RNA cleaning cannot simply be reused |
+| Spatial transcriptomics | Expression-to-spot coordinate mapping, with missing coordinates recorded |
+| Protein, metabolomics, imaging | File collections, sample information, and asset inventories first; quantitative analysis needs specialized tools |
+
+The last group used a collection-first approach. Saving files and their provenance was useful without pretending that renaming an output to h5ad completed the analysis.
+
+Long-running execution became part of the later Nova / Sentinel work: Skills describe stage inputs and outputs, durable state records progress, and retry categories distinguish temporary download failures from unsuitable data. Nova remained a design; Sentinel implemented parts of the queue, workers, retries, and heartbeats. A historical tiny run stopped after stage two failed, so complete unattended operation was not validated.
+
+BioFlow was later used for team data collection and produced a software-copyright outcome. Looking back, the work that required the most judgment was deciding which attachment was a matrix, which files belonged together, which sample owned a metadata row, and when the evidence was insufficient. Making those relationships explicit gave both models and programs a clearer job.
+
+Early scripts are available in [Bio_dataflow](https://github.com/laowangbushilaowang/Bio_dataflow). That repository does not contain all later omics extensions or the Sentinel prototype.
