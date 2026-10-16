@@ -1,124 +1,104 @@
 ---
-title: "Touch feedback for a remote browser on iPhone"
-excerpt: "The input-to-image loop behind a private SwiftUI client: connection reuse, stale pointer positions, coordinate mapping, and browser sessions that outlive the phone screen."
-language: "en"
+title: An iPhone workbench for a small server
+excerpt: Even an account query was running out of memory. Separating lightweight requests, browser work, and phone interaction—and withdrawing one paging experiment.
+language: en
 date: "2026-10-09"
 publishedAt: "2026-10-09T13:00:43Z"
-updated: "2026-10-09"
-project: "private-iphone-workbench"
-tags: ["SwiftUI", "SSH", "Remote browser"]
+updated: "2026-10-16"
+translationKey: iphone-remote-browser
+project: private-iphone-workbench
+tags: [SwiftUI, Linux, Remote browser]
 ---
 
-I could see the remote login page on my iPhone, but dragging a control was still difficult. My finger moved ahead of the image. When the next screenshot arrived, I had to work out where the previous movement had ended.
+I wanted to move work that depended on my computer onto a server, then use an iPhone to inspect orders and manage tasks. The server had 2GB of RAM. Several browsers running together were an obvious concern.
 
-A remote browser needs a short feedback loop: send a position, let the page respond, and bring the new image back. Forwarding clicks and periodically refreshing screenshots can produce a working connection without producing an accurate drag. My private iPhone workbench made that difference hard to miss.
+The problem became concrete when even an account query reported insufficient memory. A connection and a working button were only the beginning. What was consuming the memory? Why did a query need an entire website? If slower storage was acceptable, why not use swap?
 
-The app is a mobile front end for my local workbench. SwiftUI handles ordinary records, task progress, and parameters; a remote browser view appears when I need to interact with the original website. I set the workflow and interaction requirements and reported problems from use. Codex helped implement and check the changes. This post explains the touch path, including a timing result that did not establish a performance improvement.
+Those questions shaped this private app. I supplied the workflow, interface requirements, and feedback from use; Codex helped implement and check the changes. The native interface uses SwiftUI, with Apple's [SwiftNIO SSH](https://github.com/apple/swift-nio-ssh) underneath the SSH connection.
 
-## What a movement waits for
+## Keep execution on the server
 
-The phone displays a screenshot from remote Chrome. SwiftUI reads a gesture position and sends a request over SSH to a fixed gateway. The gateway forwards it to a browser controller, which dispatches a mouse event through Chrome DevTools Protocol, captures a screenshot, and sends JPEG data back to the app.
+The phone needed to show orders and account information, edit parameters, and display progress. A remote browser was useful when I actually needed the original website.
 
-A movement therefore includes input transport, browser execution, image capture and encoding, return transport, and local display. The early implementation also opened a new SSH connection for every movement and closed it after the response. A drag repeatedly exercised that single-request path.
+The early interface bundled too much into selecting parameters and starting a complete workflow. It was awkward when I only wanted a query or needed to archive something after the main task. I asked for pages arranged around how I used the desktop workbench: account and session, inputs and parameters, execution, follow-up work, and order management. Common controls stay visible; less frequent ones can fold away.
 
-I wanted visible feedback during the drag, rather than a final image after release. The revised implementation keeps an authenticated SSH connection and command channel while the interaction screen is open. Requests and responses are newline-delimited JSON. The channel closes when it is no longer needed. Apple's [SwiftNIO SSH](https://github.com/apple/swift-nio-ssh) supplies the SSH building blocks; the app implements its request handling and lifecycle around them.
+The phone and Mac workbench use the same cloud task queue. Once the server accepts a task, leaving the phone screen does not end it. Returning reads that task's state. A lost response should recover the original request rather than create another one.
 
-This persistent channel is not a continuous video stream. Each pointer request still waits for a screenshot before the next movement can be processed. Reuse removes repeated connection setup and gateway-command startup. It leaves image capture in the loop.
-
-## Reuse did not make the image instantly responsive
-
-A device diagnostic from October 9, 2026 contains one complete timing sample:
-
-| Measurement | Time |
-| --- | ---: |
-| Fetch a frame through the single-request, fresh-connection path | 1,011 ms |
-| Open the persistent browser connection and channel | 96 ms |
-| Fetch one frame through that connection | 2,459 ms |
-
-The diagnostic ran those operations in order. The first two attempts to read its output found the browser unavailable; a later read retrieved the complete result above.
-
-The slower frame used the reused connection. That does not show that reuse caused the slowdown. It also gives me no basis for subtracting two rows and advertising a speedup. These were single observations at different times, without controlled page state, server waiting, or network conditions.
-
-They do make “it is all the SSH handshake” an inadequate explanation. The 96 ms measurement covers opening the persistent path, not an isolated handshake. Frame retrieval combines capture, gateway processing, and transfer. Those parts still need separate measurements. A better connection object gives the user no help while the picture remains two seconds behind.
-
-The current capture code tries JPEG quality 52, falls back to 34 when the returned data is too large, and bounds its Base64 length. That limits frame size at the cost of clarity. It does not bound latency. [CDP screenshot capture](https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-captureScreenshot) is one stage in a longer request.
-
-## Keeping the latest position
-
-Queue every `onChanged` callback and a slow connection accumulates positions the finger has already left. The user can release while the server is still working through the middle of the drag. Returned images then describe earlier movements.
-
-The app keeps a `pointerLatest` value instead. While a request is pending, gesture callbacks replace that value rather than append another send task. After receiving an image, the sender reads the latest position again.
-
-This is the main branch of the actual Swift loop, with the initial press, error handling, and cleanup omitted:
-
-```swift
-while true {
-    let next = pointerLatest ?? last
-    if abs(next.x - last.x) + abs(next.y - last.y) >= 2 {
-        let moved = try await control.pointerMove(next)
-        browserFrame = scenePhase == .active ? moved : nil
-        last = next
-        continue
-    }
-    if pointerFinished {
-        let released = try await control.pointerUp(next)
-        browserFrame = scenePhase == .active ? released : nil
-        return
-    }
-    try await Task.sleep(for: .milliseconds(50))
-}
+```text
+iPhone / Mac: select, submit, inspect progress
+                         ↓
+Server: save task → queue → execute → save result
+                         ↓
+Attach the phone to an existing browser when human input is needed
 ```
 
-The loop waits briefly when the position differs by less than two browser-coordinate units. Otherwise, it sends the latest point. Release has a separate flag and still produces a release event. Coalescing movement does not discard the press and release that define the gesture.
+*Responsibilities at a glance. The phone view and server task have separate lifetimes.*
 
-This tradeoff has a limited use. For ordinary controls, avoiding playback of stale positions is useful. For handwriting, intermediate points are part of the content and cannot simply be dropped. Even a control can behave differently under a large coordinate jump; that needs testing on the actual page.
+The phone tells me what is happening and lets me choose the next action. Work that must keep running belongs on the server.
 
-An interrupted drag creates another problem: the phone locks or disconnects while the server still considers the mouse pressed. Leaving the view or losing the active scene marks the gesture finished. The error path attempts a release. The browser controller also has a 20-second pointer timeout that attempts release and clears its state. That is a fallback after interruption, not a normal way to end a gesture.
+## Avoid starting a browser for a query
 
-Idle frame refresh checks the same busy and gesture state, so it does not launch another periodic read during a drag. This reduces contention between two uses of the channel. Movement requests still wait for images, so the slow part of the feedback loop remains.
+I initially asked about compression and swap. There was also a more direct application change available: stop launching a full browser where a request would do.
 
-## Coordinates after zooming
+An account query needs a result. Earlier paths could start a browser, load a complete homepage, and make the request from there. The chat interface, scripts, and rendering state came along for a query that did not need them.
 
-Displaying the image is only half of accurate input. Its size on the phone differs from the browser's coordinate space. Forwarding screen coordinates directly becomes increasingly wrong as the image is enlarged.
+The implementation developed two paths:
 
-The app maps a gesture location within the image layer back to the screenshot. With proportional scaling, screenshot width `frame.width`, and displayed width `displayWidth`, the main calculation is:
+- **Ordinary queries and management operations** reuse the desktop workbench's HTTPS modules and display structured results in native views.
+- **Login, session recovery, or interaction with the website** uses the browser associated with that account.
 
-```swift
-let scale = Double(frame.width) / Double(displayWidth)
-let x = min(Double(frame.width), max(0, Double(location.x) * scale))
-let y = min(Double(frame.height), max(0, Double(location.y) * scale))
-```
+There was an intermediate approach too: retain the account's browser context but release the full homepage after a successful query. A lightweight page helps paths that still require that context. A direct request avoids starting Chrome for an ordinary query altogether.
 
-The important detail is where `location` comes from: the gesture layer on the image, rather than the whole screen. If the server captures only a horizontal region of the remote page, it adds that region's `viewOffset` back to x before dispatching the [CDP mouse event](https://chromedevtools.github.io/devtools-protocol/tot/Input/#method-dispatchMouseEvent).
+This addresses a different cost from reducing screenshot quality. Smaller images can reduce encoding and transfer work while leaving the full browser resident on the server.
 
-Zoom introduces a gesture conflict too. Is the finger panning the enlarged image or dragging something inside the remote page? I kept an explicit switch between moving the image and operating the page. In pan mode, the remote-input overlay stops accepting touches and the ScrollView handles positioning. Switching back forwards gestures to the browser. It is an extra button, but the destination of the gesture is visible.
+## Let heavy tasks take turns
 
-Ordinary text input does not need to fight remote pixels. Login details use a native form and are sent to fixed fields on the current page. Verification that needs me stays on the original website. This is a screenshot retained during development:
+The remaining browser work needs a budget.
 
-![Historical simulator screenshot of the native login form with a test email and enabled submit button](/images/projects/private-iphone-workbench/native-login-form.webp)
+The cloud worker processes queued tasks serially. Before another kind of heavy operation starts, it parks the browser that is no longer needed and checks available memory. Parking stops the process while retaining its profile: the local browser data used when it next starts.
 
-*Actual version 1.0 simulator UI with a test email and example password. The status bar and lower blank space were cropped, then the image was compressed. It shows form readiness, not a successful login or the current 1.6 interface.*
+Keeping that data does not require keeping the process alive. It avoids preparing a completely new browser environment each time, while allowing its memory to be reclaimed. The website can still expire a session; a saved profile is no promise of permanent login.
 
-## Leaving the screen while retaining the session
+Some limits are explicit in service configuration and startup logic:
 
-The touch channel follows the phone view. The remote browser needs a different lifecycle.
+| Component | Configuration or rule | Purpose |
+|---|---|---|
+| Resident browser service | 600 MiB hard memory limit | Bound the service and its browser processes |
+| Cloud task worker | 900 MiB hard memory limit | Leave room for other services |
+| New payment-task browser | At least 1,000 MiB available after parking the previous browser | Reserve cold-start headroom; resuming an existing window has separate checks |
 
-“Done” leaves the image and releases the phone's interaction connection; a server task may continue. Releasing memory stops the remote browser process. Signing out changes authentication state. Early versions blurred those actions: restarting the controller could lose the login held in a temporary browser environment.
+*Configuration and admission conditions, rather than measured process footprints.*
 
-Later versions use a persistent browser profile. `parked` means the process is stopped while the profile remains available for reopening. That preserves local browser state; it cannot prevent the website from expiring a session.
+I also asked for window management on the phone: show retained windows and the task occupying them, attach to an original window, or close it to release memory. An insufficient-memory message is much less useful when it leaves me unable to see what can be closed.
 
-The small server also needs to choose which browser gets its memory. The code can retain one idle, authenticated browser when available memory permits. Before another browser-based task starts, it parks the first browser and checks startup headroom. Returning to the app's home screen should not delete a login. Retaining a login should not require Chrome to hold memory indefinitely either.
+Leaving an image, parking a browser, and signing out are separate actions. Closing a phone view must not casually terminate the server window belonging to a running task.
 
-The status probe distinguishes `closed`, `parked`, `login_required`, `verification_required`, `ready`, and `unknown`. In this interface, `ready` means the expected list page is visible. It does not pronounce the next task successful.
+## One swap approach was withdrawn
 
-## What ran on the phone
+My reasoning was simple: I could accept slower access if disk space helped the small server cope.
 
-Version confusion interrupted acceptance testing in this project. Reports that a new build had been installed conflicted with the controls I could actually see. I later asked to continue debugging in the simulator so I could keep using my phone. A build, an installation on a particular device, and a usable interaction need separate checks.
+Disk swap stores inactive pages on disk. Zswap first compresses pages into a RAM cache to reduce some disk I/O, consuming CPU and RAM itself. The [kernel's zswap documentation](https://docs.kernel.org/admin-guide/mm/zswap.html) explains this relationship. A compression cache therefore has a cost; repeated swapping of actively used data can still make interaction worse.
 
-An earlier phone version read records through its device key. I saw the remote login page on the physical phone and reported the difficult taps and drags. The frame timings above also came from the phone. In the October 9 records reviewed for this post, version 1.6 was updated in the simulator while the phone retained an earlier build. The simulator's new layout was not evidence of a phone update.
+The project acquired an encrypted paging prototype: a regular file, a loop device, then dm-crypt and swap, alongside zswap. That storage stack was later reviewed and found to carry a low-memory deadlock risk. Writing pages out could require filesystem allocation while the machine was already trying to reclaim memory.
 
-For this review, seven gateway tests and one browser-status test file passed using temporary data and simulated pages. They cover bounded request parameters, omission of private content from ordinary lists, separate parsing of successive JSON lines, and keeping the system-Python gateway independent of portal dependencies. They do not measure touch responsiveness. The historical simulator build record establishes that build's completion.
+A [Linux Block discussion](https://www.spinics.net/lists/linux-block/msg133309.html) explains that particular dependency. It does not make ordinary direct swap files equivalent to the loop-plus-encryption stack. The project withdrew activation of the prototype, retaining status inspection and guarded recovery. I do not count it as a successful capacity upgrade.
 
-My next change would separate input acknowledgement from frame retrieval: deliver coordinates promptly, control the image-update rate, and associate displayed frames with processed input. I would then repeat fresh and reused connection measurements on the same device and page, recording capture, transfer, and display separately. That comparison is still future work.
+The worker's `MemorySwapMax=2G` also specifies an allowance; it does not create swap storage. A backing device, its available space, and a process limit are separate things. The [cgroup documentation](https://docs.kernel.org/admin-guide/cgroup-v2.html) accounts for memory and swap separately.
 
-For the next acceptance test, I would use the same control: follow it while dragging, stop catching up after release, and reconnect without leaving a mouse button held down.
+I kept the application changes: fewer browser launches, serial execution, window reuse, and startup checks. Paging can help with pressure, but its backing storage needs separate scrutiny. Adding gigabytes of swap to 2GB of RAM does not turn them into equally fast memory.
+
+## Use the remote image where it is needed
+
+Ordinary forms use native controls. The remote image handles interaction with the original site. This native login form comes from early development:
+
+![Native login form in the private iPhone workbench](/images/projects/private-iphone-workbench/native-login-form.webp)
+
+*Actual version 1.0 simulator UI with a test email and example password, cropped and compressed. It illustrates the form, not a successful login or the current source version.*
+
+Remote interaction is a send-action, capture-image, display loop. I found dragging difficult when the image lagged behind my finger. The implementation later reused an SSH channel and retained only the latest unsent movement position. Release remains a separate event, so the server does not keep replaying old movements after the finger lifts. Zoomed images also need image-local coordinates mapped back to the browser.
+
+Those changes leave capture in the loop. One physical-device diagnostic recorded frame retrievals of 1,011 ms and 2,459 ms through the two paths, once each. It does not establish a speedup. Dropping intermediate movement points is also unsuitable for operations such as drawing, where the path itself matters.
+
+Native views need interaction testing too. I encountered an order list that loaded but crashed when I opened its detail view; a successful JSON request could not reveal that problem. The source later added type-erasure boundaries around its paged views. A successful build, a working simulator screen, and a usable installation on my phone still require separate checks.
+
+The app's purpose is to let me find a task, understand its progress, and manage the windows it occupies from my phone. The current source contains these divisions and resource rules. Smooth physical-device dragging, sustained operation, and complete business workflows still need their own acceptance checks.
