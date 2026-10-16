@@ -1007,5 +1007,43 @@
         "href": "https://github.com/laowangbushilaowang/701_ass/blob/main/701_ass1/ROC_Analysis_and_Ethics.ipynb"
       }
     ]
+  },
+  {
+    "id": "hg532-security-notes",
+    "title": "HG532 security reading notes",
+    "titleZh": "HG532 固件安全阅读笔记",
+    "period": "Security study · 2024",
+    "periodZh": "安全学习 · 2024",
+    "summary": "A short study of a disclosed firmware-upgrade vulnerability, with attention to input interpretation and actual request content.",
+    "summaryZh": "围绕已披露的升级接口漏洞，理解输入怎样进入命令解释，以及脚本实际发送了什么。",
+    "tags": [
+      "Security",
+      "Firmware",
+      "Reading notes"
+    ],
+    "featured": false,
+    "role": "Study materials and code reading",
+    "roleZh": "学习材料整理与代码阅读",
+    "ownership": "The repository collects firmware and experiment scripts around CVE-2017-17215. The vulnerability discovery belongs to Check Point and the device firmware to Huawei; this article presents my reading notes.",
+    "ownershipZh": "仓库收集了 CVE-2017-17215 相关固件和实验脚本。漏洞发现归 Check Point，设备固件归华为；文章按个人阅读笔记展示。",
+    "article": "hg532-command-injection",
+    "details": [
+      "Explains the URL-to-shell interpretation problem using the original disclosure and vendor notice.",
+      "Separates a defined variable, the actual XML request body, and evidence of execution on a device."
+    ],
+    "detailsZh": [
+      "结合原披露与厂商公告解释 URL 进入 shell 解释的过程。",
+      "区分脚本定义的变量、实际 XML 请求体和设备侧执行结果。"
+    ],
+    "links": [
+      {
+        "label": "Study repository",
+        "href": "https://github.com/laowangbushilaowang/cyberproject"
+      },
+      {
+        "label": "Original disclosure",
+        "href": "https://research.checkpoint.com/2017/good-zero-day-skiddie/"
+      }
+    ]
   }
 ]
