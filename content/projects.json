@@ -852,5 +852,41 @@
         "href": "https://github.com/QwenLM/qwen-code"
       }
     ]
+  },
+  {
+    "id": "cn-radar-adaptation",
+    "title": "CN Radar job collection",
+    "titleZh": "CN Radar 岗位采集",
+    "period": "Personal adaptation · 2026",
+    "periodZh": "个人适配 · 2026",
+    "summary": "An Android collection and App-to-Web workflow adapted on top of the open-source CN Company Radar Toolbox.",
+    "summaryZh": "基于开源 CN Company Radar Toolbox，适配 Android 采集、App 与网页衔接及完整 JD 整理。",
+    "tags": [
+      "Python",
+      "Android",
+      "LLM workflows"
+    ],
+    "featured": false,
+    "role": "Personal adaptation, developed with Codex",
+    "roleZh": "通过 Codex 迭代的个人适配",
+    "ownership": "The underlying toolbox is an upstream open-source project. I set the collection and review requirements and iterated the Android workflow and handoff with Codex; the upstream product is not my original work.",
+    "ownershipZh": "基础工具箱来自上游开源项目。我提出采集与阅读要求，通过 Codex 迭代 Android 流程和数据衔接；保留上游产品归属。",
+    "article": "android-job-collection",
+    "details": [
+      "Uses visible Android controls for latest-first discovery, and associates expanded descriptions with platform job IDs for library ingestion and Web use.",
+      "Keeps card discovery, captured descriptions, coarse field rules, and model review separate. Scripts handle repeatable interaction; model review uses the description and personal project materials.",
+      "One historical App batch retained 26 expanded descriptions with distinct job IDs. The article uses a cropped actual App capture; no recruiter information, private application records, or communication is published."
+    ],
+    "detailsZh": [
+      "通过 Android 可见控件发现最新排序的候选，将展开的 JD 与平台岗位 ID 对应，进入岗位库并衔接网页。",
+      "卡片发现、正文采集、字段粗筛和模型评阅分别记录。脚本处理重复交互，模型结合 JD 与个人项目资料判断。",
+      "一轮历史 App 采集保存了26份不同岗位 ID 的展开正文；配图为裁切后的实际 App 画面，不公开招聘者信息、私人投递记录或沟通内容。"
+    ],
+    "links": [
+      {
+        "label": "CN Company Radar · upstream toolbox",
+        "href": "https://github.com/zexianzhang36-prog/cn-company-radar-toolbox"
+      }
+    ]
   }
 ]
