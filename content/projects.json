@@ -527,5 +527,35 @@
       "从咨询问答文本出发，用双向 LSTM 做主题分类，比较编码器—解码器 Transformer 与 345M 参数的 DialoGPT。",
       "人工评价得到 37 份有效反馈：DialoGPT 的整体质量更高，适切性评分却更低。"
     ]
+  },
+  {
+    "id": "phd-advisor-screening",
+    "title": "PhD advisor screening",
+    "titleZh": "PhD 导师筛选助手",
+    "period": "February–July 2026",
+    "periodZh": "2026 年 2–7 月",
+    "summary": "A personal research tool for working through university directories, professor pages, research fit, and recruitment information.",
+    "summaryZh": "从学校院系目录出发，整理教授名单、个人主页、研究匹配和招生信息的个人研究工具。",
+    "tags": [
+      "Agents",
+      "Python",
+      "Ollama",
+      "Skills"
+    ],
+    "featured": false,
+    "cover": "/images/phd-screening/workflow.svg",
+    "role": "Workflow design and development with Codex",
+    "roleZh": "需求与流程设计、Codex 协作开发",
+    "ownership": "I specified and iterated this personal tool with Codex. It uses third-party browser and model tools; roster coverage and page review are tracked separately.",
+    "ownershipZh": "我提出需求并与 Codex 迭代这个个人工具；浏览器和模型使用第三方工具，名单范围与主页核查分开记录。",
+    "article": "phd-advisor-screening",
+    "details": [
+      "Started with a Notebook and modular Python pipeline; evolved toward official unit rosters, per-person page review, and resumable CSV tasks.",
+      "A saved BU run remained incomplete despite 1,424 records. A later HKUST(GZ) AI/DSA roster merged 35 and 34 unit memberships into 65 people, retaining four cross-appointments and homepage gaps."
+    ],
+    "detailsZh": [
+      "从 Notebook 和模块化 Python 原型，逐渐转向学校实际院系名单、逐人读主页与 CSV 分步续跑。",
+      "BU 的一次保存结果虽有 1,424 条记录，仍未完成全范围；后来港科广 AI/DSA 名单将 35 与 34 条学域归属合并为 65 人，保留 4 位跨聘和主页缺口。"
+    ]
   }
 ]
