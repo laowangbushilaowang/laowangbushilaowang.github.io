@@ -661,5 +661,42 @@
       "分别展示听牌命中率、补强后的近似权益与牌型分布，避免把几个概率混为一谈。",
       "连续选牌与文本输入；原生计算任务防止旧结果覆盖。对手为随机手牌，未实现范围建模或最优下注策略。"
     ]
+  },
+  {
+    "id": "sts2-mcp-on-mac",
+    "title": "STS2 MCP on Mac",
+    "titleZh": "Mac 上的杀戮尖塔 MCP",
+    "period": "Personal integration · March 2026",
+    "periodZh": "个人接入实践 · 2026 年 3 月",
+    "summary": "Setting up CharTyr’s STS2-Agent on macOS, fixing a missing manifest copy, and testing a state-first playing loop.",
+    "summaryZh": "在 macOS 接入 CharTyr 的 STS2-Agent，补齐身份清单复制，并实际验证每步重读局面的出牌流程。",
+    "tags": [
+      "MCP",
+      "Agents",
+      "macOS"
+    ],
+    "featured": false,
+    "role": "Third-party tool integration and use",
+    "roleZh": "第三方工具接入与使用",
+    "ownership": "CharTyr created the framework. I requested and checked the Mac setup and playing workflow; Codex assisted implementation and actions. The build-script patch remains in the local working copy.",
+    "ownershipZh": "框架由 CharTyr 开发。我提出并核对 Mac 接入和游玩流程，Codex 协助实现与操作；构建脚本补丁留在本地。",
+    "article": "sts2-mcp-on-mac",
+    "cover": "/images/sts2/mcp-loop.svg",
+    "details": [
+      "Historical Mod 0.5.2/game v0.99.1 health check and six completed actions across two turns, followed by a user interruption.",
+      "Refreshes hand/target indexes and waits for a new action window; legal actions do not establish playing strength.",
+      "Removed Mod files with a backup; retained enable settings and separate modded saves were identified. A successful return to vanilla was not verified."
+    ],
+    "detailsZh": [
+      "历史健康检查为 Mod 0.5.2 / 游戏 v0.99.1；两回合中完成六次动作，之后由本人中断。",
+      "重新读取手牌与目标索引，并等待新的可操作阶段；可执行不等于策略优秀。",
+      "移走 Mod 并保留备份，定位残留启用设置和独立 Mod 存档；未验证最终切回普通档。"
+    ],
+    "links": [
+      {
+        "label": "CharTyr/STS2-Agent",
+        "href": "https://github.com/CharTyr/STS2-Agent"
+      }
+    ]
   }
 ]
