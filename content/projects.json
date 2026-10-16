@@ -1045,5 +1045,50 @@
         "href": "https://research.checkpoint.com/2017/good-zero-day-skiddie/"
       }
     ]
+  },
+  {
+    "id": "drawing-vision",
+    "title": "Symbol matching and door detection",
+    "titleZh": "图纸符号匹配与左右门检测",
+    "period": "Technical assessment · October 2026",
+    "periodZh": "视觉技术测评 · 2026 年 10 月",
+    "summary": "Query-based symbol matching and a YOLO/ResNet door pipeline, with practical checks on geometry rules, neighboring classes, and missed detections.",
+    "summaryZh": "用查询模板匹配符号，用 YOLO 与 ResNet 检测左右门；重点检查几何规则、近邻类别和漏检发生的环节。",
+    "tags": [
+      "Computer vision",
+      "OpenCV",
+      "Object detection"
+    ],
+    "featured": false,
+    "role": "Problem analysis, experiment direction, and visual review with Codex-assisted implementation",
+    "roleZh": "问题分析、实验选择与看图复核，Codex 协助实现和实验",
+    "ownership": "I directed the work and reviewed errors and tradeoffs with Codex. The assessment supplied the drawing inputs and door labels; OpenCV, Ultralytics YOLO and TorchVision provided the underlying implementations. Temporary symbol references were developed during the work.",
+    "ownershipZh": "我提出和调整实验方向，复核错误与取舍，Codex 协助代码和实验。图纸输入与门标注由题目提供，底层实现来自 OpenCV、Ultralytics YOLO 和 TorchVision；符号开发参考在任务过程中整理。",
+    "article": "drawing-symbols-and-doors",
+    "cover": "/images/drawing-vision/inputs-en.webp",
+    "details": [
+      "Uses crop, scale and orientation search for symbols; a circle-veto check exposes the cost of a geometric assumption.",
+      "Trains a door detector with neighboring classes and combines its proposals with crop review and original-drawing output.",
+      "The reported complete pipeline finds 148/193 test references with 11 false positives, while source differences and revisited-test limits remain visible."
+    ],
+    "detailsZh": [
+      "符号任务采用裁剪、多尺度和方向搜索，并检查圆周硬过滤的误拒与代价。",
+      "门检测学习相邻门型，再结合裁剪复核与原图输出。",
+      "报告完整流程在193个测试参考中找对148个、错检11个，同时保留来源差异与测试集已反复复看的限制。"
+    ],
+    "links": [
+      {
+        "label": "OpenCV",
+        "href": "https://github.com/opencv/opencv"
+      },
+      {
+        "label": "Ultralytics YOLO",
+        "href": "https://github.com/ultralytics/ultralytics"
+      },
+      {
+        "label": "TorchVision",
+        "href": "https://github.com/pytorch/vision"
+      }
+    ]
   }
 ]
