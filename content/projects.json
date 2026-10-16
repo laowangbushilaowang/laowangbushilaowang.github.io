@@ -280,8 +280,8 @@
     "titleZh": "SCage / TempoFactor",
     "period": "Guangzhou Laboratory",
     "periodZh": "广州实验室",
-    "summary": "Modeling sample time and cell state, then asking what survives held-out evaluation and downstream analysis. Local spatial ordering remains a limited observation.",
-    "summaryZh": "建模样本时间与细胞状态，再检查哪些结论能经受留出评估和下游分析。局部空间排序仍是有限观察。",
+    "summary": "A sample-time-aware VAE studied through stage prediction, conditional gene readouts and spatial follow-up.",
+    "summaryZh": "从样本时间监督的VAE出发，研究阶段预测、条件化基因读出和组织中的空间关联。",
     "tags": [
       "VAE",
       "Benchmarking",
@@ -290,8 +290,20 @@
     "featured": false,
     "role": "Ongoing team research",
     "roleZh": "持续中的团队研究",
-    "ownership": "I contribute to model refactoring, benchmarks, attribution and validation. Spatial predictions do not establish lineage, absolute speed, or mechanism.",
-    "ownershipZh": "我参与模型重构、benchmark、归因和验证。空间预测不能证明谱系、绝对发育速度或机制。"
+    "ownership": "I contribute to reproduction, model refactoring, benchmark checks, gene attribution and figures in this team project. The study remains ongoing.",
+    "ownershipZh": "我在团队项目中参与复现、模型重构、对照检查、基因归因和图表分析；研究仍在继续。",
+    "article": "tempofactor-sample-time",
+    "cover": "/images/tempofactor/overview.webp",
+    "details": [
+      "Separates Shared and Time representations while retaining a joint count-data reconstruction model.",
+      "A fetal-lung reproduction exposed different holdout units and unequal query-data access across baselines.",
+      "Conditional gene aggregation changed reference recovery; an analogous scVI readout performed closely. Spatial results remain local associations."
+    ],
+    "detailsZh": [
+      "将Shared与Time分开读出，并共同重建计数表达；两个生物因素是否真正分开仍需验证。",
+      "胎肺复现区分donor与stage留出，核对不同基线的查询数据访问差异。",
+      "条件化汇总改善当前参考基因恢复，同读出scVI接近；空间结果保留为局部关联。"
+    ]
   },
   {
     "id": "spatial-neural-field",
