@@ -925,5 +925,50 @@
         "href": "https://github.com/LuckinSven/8093-zuche-radar-public"
       }
     ]
+  },
+  {
+    "id": "cloud-request-coursework",
+    "title": "GCP request analysis coursework",
+    "titleZh": "GCP 请求分析课程项目",
+    "period": "Coursework · Fall 2023",
+    "periodZh": "课程项目 · 2023 年秋",
+    "summary": "A course pipeline that serves cloud-stored files, records generated HTTP requests in SQL, and investigates what two classifiers can learn from them.",
+    "summaryZh": "从云存储文件服务到请求入库，再用两项分类实验分析模拟数据中的可学习关系。",
+    "tags": [
+      "Python",
+      "Google Cloud",
+      "Data engineering"
+    ],
+    "featured": false,
+    "role": "Coursework implementation and analysis",
+    "roleZh": "课程实现与实验分析",
+    "ownership": "I implemented server integration, request schemas, and model analysis for a sequence of assignments. The course supplied the HTTP client; startup scripts adapt Google sample code.",
+    "ownershipZh": "完成连续课程作业中的服务接入、请求表和模型分析；HTTP 客户端由课程提供，启动脚本沿用 Google 示例。",
+    "article": "gcp-request-analysis",
+    "cover": "/images/cloud-requests/failed-requests.webp",
+    "details": [
+      "Connects Flask file requests with Cloud Storage, logging, Pub/Sub messages, and Cloud SQL request records.",
+      "Separates Country, Request, and Request_fail, with explicit limits on what missing fields and fallback attributes can support.",
+      "Saved outputs show 100% country classification and 12.23%/12.60% income classification on generated data. Prefix mappings and independently sampled eight-class income labels explain why those tasks differ."
+    ],
+    "detailsZh": [
+      "用 Flask 连接 Cloud Storage 文件读取、运行日志、Pub/Sub 消息和 Cloud SQL 请求记录。",
+      "拆分 Country、Request 与 Request_fail，检查缺字段和默认值对后续分析的影响。",
+      "模拟数据上的国家分类输出100%，收入分类输出12.23%/12.60%；前缀映射和独立随机的八类收入解释了两项任务的差异。"
+    ],
+    "links": [
+      {
+        "label": "File service · hw4",
+        "href": "https://github.com/laowangbushilaowang/hw4"
+      },
+      {
+        "label": "Request storage · hw5",
+        "href": "https://github.com/laowangbushilaowang/hw5"
+      },
+      {
+        "label": "Model analysis · hw6",
+        "href": "https://github.com/laowangbushilaowang/hw6"
+      }
+    ]
   }
 ]
