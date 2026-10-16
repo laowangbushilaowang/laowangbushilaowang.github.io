@@ -144,7 +144,7 @@ export function Project({ slug, locale }: { slug: string; locale: Locale }) {
             >
               <Link
                 href={lp(`/blog/${post.slug}`, locale)}
-                className="font-display text-xl text-accent hover:underline"
+                className="block font-display text-xl text-accent hover:underline"
               >
                 {post.title}
               </Link>
@@ -181,7 +181,7 @@ export function Blog({ locale }: { locale: Locale }) {
               <h2 className="mt-3 font-display text-2xl text-accent sm:text-3xl">
                 <Link
                   href={lp(`/blog/${post.slug}`, locale)}
-                  className="hover:underline"
+                  className="block hover:underline"
                 >
                   {post.title}
                 </Link>

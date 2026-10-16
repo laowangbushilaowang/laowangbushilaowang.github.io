@@ -248,7 +248,7 @@ export function Home({ locale }: { locale: Locale }) {
           >
             <Link
               href={localizedPath(`/blog/${post.slug}`, locale)}
-              className="font-display text-xl text-accent hover:underline"
+              className="block font-display text-xl text-accent hover:underline"
             >
               {post.title}
             </Link>
