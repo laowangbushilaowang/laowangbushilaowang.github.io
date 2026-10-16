@@ -970,5 +970,42 @@
         "href": "https://github.com/laowangbushilaowang/hw6"
       }
     ]
+  },
+  {
+    "id": "roc-evaluation-coursework",
+    "title": "ROC and model evaluation notes",
+    "titleZh": "ROC 与模型评价笔记",
+    "period": "Coursework · September 2023",
+    "periodZh": "课程练习 · 2023 年 9 月",
+    "summary": "A short course-based explanation of confusion-matrix rates, operating thresholds, and limits of statistical fairness claims.",
+    "summaryZh": "围绕课程练习，解释混淆矩阵的分母、工作阈值，以及统计公平指标的适用范围。",
+    "tags": [
+      "Machine learning",
+      "Model evaluation",
+      "Coursework"
+    ],
+    "featured": false,
+    "role": "Course exercises and reading notes",
+    "roleZh": "课程练习与阅读笔记",
+    "ownership": "The assignment supplied the questions and diagrams. My notebook contains the confusion-matrix implementation, metric calculations, and written answers.",
+    "ownershipZh": "题目和示意图由课程提供；notebook 包含我的混淆矩阵实现、指标计算和书面回答，按课堂笔记展示。",
+    "article": "roc-thresholds-and-errors",
+    "cover": "/images/roc-ethics/roc-curves.webp",
+    "details": [
+      "Uses an actual course matrix to distinguish Recall, FPR, and Precision through their denominators.",
+      "Separates one operating point from a complete ROC curve and discusses threshold costs.",
+      "Connects the course fairness questions with primary research on deferral and sources of harm, without claiming a new fairness method or empirical audit."
+    ],
+    "detailsZh": [
+      "用实际题图解释 Recall、FPR 与 Precision 的分母差异。",
+      "区分一个工作点与整条 ROC，并讨论阈值选择的代价。",
+      "结合延后决定与偏差来源的原始研究解释课程问题，不声称新公平算法或实证审计。"
+    ],
+    "links": [
+      {
+        "label": "Course notebook",
+        "href": "https://github.com/laowangbushilaowang/701_ass/blob/main/701_ass1/ROC_Analysis_and_Ethics.ipynb"
+      }
+    ]
   }
 ]
