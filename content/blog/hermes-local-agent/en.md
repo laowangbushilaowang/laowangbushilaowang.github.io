@@ -1,100 +1,59 @@
 ---
-title: "Routing inference for a local agent"
-excerpt: "Connecting Qwen to Hermes exposed a resource allocation problem: main tasks and small auxiliary requests can share both a reasoning policy and a busy inference slot."
+title: "Connecting a self-hosted Qwen to Hermes"
+excerpt: "A setup note on model APIs, browser dependencies, reasoning routes, and separating main tasks from auxiliary requests."
 language: "en"
 date: "2026-10-09"
 publishedAt: "2026-10-09T12:03:17Z"
-updated: "2026-10-09"
+updated: "2026-10-16"
 project: "hermes-local-agent"
 tags: ["Hermes", "Qwen", "llama.cpp", "Agents"]
 ---
 
-After switching a Hermes conversation to `qwen-deep`, I found that its auxiliary requests were using Deep too. Generating a title and deciding whether to allow a tool command could inherit the same inference route as the main task.
+I already had a self-hosted Qwen connected to coding clients when I saw a demonstration of Qwen with Hermes. I wanted to try the combination, particularly its browser and Computer Use tools.
 
-The local server had one inference slot. Main and auxiliary requests shared it, so a short request could wait behind a long one. A title might contain only a few words while taking substantial computation to produce. From the interface, all of this looks like “the agent is slow.” Token generation speed explains only part of the wait.
+This note covers setup work during August and September 2026. I used Codex to migrate the service, adjust routing, and check the integration. Hermes, Qwen, and llama.cpp are open-source components; the deployed GGUF was also a third-party modified and quantized model.
 
-This post covers a local Qwen deployment and its adjustments during August and September 2026: how its four routes worked, which settings I changed, and where a controlled comparison is still missing.
+## Connect the tools as well as the model
 
-## Four names, one set of weights
+Hermes ran on my Mac, while `llama-server` served the model on a GPU machine through a custom router. The model generated replies or tool requests. Hermes dispatched the tools, returned their results, and continued the conversation.
 
-The environment used `llama-server` to load a Qwen GGUF model. A custom routing layer exposed `qwen-fast`, `qwen-standard`, `qwen-deep`, and `qwen-auto`. Hermes managed the agent loop, while terminal and browser tools ran in their execution environments. I used Codex to configure, migrate, and check the setup. Hermes, Qwen, and llama.cpp are third-party components.
+The tool environment was a separate concern. Having a browser available to Codex did not make it available to Hermes. Hermes needed its own Python, Node, and browser dependencies. This installation screenshot shows the Python environment ready while browser-tool installation was still in progress.
 
-The four aliases selected different request policies for the same weights. Fast disabled thinking, Standard used `medium`, and Deep used `xhigh`; Auto chose a mode through rules. An extra model name did not provide another GPU or an independent inference process.
+![Actual Hermes browser-tool dependency installation](/images/hermes/hermes-tool-dependencies.webp "Cropped from the September 1, 2026 installation, excluding private logs on the right. It shows separate dependency preparation, not a completed installation or a performance comparison.")
 
-Two meanings of Auto were easy to confuse. The custom `qwen-auto` route inspected a request and selected a mode. An auxiliary task set to `provider: auto` in the Hermes configuration inherited the main model at that time. It did not automatically choose a lightweight model for titles. Hermes' [model configuration documentation](https://hermes-agent.nousresearch.com/docs/user-guide/configuring-models) describes inheritance and explicit auxiliary overrides.
+Client compatibility needed separate checks too. The model exposed an OpenAI-compatible API; Claude Code used a compatibility gateway, whereas Hermes used its own provider configuration. A working connection in one client did not validate the other.
 
-Client compatibility was another layer. An OpenAI-compatible model API did not make every client interchangeable. Claude Code used a compatibility gateway, and a minimal request returned the expected test marker. Hermes had its own provider configuration. Each path still needed checks for request formatting and tool-result handling.
+I checked two parts of the tool path. All four routing aliases returned structured `tool_calls` for `add_numbers(19, 23)`. A separate Hermes terminal test actually executed `pwd`; the tool returned successfully, and the model relayed the working directory to the user.
 
-## Rules can keep Auto in Deep
+The first check established that the model could request a tool in the expected format. The second reached execution and result return. Neither established reliable long tasks, recovery, or general browser operation.
 
-The early Auto implementation did not ask another language model to classify each request. It inspected the requested alias, text, media, and tool information.
+## Four aliases sharing one model
 
-Two parts of the August 31 `choose_mode` implementation explain a consequence. This excerpt retains the original conditions and omits unrelated branches:
+The router exposed four policies for the same weights:
 
-```python
-for message in messages:
-    # ... extract role and text ...
-    if role == "tool" or contains_tool_result(message.get("content")):
-        tool_results += 1
+| Alias | Setting at the time |
+| --- | --- |
+| `qwen-fast` | Thinking disabled |
+| `qwen-standard` | `medium` reasoning |
+| `qwen-deep` | `xhigh` reasoning |
+| `qwen-auto` | Rule-based selection |
 
-# ... after scanning messages ...
-if tool_results or ERROR_PATTERNS.search(latest):
-    return "deep", "tool-result-or-error"
-```
+They shared the model service. Another alias did not provide more compute.
 
-It scanned the entire supplied history. Once a tool result appeared anywhere in that history, a later request could satisfy the condition for Deep. The code did not distinguish a fresh failure needing investigation from a file read that succeeded several turns earlier.
+An early Auto rule tended to select Deep whenever a tool result appeared anywhere in the conversation history. Agents read files and run commands frequently, so that condition soon became true. The later code examined the current user task and its newest batch of tool results instead. Routine successful calls could return to Standard; current errors, verification review, and the first evidence review for a complex task could still use Deep. This was request-routing logic, not a separately trained classifier.
 
-Agents use tools frequently. A conservative rule could therefore become a persistent preference for Deep. Testing a short question by itself would miss this: the same question with tool-bearing history could take a different route. This describes the early source snapshot, not a new test of today's service.
+Hermes had a different meaning of Auto. Its [auxiliary model configuration](https://hermes-agent.nousresearch.com/docs/user-guide/configuring-models) could inherit the main model when no override was set. Selecting Deep for the conversation could therefore send title generation and command-approval requests through Deep too. This deployment had one inference slot, shared by those requests.
 
-I would still retain Deep for difficult work. Root-cause analysis and a small text edit have different needs. The [official Qwen model card](https://huggingface.co/Qwen/Qwen3.8-27B-FP8) warns that shallower reasoning can produce more failures and retries, increasing total task time despite quicker individual responses. The useful comparison is whether the task finishes and how much work that takes.
+I kept local Standard for the main task and moved approvals to an independent Codex Spark model on September 3. That made it a hybrid setup: approval requests left the local model service. Titles, compression, and all the other auxiliary tasks were not fully reassigned, and I did not complete an A/B measurement of total latency.
 
-## Separate the main task from auxiliary inference
+What helped was breaking down the vague symptom that “the agent is slow.” Which request was reasoning—the main task or an auxiliary job? Was it generating or waiting for the single slot? Each alias had only one timing sample, and Deep even finished faster than Standard in that set. Ranking them from those measurements would have been misleading.
 
-The September 1 configuration still left titles, approvals, and other auxiliary tasks on Auto. Logs showed auxiliary inference inheriting `qwen-deep`. The server ran with `--parallel 1`, and other training work was active on the machine. These could all affect waiting time; I did not measure their separate contributions.
+## Check context and connectivity layer by layer
 
-I later kept local `qwen-standard` as the main model and chose an independent Codex model for approvals. The September 3 records show the final approval setting as `gpt-5.3-codex-spark`. They do not show that titles, compression, and every other auxiliary task were reassigned according to the original proposal.
+The server was configured for 262,144 tokens, but Hermes initially declared that capacity only for Auto. I added the declarations for all four aliases and enabled the tool-loop hard stop for repeated failures or calls without progress. This was a configuration capacity, not a quality test at a full window.
 
-This was a hybrid setup. Approval requests used another provider, so command information submitted for approval left the local model service. Describing the whole system as entirely local would hide that path.
+Context also consumes GPU memory. Weights share the budget with KV cache and runtime buffers. A larger window or more concurrent requests requires another resource estimate; changing one slot to two does not establish two sessions with the previous capacity and speed. Earlier compression and further auxiliary-task separation remained recommendations at that point.
 
-A separate approval route let me choose a model for that judgment and move its inference off the local single-slot server. It still added a request that took time. I did not complete an end-to-end A/B comparison or measure a latency reduction. An approval classifier also is not an operating-system sandbox: its decision and the executing process's actual permissions are separate matters.
+Connection failures needed a different set of checks. In one investigation, health and model-list requests succeeded on the model host while the external gateway timed out. An earlier Open WebUI investigation also found an empty model picker despite a successful direct request. A 502 through the proxy was a useful clue, but that record did not include a complete verified UI repair.
 
-Pinning titles and similar tasks to a lightweight mode remains a useful experiment. It could avoid excessive reasoning on small jobs, but if those requests still reach the same local process, they can still queue. Routing and capacity need to be considered together. The [llama.cpp server documentation](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md) defines `--parallel` as the number of server slots; this deployment had one.
-
-## A tool call is the first compatibility check
-
-A working chat endpoint is followed by several other checks: the model emits a structured call, the framework dispatches it, the tool result returns to the model, and the agent continues toward the requested outcome.
-
-On September 1, a small test supplied `add_numbers` with arguments 19 and 23 to each alias. These are the recorded output summaries with timing and reasoning-length fields removed:
-
-```text
-qwen-fast      finish=tool_calls tool=add_numbers args={"a":19,"b":23}
-qwen-standard  finish=tool_calls tool=add_numbers args={"a":19,"b":23}
-qwen-deep      finish=tool_calls tool=add_numbers args={"a":19,"b":23}
-qwen-auto      finish=tool_calls tool=add_numbers args={"a":19,"b":23}
-```
-
-All four routes had returned recognizable structured tool requests. They were not merely describing a call in prose. This did not test complex arguments, recovery, or long-task completion. The tool performs the addition; the framework must preserve the name, arguments, and call ID, then attach the result to the correct call.
-
-Each route was tested once under variable server load. Deep even returned faster than Standard in that sample. That is not a useful speed ranking. A comparison needs fixed tasks, completion and retry counts, and total elapsed time, with server waiting separated from generation. Otherwise, the route that happens to find an idle slot gets a flattering result.
-
-The deployed weights also matter: this was a third-party modified and quantized Qwen3.8-27B Aggressive GGUF. Evaluations of the official model cannot simply be transferred to it. The small tool test did not establish the reliability of approval decisions either.
-
-## Context capacity has to agree across the stack
-
-The server's context parameter was 262,144 tokens. Initially, Hermes declared that length only for `qwen-auto`. Similar alias names did not tell the client that the other routes shared the same capacity.
-
-On September 3, I approved adding context declarations for all four aliases and enabling the tool-loop hard stop. The resulting output listed each alias at 262,144 tokens. A static configuration inspection for this article found those values still present. This checks configuration agreement, not quality at a full context window or whether a running session loaded the latest settings.
-
-Context also consumes resources. Beyond the weights, inference needs cached intermediate state and runtime buffers. Larger contexts and more concurrent requests change those requirements. The relationship between slots and per-request capacity needs to be checked for the deployed runtime version. Changing `--parallel 1` to 2 does not by itself establish two sessions with the previous capacity and speed.
-
-Earlier compression around 160K tokens and disabling automatic background review remained recommendations rather than fully applied changes. The hard stop was enabled to handle repeated failures or calls without progress. It cannot inspect every final artifact for correctness: a tool loop can stop reporting errors while producing the wrong result.
-
-## A healthy model can sit behind a broken path
-
-During one check, the model's health and model-list endpoints responded successfully from its own machine while the external gateway timed out. The inference process was answering locally, but the client's path to it was unavailable. Reloading the weights would not necessarily address that failure.
-
-An earlier Open WebUI investigation showed a different mismatch. Its model picker was empty, yet a direct request to the local model endpoint returned a model. Logs showed a 502 when that request went through a proxy; the WebUI process had inherited `HTTP_PROXY` and `HTTPS_PROXY`. Bypassing the proxy for local addresses was the proposed fix. The record lacks a subsequent complete UI verification, so I cannot present it as a confirmed repair.
-
-These incidents give me a concrete order for diagnosis: send a minimal request from the model host, test the same path from the client host, then inspect the agent's tool loop. Cross one additional component at a time. A vague “model connection failed” otherwise bundles proxies, gateways, queueing, and inference into one symptom.
-
-This environment has records of service migration, four-route structured tool returns, and several applied settings. The missing comparison is a set of real tasks with main and auxiliary requests configured separately: how many finished, how many retries occurred, and where the time went. That is the measurement I would make before choosing which part to speed up.
+My diagnosis order became a minimal request on the model host, the same path from the client, then the tool loop. Crossing one extra layer at a time helped locate the failure. After the minimal request works, a longer task can show where the workflow stops. A tool failure, exhausted context, and a broken connection need different responses.
