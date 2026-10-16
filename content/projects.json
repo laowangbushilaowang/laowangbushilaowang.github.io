@@ -698,5 +698,36 @@
         "href": "https://github.com/CharTyr/STS2-Agent"
       }
     ]
+  },
+  {
+    "id": "stardew-pixel-beads",
+    "title": "Stardew pixel-bead patterns",
+    "titleZh": "星露谷人物拼豆图纸",
+    "period": "Personal making project · 2026",
+    "periodZh": "个人小制作 · 2026",
+    "summary": "Character cutouts, real bead-code charts and color counts, with a palette correction that restored a skin-colored shirt to white.",
+    "summaryZh": "把游戏人物整理成透明图、实际色号孔位表与用量统计，并修正一次把白衬衣映射成肤色的错误。",
+    "tags": [
+      "Pixel Art",
+      "Swift",
+      "Image Processing"
+    ],
+    "featured": false,
+    "role": "Codex-assisted pattern preparation",
+    "roleZh": "Codex 协助的图纸制作",
+    "ownership": "I specified size, pixel detail, shadow removal and Artkal codes, then reviewed the palette. Codex implemented the scripts; game character art belongs to its creators.",
+    "ownershipZh": "我提出尺寸、像素细节、去影子和 Artkal 色号要求，并检查配色；Codex 实现脚本，游戏人物形象归原作者。",
+    "article": "stardew-pixel-beads",
+    "cover": "/images/stardew-beads/characters.webp",
+    "details": [
+      "Preserves each occupied pixel as a bead cell; the two 15×31 patterns contain 392 and 333 filled cells.",
+      "Hand-written C-code mappings and AppKit chart rendering; color-count tables come from the cell data.",
+      "Three prepared patterns and existing PNG outputs; no physical color-match or assembled-craft validation."
+    ],
+    "detailsZh": [
+      "以一像素对应一孔保留轮廓，两个 15×31 图案分别有 392、333 个非空孔位。",
+      "用手工整理的 C 系列颜色对应表和 AppKit 输出孔位图，从同一网格统计各色数量。",
+      "已整理三个人物图案及 PNG；屏幕配色仍是近似，未验证实物成品与色差。"
+    ]
   }
 ]
