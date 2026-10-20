@@ -8,7 +8,7 @@ import { localizedPath, type Locale } from "@/lib/locale";
 import { siteProfile } from "@/content/site";
 
 export function Home({ locale }: { locale: Locale }) {
-  const posts = getAllPosts(locale);
+  const posts = getAllPosts(locale).filter((post) => post.projectTier === "primary");
   return (
     <Container className="py-6 md:py-12">
       <section className="grid items-start gap-5 border-b border-line pb-7 md:gap-8 md:pb-10 md:grid-cols-[240px_minmax(0,1fr)]">
@@ -239,7 +239,7 @@ export function Home({ locale }: { locale: Locale }) {
       </section>
       <section className="border-t border-line pt-7 pb-4">
         <h2 className="font-display text-2xl text-accent">
-          <LocalizedText en="Recent writing" zh="最近写的文章" />
+          <LocalizedText en="Project writing" zh="项目文章" />
         </h2>
         {posts.slice(0, 3).map((post) => (
           <article

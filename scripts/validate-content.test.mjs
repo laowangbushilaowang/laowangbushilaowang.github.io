@@ -13,7 +13,7 @@ function fixture(t) {
   fs.writeFileSync(
     path.join(root, "content/projects.json"),
     JSON.stringify([
-      { id: "project", cover: "/images/cover.svg", article: "note" },
+      { id: "project", tier: "primary", projectDate: "2025-11", cover: "/images/cover.svg", article: "note" },
     ]),
   );
   for (const lang of ["en", "zh"])
@@ -78,4 +78,21 @@ test("publication time is optional, valid, and shared by translations", (t) => {
   assert.match(validateContent(root).join(" "), /inconsistent publishedAt/);
   fs.writeFileSync(en, fs.readFileSync(en, "utf8").replace("2026-10-09T13:00:43Z", "invalid"));
   assert.match(validateContent(root).join(" "), /invalid publishedAt/);
+});
+
+
+test("requires an explicit tier and a project date with valid precision", (t) => {
+  const root = fixture(t);
+  const file = path.join(root, "content/projects.json");
+  const [project] = JSON.parse(fs.readFileSync(file, "utf8"));
+  for (const projectDate of ["2025", "2025-11", "2025-11-25", null]) {
+    fs.writeFileSync(file, JSON.stringify([{ ...project, projectDate }]));
+    assert.deepEqual(validateContent(root), []);
+  }
+  for (const projectDate of [undefined, "2025-13", "2025-02-30", "yesterday"]) {
+    fs.writeFileSync(file, JSON.stringify([{ ...project, projectDate }]));
+    assert.match(validateContent(root).join(" "), /invalid projectDate/);
+  }
+  fs.writeFileSync(file, JSON.stringify([{ ...project, tier: "featured" }]));
+  assert.match(validateContent(root).join(" "), /invalid project tier/);
 });

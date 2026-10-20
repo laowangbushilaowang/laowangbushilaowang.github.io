@@ -37,3 +37,8 @@ Choose technical depth for the article's question. Tool-use and workflow posts s
 Keep only material that answers the article's question. Each paragraph should contribute a concrete practice, a reason for a choice, a necessary example, or an actual result. Remove repeated setup, author introductions, generic commentary about AI, and empty conclusions. Source research belongs in the private dossier; its volume should not dictate article length.
 
 Cut filler without removing the substance of the work. Reader-facing articles need concrete structures, examples, and reasons for choices, not a word-count target. Write from the actual research, analysis, engineering, and handoff needs; do not add role labels as decorative sections. A requested explanatory structure diagram may be drawn from verified conventions and clearly labelled as a schematic. This does not authorize invented result figures or decorative image quotas.
+
+
+## Project groups and chronology
+
+`projects.json` owns each project's `tier` (`primary` or `secondary`) and `projectDate` (known `YYYY`, `YYYY-MM`, or `YYYY-MM-DD`; `null` when unresolved). Primary means work, internship, thesis, or a formal academic project; personal tools, routine exercises, and open-source practice are secondary. This classification is independent of material completeness. Project and blog indexes show both groups on one scrolling page, main projects first. Each group sorts by documented project time, newest first. Partial dates keep their known precision; unknown dates come last. Articles inherit the same group and date from their linked project. `date`, `publishedAt`, and `updated` remain article publication/edit metadata. `featured` continues to control the separate featured-project selection.

@@ -3,8 +3,8 @@
     "id": "codex-workflow",
     "title": "File-based agent project management",
     "titleZh": "基于文件的 Agent 项目管理",
-    "period": "Personal practice",
-    "periodZh": "个人实践",
+    "period": "September 2026 · Personal practice",
+    "periodZh": "2026 年 9 月 · 个人实践",
     "summary": "Analysis capsules, notebook decisions, dependency boundaries, and handoffs for continuing agent-assisted research.",
     "summaryZh": "按轮次组织分析目录，在 Notebook 中保留判断，用输入边界和交接定位 Agent 要继续的研究。",
     "tags": [
@@ -17,14 +17,16 @@
     "roleZh": "个人工作流",
     "ownership": "I directed and reviewed the changes to my project workflows; Codex implemented the files and helped check them.",
     "ownershipZh": "我提出并审查工作流的修改，Codex 完成文件实现并协助核对。",
-    "article": "codex-long-projects"
+    "article": "codex-long-projects",
+    "tier": "secondary",
+    "projectDate": "2026-09"
   },
   {
     "id": "aiquant",
     "title": "AIQuant",
     "titleZh": "AIQuant",
-    "period": "Personal project",
-    "periodZh": "个人项目",
+    "period": "From April 2026 · Personal research",
+    "periodZh": "2026 年 4 月起 · 个人研究",
     "summary": "A Codex-assisted research workflow connecting reusable Skills, continuous market data, controlled experiments, and a dashboard. No promotion-ready strategy.",
     "summaryZh": "用 Skills、持续行情、受控实验与网页，把 Codex 的每轮量化研究接起来。目前没有可晋级策略。",
     "tags": [
@@ -49,14 +51,16 @@
       "Skills 分别保存事件研究、新闻增量收集、前沿方法、策略验证与数据计算的流程。轻量文件包区分已有分析和待查问题，无需把整份行情塞进模型上下文。",
       "后台采集写入近期热数据，研究任务消费已有数据并更新派生报告；长历史和大报告放在远端。Chart IQ 用于查看价格、策略状态，以及受控范围内的后台任务。",
       "历史、账户和执行阶段使用冻结的同一策略定义。一项 319 笔参考交易的订单流诊断，零成本接近盈亏平衡，计入成本后为负；它是重复使用的样本外窗口且未验证成交。实盘和订单接口未启用。"
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-04"
   },
   {
     "id": "single-cell-agent-pipeline",
     "title": "BioFlow: omics collection and standardization",
     "titleZh": "BioFlow：组学数据采集与标准化",
-    "period": "Guangzhou Laboratory",
-    "periodZh": "广州实验室",
+    "period": "2025–2026 · Guangzhou Laboratory",
+    "periodZh": "2025—2026 · 广州实验室",
     "summary": "A data-curation workflow for a virtual-cell corpus: interpret heterogeneous files, link cells to samples, and recover metadata through tools and focused model judgments.",
     "summaryZh": "为虚拟细胞语料整理公开组学数据：判断异构文件、对应细胞与样本，再用规则和模型补齐元信息。",
     "tags": [
@@ -88,7 +92,9 @@
         "href": "https://github.com/laowangbushilaowang/Bio_dataflow"
       }
     ],
-    "cover": "/images/bioflow/workflow-original.webp"
+    "cover": "/images/bioflow/workflow-original.webp",
+    "tier": "primary",
+    "projectDate": "2025-11"
   },
   {
     "id": "hermes-local-agent",
@@ -130,14 +136,16 @@
         "label": "llama.cpp · inference runtime",
         "href": "https://github.com/ggml-org/llama.cpp"
       }
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-08"
   },
   {
     "id": "private-workbench",
     "title": "Private local workbench",
     "titleZh": "私有本地工作台",
-    "period": "Personal tool · 2026",
-    "periodZh": "个人工具 · 2026",
+    "period": "From July 2026 · Personal tool",
+    "periodZh": "2026 年 7 月起 · 个人工具",
     "summary": "A private Web workbench connecting orders, local scripts, browser execution, progress, and archiving.",
     "summaryZh": "将订单、本地脚本、浏览器执行、进度与归档接在一起的私有 Web 工作台。",
     "tags": [
@@ -162,14 +170,16 @@
       "用页面选择版本、执行标识与查询序号区分旧响应和不同尝试；停止等待本机回执，已经发出的外部请求仍需回读结果。",
       "源码与配置示例、私有运行资料、业务记录及旧原型分开存放。我提出工作流与界面要求，Codex 协助实现和检查。",
       "文章配图是实际界面组件的只读合成数据重放；未宣称自动完成率或当前生产全流程验收。"
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-07"
   },
   {
     "id": "private-iphone-workbench",
     "title": "Private iPhone workbench",
     "titleZh": "私有 iPhone 管理端",
-    "period": "Personal tool · 2026",
-    "periodZh": "个人工具 · 2026",
+    "period": "From September 2026 · Personal tool",
+    "periodZh": "2026 年 9 月起 · 个人工具",
     "summary": "A private iPhone client for managing server tasks, with native workflow pages and explicit budgets for remote browser work.",
     "summaryZh": "用 iPhone 管理服务器任务的私有客户端，结合原生流程页面、远端浏览器与明确的资源预算。",
     "tags": [
@@ -200,7 +210,9 @@
         "label": "SwiftNIO SSH · upstream library",
         "href": "https://github.com/apple/swift-nio-ssh"
       }
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-09"
   },
   {
     "id": "bu-thesis",
@@ -241,7 +253,9 @@
       "At 10,240 samples and 128 directions, greedy selection reaches 25.72 dB versus 19.96 dB for random sampling; edge and diversity preferences hurt.",
       "Experiments compare sample and direction counts, linear and spline interpolation, and the relationship between selection and reconstruction directions.",
       "At the largest budget, the method exceeds a plain network and traditional baselines; the Fourier-feature network remains strongest. Representation count does not establish runtime efficiency."
-    ]
+    ],
+    "tier": "primary",
+    "projectDate": "2025"
   },
   {
     "id": "niche-time-pseudotime",
@@ -272,14 +286,16 @@
       "比较拟时序与样本年龄两条轴，先检查分支选择、预处理和共同状态覆盖。",
       "尝试多项式残差回归、分箱稳定性评分、NAM与协变量监督VAE。",
       "状态覆盖不足及两轴相关限制因素识别，后续任务收紧到样本时间预测。"
-    ]
+    ],
+    "tier": "primary",
+    "projectDate": "2025-09"
   },
   {
     "id": "tempofactor",
     "title": "SCage / TempoFactor",
     "titleZh": "SCage / TempoFactor",
-    "period": "Guangzhou Laboratory",
-    "periodZh": "广州实验室",
+    "period": "2026 · Guangzhou Laboratory",
+    "periodZh": "2026 · 广州实验室",
     "summary": "A sample-time-aware VAE studied through stage prediction, conditional gene readouts and spatial follow-up.",
     "summaryZh": "从样本时间监督的VAE出发，研究阶段预测、条件化基因读出和组织中的空间关联。",
     "tags": [
@@ -303,7 +319,9 @@
       "将Shared与Time分开读出，并共同重建计数表达；两个生物因素是否真正分开仍需验证。",
       "胎肺复现区分donor与stage留出，核对不同基线的查询数据访问差异。",
       "条件化汇总改善当前参考基因恢复，同读出scVI接近；空间结果保留为局部关联。"
-    ]
+    ],
+    "tier": "primary",
+    "projectDate": "2026-03"
   },
   {
     "id": "spatial-neural-field",
@@ -334,7 +352,9 @@
       "Extended two-dimensional expression modeling to three-dimensional sections, comparing MLP, Fourier networks, SIREN, and normalized variants.",
       "Reimplemented a GAE-to-latent-to-coordinate-network pipeline with staged alignment and decoder adjustment.",
       "Distinguished fitting from between-section prediction; encoder access to validation expression limits the prototype evaluation. Gradients do not establish movement or fate."
-    ]
+    ],
+    "tier": "primary",
+    "projectDate": "2025-06"
   },
   {
     "id": "yolov7-robotics",
@@ -365,7 +385,9 @@
       "单张 2080 Ti 上的结构/损失消融与训练预算取舍，未部署机器人硬件。",
       "敌人/队友标注、自采与模型预标注循环，以及截图和推理延迟的比较。",
       "实时控制原型；后参加华为比赛，昇腾适配遇兼容问题，改用 YOLOv5 模板训练。"
-    ]
+    ],
+    "tier": "primary",
+    "projectDate": "2022-07"
   },
   {
     "id": "geospatial-fairness",
@@ -394,7 +416,9 @@
     "detailsZh": [
       "使用 ACS 五年数据，统一年通勤小时口径，比较 2016–2021 PUMA 地区的群体差异。",
       "团队交付地区地图、趋势与回归分析及规划建议；这些结果不能直接识别疫情或政策的因果作用。"
-    ]
+    ],
+    "tier": "primary",
+    "projectDate": "2023"
   },
   {
     "id": "data-days-for-good",
@@ -429,7 +453,9 @@
         "label": "Interactive report",
         "href": "https://jun8.shinyapps.io/dd4g-bu-tech-majors-survey/"
       }
-    ]
+    ],
+    "tier": "primary",
+    "projectDate": "2024"
   },
   {
     "id": "sneaker-trading-platform",
@@ -467,7 +493,9 @@
         "href": "https://gitee.com/LaoWangB/dbws-project"
       }
     ],
-    "article": "sneaker-trading-platform"
+    "article": "sneaker-trading-platform",
+    "tier": "primary",
+    "projectDate": "2021-02"
   },
   {
     "id": "emrnet",
@@ -508,14 +536,16 @@
         "label": "MPRNet · upstream code",
         "href": "https://github.com/swz30/MPRNet"
       }
-    ]
+    ],
+    "tier": "primary",
+    "projectDate": "2023-02"
   },
   {
     "id": "mental-health-chatbot",
     "title": "Mental-health chatbot",
     "titleZh": "心理健康聊天机器人",
-    "period": "Undergraduate NLP project",
-    "periodZh": "本科 NLP 项目",
+    "period": "2022–2023 · Undergraduate NLP project",
+    "periodZh": "2022—2023 · 本科 NLP 项目",
     "summary": "A counseling QA prototype connecting data collection, topic classification, response generation, and reader evaluation.",
     "summaryZh": "连接咨询问答采集、主题分类、回答生成与人工评估的 NLP 原型。",
     "tags": [
@@ -538,7 +568,9 @@
     "detailsZh": [
       "从咨询问答文本出发，用双向 LSTM 做主题分类，比较编码器—解码器 Transformer 与 345M 参数的 DialoGPT。",
       "人工评价得到 37 份有效反馈：DialoGPT 的整体质量更高，适切性评分却更低。"
-    ]
+    ],
+    "tier": "primary",
+    "projectDate": null
   },
   {
     "id": "phd-advisor-screening",
@@ -568,14 +600,16 @@
     "detailsZh": [
       "从 Notebook 和模块化 Python 原型，逐渐转向学校实际院系名单、逐人读主页与 CSV 分步续跑。",
       "BU 的一次保存结果虽有 1,424 条记录，仍未完成全范围；后来港科广 AI/DSA 名单将 35 与 34 条学域归属合并为 65 人，保留 4 位跨聘和主页缺口。"
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-02"
   },
   {
     "id": "ticket-tool-research",
     "title": "Android ticket-tool research",
     "titleZh": "票务工具与 Android 自动化调研",
-    "period": "2026 · Open-source investigation",
-    "periodZh": "2026 · 开源工具调研",
+    "period": "February 2026 · Open-source investigation",
+    "periodZh": "2026 年 2 月 · 开源工具调研",
     "summary": "A reading of open-source ticket tools to understand Android control paths, page state, latency boundaries, and result confirmation.",
     "summaryZh": "阅读几份开源票务工具，理解安卓控制链路、页面状态、计时范围和结果确认。",
     "tags": [
@@ -598,14 +632,16 @@
     "detailsZh": [
       "梳理 Appium 客户端、服务端与 Android 驱动的关系，对照 HaTickets 使用的 Python uiautomator2 入口。",
       "从源码比较控件定位、页面状态、计时范围，以及结果返回值如何用于判断一轮操作是否完成。"
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-02"
   },
   {
     "id": "stardew-farm-planner",
     "title": "Stardew Farm Blueprint",
     "titleZh": "星露谷农场蓝图",
-    "period": "Personal project · 2026",
-    "periodZh": "个人项目 · 2026",
+    "period": "March 2026 · Personal project",
+    "periodZh": "2026 年 3 月 · 个人项目",
     "summary": "A local tile-based farm plan with three construction stages, entrance checks and a rule-based next-action list.",
     "summaryZh": "把农场改造拆成三个阶段，用格子坐标表达建筑与道路，检查出入口，再生成下一步建设清单。",
     "tags": [
@@ -629,14 +665,16 @@
       "在80×65格的Canvas上，分别记录建筑图片、地面占地与入口位置。",
       "检查建模范围内的重叠、道路、农田、预留地，并从门口搜索到道路。",
       "三套阶段方案配合手填状态的规则清单；尚无游戏内收益/耗时对照或全局最优证明。"
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-03"
   },
   {
     "id": "texas-equity",
     "title": "Texas Equity",
     "titleZh": "德州概率计算器",
-    "period": "Personal project · 2026",
-    "periodZh": "个人项目 · 2026",
+    "period": "March 2026 · Personal project",
+    "periodZh": "2026 年 3 月 · 个人项目",
     "summary": "A web and SwiftUI poker calculator for random-deal equity, player-count comparisons and faster card entry.",
     "summaryZh": "从网页到 SwiftUI，计算随机对手下的牌局权益，解释人数与平分的影响，并改进手机输牌。",
     "tags": [
@@ -660,7 +698,9 @@
       "无放回模拟合法牌局，比较七张牌中的最佳牌型，并按共同获胜人数分摊权益。",
       "分别展示听牌命中率、补强后的近似权益与牌型分布，避免把几个概率混为一谈。",
       "连续选牌与文本输入；原生计算任务防止旧结果覆盖。对手为随机手牌，未实现范围建模或最优下注策略。"
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-03"
   },
   {
     "id": "sts2-mcp-on-mac",
@@ -697,14 +737,16 @@
         "label": "CharTyr/STS2-Agent",
         "href": "https://github.com/CharTyr/STS2-Agent"
       }
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-03"
   },
   {
     "id": "stardew-pixel-beads",
     "title": "Stardew pixel-bead patterns",
     "titleZh": "星露谷人物拼豆图纸",
-    "period": "Personal making project · 2026",
-    "periodZh": "个人小制作 · 2026",
+    "period": "April 2026 · Personal making project",
+    "periodZh": "2026 年 4 月 · 个人小制作",
     "summary": "Character cutouts, real bead-code charts and color counts, with a palette correction that restored a skin-colored shirt to white.",
     "summaryZh": "把游戏人物整理成透明图、实际色号孔位表与用量统计，并修正一次把白衬衣映射成肤色的错误。",
     "tags": [
@@ -728,7 +770,9 @@
       "以一像素对应一孔保留轮廓，两个 15×31 图案分别有 392、333 个非空孔位。",
       "用手工整理的 C 系列颜色对应表和 AppKit 输出孔位图，从同一网格统计各色数量。",
       "已整理三个人物图案及 PNG；屏幕配色仍是近似，未验证实物成品与色差。"
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-04"
   },
   {
     "id": "astockquant",
@@ -769,7 +813,9 @@
         "label": "Qlib",
         "href": "https://github.com/microsoft/qlib"
       }
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-06"
   },
   {
     "id": "comfy-video",
@@ -810,7 +856,9 @@
         "label": "H3 continuation suite",
         "href": "https://github.com/HerrgottMargott/Herrgotts-H3-Infinite-Continuation-Suite"
       }
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-08"
   },
   {
     "id": "local-search-mcp",
@@ -851,14 +899,16 @@
         "label": "Qwen Code",
         "href": "https://github.com/QwenLM/qwen-code"
       }
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-09"
   },
   {
     "id": "cn-radar-adaptation",
     "title": "CN Radar job collection",
     "titleZh": "CN Radar 岗位采集",
-    "period": "Personal adaptation · 2026",
-    "periodZh": "个人适配 · 2026",
+    "period": "From May 2026 · Personal adaptation",
+    "periodZh": "2026 年 5 月起 · 个人适配",
     "summary": "An Android collection and App-to-Web workflow adapted on top of the open-source CN Company Radar Toolbox.",
     "summaryZh": "基于开源 CN Company Radar Toolbox，适配 Android 采集、App 与网页衔接及完整 JD 整理。",
     "tags": [
@@ -887,7 +937,9 @@
         "label": "CN Company Radar · upstream toolbox",
         "href": "https://github.com/zexianzhang36-prog/cn-company-radar-toolbox"
       }
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-05"
   },
   {
     "id": "rental-radar-adaptation",
@@ -924,7 +976,9 @@
         "label": "Zuche Radar · upstream project",
         "href": "https://github.com/LuckinSven/8093-zuche-radar-public"
       }
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-09"
   },
   {
     "id": "cloud-request-coursework",
@@ -969,7 +1023,9 @@
         "label": "Model analysis · hw6",
         "href": "https://github.com/laowangbushilaowang/hw6"
       }
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2023-10"
   },
   {
     "id": "roc-evaluation-coursework",
@@ -1006,7 +1062,9 @@
         "label": "Course notebook",
         "href": "https://github.com/laowangbushilaowang/701_ass/blob/main/701_ass1/ROC_Analysis_and_Ethics.ipynb"
       }
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2023-09"
   },
   {
     "id": "hg532-security-notes",
@@ -1044,7 +1102,9 @@
         "label": "Original disclosure",
         "href": "https://research.checkpoint.com/2017/good-zero-day-skiddie/"
       }
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2024-05"
   },
   {
     "id": "drawing-vision",
@@ -1089,6 +1149,8 @@
         "label": "TorchVision",
         "href": "https://github.com/pytorch/vision"
       }
-    ]
+    ],
+    "tier": "secondary",
+    "projectDate": "2026-10"
   }
 ]

@@ -15,6 +15,10 @@ export type BlogFrontmatter = {
 export type BlogPostSummary = BlogFrontmatter & {
   slug: string;
   readingTimeMinutes: number;
+  projectDate: string | null;
+  projectTier: "primary" | "secondary";
+  projectPeriod: string;
+  projectPeriodZh: string;
 };
 export type BlogPost = BlogPostSummary & { content: string };
 export type TocItem = { id: string; text: string; depth: number };

@@ -68,6 +68,8 @@ export type ProjectLink = {
 
 export type ProjectItem = {
   id: string;
+  tier: "primary" | "secondary";
+  projectDate: string | null;
   title: string;
   titleZh?: string;
   period: string;

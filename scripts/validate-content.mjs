@@ -14,6 +14,16 @@ export function validateContent(root) {
       errors.push(`${where}: missing public asset ${url}`);
   }
   projects.forEach((p) => {
+    if (!["primary", "secondary"].includes(p.tier)) errors.push(`${p.id}: invalid project tier`);
+    if (p.projectDate !== null) {
+      if (typeof p.projectDate !== "string" || !/^\d{4}(?:-(?:0[1-9]|1[0-2])(?:-(?:0[1-9]|[12]\d|3[01]))?)?$/.test(p.projectDate)) {
+        errors.push(`${p.id}: invalid projectDate`);
+      } else {
+        const [year, month = 1, day = 1] = p.projectDate.split("-").map(Number);
+        const parsed = new Date(Date.UTC(year, month - 1, day));
+        if (parsed.getUTCFullYear() !== year || parsed.getUTCMonth() !== month - 1 || parsed.getUTCDate() !== day) errors.push(`${p.id}: invalid projectDate`);
+      }
+    }
     if (p.cover) asset(p.cover, p.id);
   });
   const directory = path.join(root, "content/blog");

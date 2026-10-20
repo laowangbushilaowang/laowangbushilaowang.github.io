@@ -3,6 +3,8 @@ import path from "node:path";
 import matter from "gray-matter";
 import type { BlogFrontmatter, BlogPost, BlogPostSummary } from "@/types/blog";
 import type { Locale } from "./locale";
+import { projects } from "@/content/projects";
+import { sortProjectPosts } from "./project-order";
 const directory = path.join(process.cwd(), "content/blog");
 export function getPostBySlug(
   slug: string,
@@ -19,8 +21,13 @@ export function getPostBySlug(
     .replace(/[\u3400-\u9fff]/g, " ")
     .split(/\s+/)
     .filter(Boolean).length;
+  const project = projects.find((p) => p.id === frontmatter.project);
   return {
     ...frontmatter,
+    projectDate: project?.projectDate ?? null,
+    projectTier: project?.tier ?? "secondary",
+    projectPeriod: project?.period ?? "",
+    projectPeriodZh: project?.periodZh ?? project?.period ?? "",
     slug,
     content,
     readingTimeMinutes: Math.max(1, Math.ceil(characters / 350 + words / 220)),
@@ -28,12 +35,10 @@ export function getPostBySlug(
 }
 export function getAllPosts(locale: Locale = "en"): BlogPostSummary[] {
   if (!fs.existsSync(directory)) return [];
-  return fs
-    .readdirSync(directory, { withFileTypes: true })
-    .filter((e) => e.isDirectory())
-    .map((e) => getPostBySlug(e.name, locale))
-    .filter((p): p is BlogPost => p !== null)
-    .sort((a, b) =>
-      (b.publishedAt ?? b.date).localeCompare(a.publishedAt ?? a.date),
-    );
+  return sortProjectPosts(
+    fs.readdirSync(directory, { withFileTypes: true })
+      .filter((e) => e.isDirectory())
+      .map((e) => getPostBySlug(e.name, locale))
+      .filter((p): p is BlogPost => p !== null),
+  );
 }
